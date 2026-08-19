@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirigiendo...</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .loader {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <h2>Conectando con Google Maps...</h2>
+        <!-- Aquí puedes poner un pequeño spinner CSS si quieres -->
+    </div>
+
+    <script>
+        // Aquí pones el link exacto de las reseñas de Google Maps del cliente
+        const urlDestino = "https://g.page/r/EJEMPLO_DE_LINK/review";
+        
+        // window.location.replace no guarda el historial, así que si el usuario 
+        // le da al botón "Atrás", no se queda atrapado en un ciclo infinito de redirección.
+        setTimeout(function() {
+            window.location.replace(urlDestino);
+        }, 100); // 100 milisegundos de espera
+    </script>
+</body>
+</html>
