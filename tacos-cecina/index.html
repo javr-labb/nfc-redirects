@@ -3,19 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirigiendo...</title>
+    <title>Tacos de Cecina - Enlaces</title>
+    <style>
+        /* Estilos generales limpios y modernos */
+        body {
+            background-color: #1a252c;
+            color: white;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            margin-top: 10vh;
+        }
+        /* Círculo para el logo o emoji */
+        .logo {
+            width: 90px;
+            height: 90px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+        p {
+            color: #a0a0a0;
+            margin-bottom: 40px;
+            font-size: 1rem;
+        }
+        /* Diseño de los botones */
+        .link-btn {
+            display: block;
+            width: 100%;
+            background-color: #48a9a6; /* Color principal (Menú) */
+            color: white;
+            text-decoration: none;
+            padding: 18px 0;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        /* Efecto al tocar el botón en el celular */
+        .link-btn:active {
+            transform: scale(0.97);
+        }
+        /* Color secundario para el botón de reseñas */
+        .link-btn.secondary {
+            background-color: #33424d; 
+            border: 1px solid #48a9a6;
+        }
+    </style>
 </head>
-<body style="background-color: #1a252c; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
-    
-    <h2>Abriendo Google Maps...</h2>
+<body>
 
-    <script>
-        // PEGA EL LINK LARGO DE GOOGLE EXACTAMENTE AQUÍ ADENTRO:
-        const urlDestino = "https://www.google.com/maps/place/Tacos+de+Cecina+de+Yecapixtla+%22el+chef%22/@19.299423,-99.0749938,16z/data=!4m15!1m5!2m4!1stacos!5m1!4e9!6e5!3m8!1s0x85ce032f7cbb661f:0xf37e5dafeaad007c!8m2!3d19.2992056!4d-99.0712701!9m1!1b1!15sCgV0YWNvc1oHIgV0YWNvc5IBD3RhY29fcmVzdGF1cmFudJoBJENoZERTVWhOTUc5blMwVkpRMEZuU1VOcWEyUllSak4zUlJBQuABAPoBBAgAEEk!16s%2Fg%2F11nxp75s1j?entry=ttu&g_ep=EgoyMDI2MDgxNy4wIKXMDSoASAFQAw%3D%3D";
+    <div class="container">
+        <!-- Puedes cambiar el taco por el logo del restaurante usando una etiqueta <img> si quieres -->
+        <div class="logo">🌮</div>
         
-        setTimeout(function() {
-            window.location.replace(urlDestino);
-        }, 100);
-    </script>
+        <h1>Tacos de Cecina</h1>
+        <p>¿Qué deseas hacer?</p>
+
+        <!-- BOTÓN 1: EL MENÚ -->
+        <!-- Cambia "AQUI_VA_EL_LINK_DEL_PDF" por el link real de su menú (puedes subir el PDF al mismo GitHub si quieres) -->
+        <a href="AQUI_VA_EL_LINK_DEL_PDF" class="link-btn">
+            📄 Ver Menú Digital
+        </a>
+
+        <!-- BOTÓN 2: LAS RESEÑAS -->
+        <!-- Aquí ya te dejé el link que sacaste hace rato -->
+        <a href="https://www.google.com/maps/place/Tacos+de+Cecina+de+Yecapixtla+%22el+chef%22/@19.299423,-99.0749938,16z/data=!4m15!1m5!2m4!1stacos!5m1!4e9!6e5!3m8!1s0x85ce032f7cbb661f:0xf37e5dafeaad007c!8m2!3d19.2992056!4d-99.0712701!9m1!1b1!15sCgV0YWNvc1oHIgV0YWNvc5IBD3RhY29fcmVzdGF1cmFudJoBJENoZERTVWhOTUc5blMwVkpRMEZuU1VOcWEyUllSak4zUlJBQuABAPoBBAgAEEk!16s%2Fg%2F11nxp75s1j?entry=ttu&g_ep=EgoyMDI2MDgxNy4wIKXMDSoASAFQAw%3D%3D" class="link-btn secondary">
+            ⭐ Regálanos 5 Estrellas
+        </a>
+    </div>
+
 </body>
 </html>
