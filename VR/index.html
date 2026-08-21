@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VR+Lab — Toca algo. Conecta todo.</title>
+<meta name="description" content="VR+Lab convierte objetos físicos en puertas de entrada digitales con tecnología NFC: menús, tarjetas, reseñas, packaging y más.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F1F0EC;
+    --bg-warm: #EAE7DF;
+    --ink: #15161A;
+    --ink-soft: #4A4B52;
+    --muted: #8C8B85;
+    --line: rgba(21,22,26,0.12);
+    --signal: #3D3AF1;
+    --signal-soft: #E4E3FD;
+    --coral: #FF5F4C;
+    --paper: #FFFFFE;
+    --radius: 14px;
+    --maxw: 1180px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* subtle paper grain */
+  body::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  img, svg{ display: block; max-width: 100%; }
+
+  .display{
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+  }
+  .mono{
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .wrap{
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  :focus-visible{
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(241,240,236,0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.wrap{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 76px;
+  }
+  .logo{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo .plus{ color: var(--signal); }
+  .navlinks{
+    display: flex;
+    gap: 36px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .navlinks a{ transition: color 0.2s ease; }
+  .navlinks a:hover{ color: var(--ink); }
+  .nav-cta{
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .nav-cta:hover{ background: var(--signal); transform: translateY(-1px); }
+  .menu-toggle{ display: none; }
+
+  @media (max-width: 760px){
+    .navlinks{ display: none; }
+    .menu-toggle{ display: block; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding: 96px 0 80px;
+    position: relative;
+  }
+  .hero-grid{
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .eyebrow{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--signal);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before{
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 4px var(--signal-soft);
+  }
+  .hero h1{
+    font-size: clamp(42px, 6vw, 74px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin: 0 0 26px;
+  }
+  .hero h1 em{
+    font-style: italic;
+    color: var(--signal);
+  }
+  .hero p.lede{
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0 0 36px;
+  }
+  .hero-ctas{ display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary, .btn-secondary{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 26px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+  }
+  .btn-primary{
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .btn-primary:hover{ background: var(--signal); transform: translateY(-2px); }
+  .btn-secondary{
+    border: 1.5px solid var(--line);
+    color: var(--ink);
+  }
+  .btn-secondary:hover{ border-color: var(--ink); }
+
+  /* signature: pulsing NFC field */
+  .signal-stage{
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ring{
+    position: absolute;
+    border-radius: 50%;
+    border: 1.5px solid var(--signal);
+    opacity: 0;
+    animation: pulse 3.2s cubic-bezier(0.2,0.6,0.4,1) infinite;
+  }
+  .ring:nth-child(1){ width: 130px; height: 130px; animation-delay: 0s; }
+  .ring:nth-child(2){ width: 130px; height: 130px; animation-delay: 0.9s; }
+  .ring:nth-child(3){ width: 130px; height: 130px; animation-delay: 1.8s; }
+  @keyframes pulse{
+    0%{ transform: scale(1); opacity: 0.55; border-color: var(--signal); }
+    100%{ transform: scale(3.4); opacity: 0; border-color: var(--coral); }
+  }
+  .tag-card{
+    position: relative;
+    z-index: 2;
+    width: 132px;
+    height: 132px;
+    border-radius: 26px;
+    background: var(--paper);
+    box-shadow: 0 20px 45px -12px rgba(21,22,26,0.25), inset 0 0 0 1px var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ring{ animation: none; opacity: 0.25; }
+  }
+
+  @media (max-width: 900px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .signal-stage{ max-width: 260px; margin: 0 auto; }
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section{ padding: 88px 0; }
+  .section-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 52px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 28px;
+  }
+  .section-head h2{
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .section-head p{
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 34ch;
+    margin: 0;
+  }
+  .section-tag{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  /* ---------- COMO FUNCIONA ---------- */
+  .steps{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .step{
+    background: var(--paper);
+    padding: 40px 32px;
+  }
+  .step .num{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--signal);
+    margin-bottom: 20px;
+  }
+  .step h3{
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 10px;
+  }
+  .step p{
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  @media (max-width: 760px){
+    .steps{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- CATALOGO ---------- */
+  .catalog-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .product-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -18px rgba(21,22,26,0.22);
+    border-color: rgba(61,58,241,0.35);
+  }
+  .card-visual{
+    position: relative;
+    height: 148px;
+    background: linear-gradient(150deg, var(--signal-soft) 0%, var(--bg-warm) 100%);
+    border-bottom: 1px solid var(--line);
+  }
+  .card-visual svg{ width: 100%; height: 100%; display: block; }
+  .mini-tap{
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    width: 30px;
+    height: 30px;
+  }
+  .mini-tap .mini-dot{
+    position: absolute;
+    inset: 0; margin: auto;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--coral);
+  }
+  .mini-tap .mini-ring{
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.4px solid var(--coral);
+    opacity: 0;
+    animation: pulse 2.8s cubic-bezier(0.2,0.6,0.4,1) infinite;
+  }
+  .mini-tap .mini-ring:nth-child(2){ animation-delay: 1.4s; }
+  @media (prefers-reduced-motion: reduce){
+    .mini-ring{ animation: none; opacity: 0.3; }
+  }
+  .card-body{
+    padding: 26px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-grow: 1;
+  }
+  .product-card h3{
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .product-card p{
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0;
+    flex-grow: 1;
+  }
+  .price-row{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .price{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  .price span{ color: var(--muted); }
+  .card-arrow{
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg-warm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+  }
+  .product-card:hover .card-arrow{ background: var(--signal); }
+  .product-card:hover .card-arrow svg{ stroke: var(--paper); }
+  .card-arrow svg{ width: 14px; height: 14px; stroke: var(--ink); transition: stroke 0.2s ease; }
+
+  /* package tiers (details/summary) */
+  .tiers{
+    border-top: 1px solid var(--line);
+    margin-top: 2px;
+  }
+  .tiers summary{
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .tiers summary::-webkit-details-marker{ display: none; }
+  .tiers summary::after{
+    content: "";
+    width: 9px; height: 9px;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .tiers[open] summary::after{ transform: rotate(-135deg); }
+  .tiers[open] summary{ color: var(--ink); }
+  .tier-list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 0 4px;
+  }
+  .tier-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+  }
+  .tier-row .tier-name{
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .tier-row .tier-desc{
+    display: block;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .tier-row .tier-price{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    white-space: nowrap;
+    color: var(--signal);
+    font-weight: 500;
+  }
+  .price-row{ cursor: default; }
+
+  @media (max-width: 900px){
+    .catalog-grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px){
+    .catalog-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- POR QUE ---------- */
+  .why{
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 22px;
+    padding: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+  }
+  .why-lead h2{
+    font-family: 'Fraunces', serif;
+    font-size: clamp(28px, 3.2vw, 38px);
+    font-weight: 500;
+    line-height: 1.15;
+    margin: 0 0 18px;
+  }
+  .why-lead p{
+    color: rgba(241,240,236,0.65);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 38ch;
+  }
+  .why-list{
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .why-item{
+    display: flex;
+    gap: 18px;
+    border-top: 1px solid rgba(241,240,236,0.15);
+    padding-top: 22px;
+  }
+  .why-item:first-child{ border-top: none; padding-top: 0; }
+  .why-item .mono-label{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--coral);
+    min-width: 56px;
+  }
+  .why-item h4{
+    font-size: 15.5px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .why-item p{
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: rgba(241,240,236,0.6);
+    margin: 0;
+  }
+
+  @media (max-width: 900px){
+    .why{ grid-template-columns: 1fr; padding: 44px 28px; border-radius: 18px; }
+  }
+
+  /* ---------- CTA / FOOTER ---------- */
+  .cta-band{
+    padding: 100px 0 60px;
+    text-align: center;
+  }
+  .cta-band h2{
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 32px;
+    max-width: 18ch;
+    margin-inline: auto;
+    line-height: 1.08;
+  }
+  .cta-band h2 em{ font-style: italic; color: var(--signal); }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 36px 0 48px;
+  }
+  .footer-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-row .logo{ font-size: 16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><span>VR</span><span class="plus">+</span><span>Lab</span></div>
+    <div class="navlinks">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#catalogo">Productos</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+    <a href="#contacto" class="nav-cta">Empieza aquí</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">tecnología nfc para negocios reales</div>
+        <h1 class="display">Toca algo.<br>Conecta <em>todo</em>.</h1>
+        <p class="lede">VR+Lab convierte objetos físicos —una mesa, una tarjeta, un empaque— en la puerta de entrada a tu presencia digital. Sin apps, sin fricción: solo un toque.</p>
+        <div class="hero-ctas">
+          <a href="#catalogo" class="btn-primary">Ver catálogo</a>
+          <a href="#como-funciona" class="btn-secondary">Cómo funciona</a>
+        </div>
+      </div>
+      <div class="signal-stage" aria-hidden="true">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="tag-card">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3D3AF1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9a3 3 0 0 1 3-3 3 3 0 0 1 3 3"/>
+            <path d="M4 12a5 5 0 0 1 5-5 5 5 0 0 1 5 5"/>
+            <rect x="2" y="14" width="20" height="8" rx="2"/>
+            <circle cx="17" cy="18" r="1.4" fill="#3D3AF1" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="section wrap" id="como-funciona">
+    <div class="section-head">
+      <div>
+        <div class="section-tag">proceso</div>
+        <h2 class="display">De objeto físico a experiencia digital</h2>
+      </div>
+      <p>Tres pasos, sin desarrollo técnico de tu parte.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Elige el objeto</h3>
+        <p>Una mesa, una tarjeta, una placa, un empaque. Si tus clientes lo tocan, puede ser un punto de conexión.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Programamos el tag</h3>
+        <p>Configuramos el contenido exacto que necesitas: menú, reseñas, portafolio, WiFi o lo que tu negocio requiera.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Tus clientes tocan</h3>
+        <p>Acercan el celular, sin apps ni códigos que escribir. La conexión pasa en menos de un segundo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOGO -->
+  <section class="section wrap" id="catalogo">
+    <div class="section-head">
+      <div>
+        <div class="section-tag">catálogo · fase 1</div>
+        <h2 class="display">Productos NFC</h2>
+      </div>
+      <p>La primera línea de VR+Lab. Más productos y servicios digitales, próximamente.</p>
+    </div>
+    <div class="catalog-grid">
+
+      <div class="product-card">
+        <div class="card-visual">
+          <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(95,18) rotate(-6)">
+              <rect x="0" y="0" width="200" height="112" rx="14" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+              <circle cx="34" cy="34" r="14" fill="none" stroke="var(--signal)" stroke-width="2"/>
+              <line x1="60" y1="27" x2="152" y2="27" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="60" y1="41" x2="118" y2="41" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="20" y1="78" x2="164" y2="78" stroke="var(--line)" stroke-width="1.5"/>
+              <line x1="20" y1="92" x2="112" y2="92" stroke="var(--line)" stroke-width="1.5"/>
+            </g>
+          </svg>
+          <div class="mini-tap" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring"></span><span class="mini-dot"></span></div>
+        </div>
+        <div class="card-body">
+        <h3>Tarjeta Digital</h3>
+        <p>Tu presentación profesional en un toque: portafolio, redes y contacto directo, sin repartir papel.</p>
+        <details class="tiers">
+          <summary>Ver paquetes <span class="price mono">desde $180</span></summary>
+          <div class="tier-list">
+            <div class="tier-row">
+              <div><span class="tier-name">Básico</span><span class="tier-desc">Programación en la tarjeta que ya tienes</span></div>
+              <div class="tier-price">$180</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Estándar</span><span class="tier-desc">Tag + tarjeta PVC nueva con diseño</span></div>
+              <div class="tier-price">$280</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Premium</span><span class="tier-desc">Tarjeta PVC + landing page personalizada</span></div>
+              <div class="tier-price">$450</div>
+            </div>
+          </div>
+        </details>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-visual">
+          <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="150" cy="75" r="48" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+            <circle cx="150" cy="75" r="31" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+            <line x1="228" y1="35" x2="228" y2="115" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M246 35 v34 M254 35 v34 M262 35 v34 M254 69 v46" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+          <div class="mini-tap" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring"></span><span class="mini-dot"></span></div>
+        </div>
+        <div class="card-body">
+        <h3>Menú Inteligente</h3>
+        <p>Tus clientes tocan la mesa y ven el menú actualizado al instante. Cambia precios cuando quieras, sin reimprimir.</p>
+        <details class="tiers">
+          <summary>Ver paquetes <span class="price mono">desde $220</span></summary>
+          <div class="tier-list">
+            <div class="tier-row">
+              <div><span class="tier-name">1 mesa demo</span><span class="tier-desc">Tag + acrílico + letrero</span></div>
+              <div class="tier-price">$220</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">5 mesas</span><span class="tier-desc">Set completo + menú digital</span></div>
+              <div class="tier-price">$1,000</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">10 mesas</span><span class="tier-desc">Restaurante completo + ajustes incluidos</span></div>
+              <div class="tier-price">$1,900</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Mantenimiento</span><span class="tier-desc">Actualización mensual de precios/platillos</span></div>
+              <div class="tier-price">$150/mes</div>
+            </div>
+          </div>
+        </details>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-visual">
+          <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round">
+              <path transform="translate(90,75)" d="M0,-18 4.2,-5.6 17.6,-5.6 6.9,2.1 11,14.8 0,7 -11,14.8 -6.9,2.1 -17.6,-5.6 -4.2,-5.6 Z"/>
+              <path transform="translate(150,75)" d="M0,-18 4.2,-5.6 17.6,-5.6 6.9,2.1 11,14.8 0,7 -11,14.8 -6.9,2.1 -17.6,-5.6 -4.2,-5.6 Z"/>
+              <path transform="translate(210,75)" d="M0,-18 4.2,-5.6 17.6,-5.6 6.9,2.1 11,14.8 0,7 -11,14.8 -6.9,2.1 -17.6,-5.6 -4.2,-5.6 Z" fill="var(--coral)" stroke="var(--coral)"/>
+              <path transform="translate(270,75)" d="M0,-18 4.2,-5.6 17.6,-5.6 6.9,2.1 11,14.8 0,7 -11,14.8 -6.9,2.1 -17.6,-5.6 -4.2,-5.6 Z"/>
+              <path transform="translate(330,75)" d="M0,-18 4.2,-5.6 17.6,-5.6 6.9,2.1 11,14.8 0,7 -11,14.8 -6.9,2.1 -17.6,-5.6 -4.2,-5.6 Z"/>
+            </g>
+          </svg>
+          <div class="mini-tap" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring"></span><span class="mini-dot"></span></div>
+        </div>
+        <div class="card-body">
+        <h3>Reséñame</h3>
+        <p>Un toque lleva directo a dejar una reseña en Google. La forma más simple de subir tu reputación local.</p>
+        <details class="tiers">
+          <summary>Ver paquetes <span class="price mono">desde $250</span></summary>
+          <div class="tier-list">
+            <div class="tier-row">
+              <div><span class="tier-name">Básico</span><span class="tier-desc">1 tag + sticker con link a Google</span></div>
+              <div class="tier-price">$250</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Con acrílico</span><span class="tier-desc">Tag + soporte de mostrador</span></div>
+              <div class="tier-price">$300</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Combo mostrador</span><span class="tier-desc">3 puntos de reseña (mostrador, caja, mesa)</span></div>
+              <div class="tier-price">$550</div>
+            </div>
+          </div>
+        </details>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-visual">
+          <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(150,80)" fill="var(--paper)" stroke="var(--ink)" stroke-width="2">
+              <ellipse cx="0" cy="18" rx="34" ry="26"/>
+              <ellipse cx="-28" cy="-20" rx="11" ry="14"/>
+              <ellipse cx="0" cy="-30" rx="11" ry="14"/>
+              <ellipse cx="28" cy="-20" rx="11" ry="14"/>
+            </g>
+          </svg>
+          <div class="mini-tap" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring"></span><span class="mini-dot"></span></div>
+        </div>
+        <div class="card-body">
+        <h3>Placa Mascota</h3>
+        <p>Datos de contacto de emergencia a un toque de distancia. Tranquilidad si tu mascota se pierde.</p>
+        <details class="tiers">
+          <summary>Ver paquetes <span class="price mono">desde $150</span></summary>
+          <div class="tier-list">
+            <div class="tier-row">
+              <div><span class="tier-name">Básico</span><span class="tier-desc">Tag + landing con datos de contacto</span></div>
+              <div class="tier-price">$150</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Con placa/llavero</span><span class="tier-desc">Tag integrado en placa física</span></div>
+              <div class="tier-price">$250</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Pack familiar</span><span class="tier-desc">3 mascotas, 3 placas</span></div>
+              <div class="tier-price">$600</div>
+            </div>
+          </div>
+        </details>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-visual">
+          <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+            <rect x="118" y="18" width="130" height="106" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+            <rect x="131" y="31" width="104" height="80" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+            <circle cx="163" cy="82" r="16" fill="none" stroke="var(--signal)" stroke-width="2"/>
+            <path d="M183 100 L218 55" stroke="var(--coral)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="mini-tap" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring"></span><span class="mini-dot"></span></div>
+        </div>
+        <div class="card-body">
+        <h3>Portafolio Creativo</h3>
+        <p>Para artistas y diseñadores: un toque en tu estudio o merch lleva directo a tu trabajo y tu tienda.</p>
+        <details class="tiers">
+          <summary>Ver paquetes <span class="price mono">desde $180</span></summary>
+          <div class="tier-list">
+            <div class="tier-row">
+              <div><span class="tier-name">Básico</span><span class="tier-desc">Tag + link directo a Instagram/Behance</span></div>
+              <div class="tier-price">$180</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Estándar</span><span class="tier-desc">Tag + landing tipo portafolio</span></div>
+              <div class="tier-price">$380</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Con acrílico</span><span class="tier-desc">Exhibición para estudio o stand</span></div>
+              <div class="tier-price">$400</div>
+            </div>
+          </div>
+        </details>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="card-visual">
+          <svg viewBox="0 0 400 150" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(150,20)" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round">
+              <path d="M0 20 L50 0 L100 20 L100 90 L50 110 L0 90 Z"/>
+              <path d="M0 20 L50 40 L100 20" fill="none"/>
+              <line x1="50" y1="40" x2="50" y2="110"/>
+            </g>
+          </svg>
+          <div class="mini-tap" aria-hidden="true"><span class="mini-ring"></span><span class="mini-ring"></span><span class="mini-dot"></span></div>
+        </div>
+        <div class="card-body">
+        <h3>Empaque con Historia</h3>
+        <p>Un toque en el empaque cuenta el origen de tu marca o entrega un cupón. Sube el valor percibido de lo artesanal.</p>
+        <details class="tiers">
+          <summary>Ver paquetes <span class="price mono">desde $300</span></summary>
+          <div class="tier-list">
+            <div class="tier-row">
+              <div><span class="tier-name">Setup único</span><span class="tier-desc">Diseño de historia de marca o cupón</span></div>
+              <div class="tier-price">$300</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Por pieza</span><span class="tier-desc">Mínimo 20 piezas, tag programado</span></div>
+              <div class="tier-price">$30 c/u</div>
+            </div>
+            <div class="tier-row">
+              <div><span class="tier-name">Paquete 50 piezas</span><span class="tier-desc">Tags + setup incluido</span></div>
+              <div class="tier-price">$1,900</div>
+            </div>
+          </div>
+        </details>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- POR QUE -->
+  <section class="section wrap">
+    <div class="why">
+      <div class="why-lead">
+        <h2>Menos fricción,<br>más conexión real.</h2>
+        <p>No vendemos tecnología por vender. Vendemos el segundo exacto en que un cliente tuyo pasa de estar frente a un objeto, a estar dentro de tu negocio digital.</p>
+      </div>
+      <div class="why-list">
+        <div class="why-item">
+          <div class="mono-label">01</div>
+          <div>
+            <h4>Cero apps para tus clientes</h4>
+            <p>Cualquier celular moderno ya trae lector NFC. Acercan, listo.</p>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="mono-label">02</div>
+          <div>
+            <h4>Contenido que tú controlas</h4>
+            <p>Actualizamos lo que el tag muestra cuando tu negocio cambia, no cuando cambia la tecnología.</p>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="mono-label">03</div>
+          <div>
+            <h4>Hecho para negocios locales</h4>
+            <p>Precios y paquetes pensados para pequeños negocios, no para presupuestos corporativos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band wrap" id="contacto">
+    <div class="eyebrow" style="justify-content:center;">empecemos</div>
+    <h2 class="display">¿Listo para que <em>tocar</em><br>sea suficiente?</h2>
+    <div class="hero-ctas" style="justify-content:center;">
+      <a href="https://wa.me/525635123355" class="btn-primary" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
+      <a href="mailto:vertizresendizjosea@gmail.com" class="btn-secondary">vertizresendizjosea@gmail.com</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <div class="logo"><span>VR</span><span class="plus">+</span><span>Lab</span></div>
+    <div>© 2026 VR+Lab. Marketing digital para el mundo físico.</div>
+  </div>
+</footer>
+
+</body>
+</html>
