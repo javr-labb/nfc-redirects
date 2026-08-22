@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adiss - Regalos & Sorpresas</title>
+    <!-- Fuentes de Google para darle un toque profesional y divertido -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos generales y fondo de "confeti" sutil */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka', sans-serif;
+            background-color: #ffffff;
+            background-image: 
+                radial-gradient(#ff007f 10%, transparent 11%), 
+                radial-gradient(#00c3ff 10%, transparent 11%),
+                radial-gradient(#ffde00 10%, transparent 11%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px, 15px 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Contenedor principal estilo tarjeta */
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 20px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 2px solid #ff007f;
+        }
+
+        /* Estilo del Logo */
+        .logo {
+            width: 180px;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Título y descripción */
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #ff007f;
+            margin: 0;
+            font-size: 28px;
+            text-shadow: 1px 1px 0px #800080;
+        }
+
+        p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Contenedor de los botones */
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Estilo base de los botones */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 16px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Botón 1: Catálogo (Tonos rosas/morados del logo) */
+        .btn-catalog {
+            background: linear-gradient(135deg, #ff007f, #800080);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        /* Botón 2: Reseñas (Tonos claros con borde) */
+        .btn-review {
+            background: white;
+            color: #800080;
+            border: 2px solid #00c3ff;
+        }
+
+        /* Iconos (Emojis para hacerlo ligero sin cargar imágenes extra) */
+        .icon {
+            font-size: 22px;
+            margin-right: 10px;
+        }
+
+        /* Footer pequeñito */
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- AQUÍ VA EL NOMBRE DE LA IMAGEN DEL LOGO -->
+        <img src="image_9406e3.jpg" alt="Logo Adiss" class="logo">
+        
+        <h1>¡Hola!</h1>
+        <p>Encuentra nuestros enlaces rápidos aquí abajo 👇</p>
+
+        <div class="links-container">
+            <!-- AQUÍ PONES EL LINK DEL CATÁLOGO DE WHATSAPP O PDF -->
+            <a href="AQUI_VA_EL_LINK_DEL_CATALOGO" class="btn btn-catalog" target="_blank">
+                <span class="icon">🎁</span> Ver Catálogo
+            </a>
+
+            <!-- AQUÍ PONES EL LINK DE LAS RESEÑAS DE GOOGLE MAPS -->
+            <a href="AQUI_VA_EL_LINK_DE_GOOGLE_MAPS" class="btn btn-review" target="_blank">
+                <span class="icon">⭐</span> Déjanos tu reseña
+            </a>
+        </div>
+
+        <div class="footer">
+            © 2026 Adiss Regalos & Sorpresas
+        </div>
+    </div>
+
+</body>
+</html>
