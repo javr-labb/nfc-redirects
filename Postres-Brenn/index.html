@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postres Brenn - Un Dulce Comienzo</title>
+    <!-- Fuentes de Google: Dancing Script para el título y Quicksand para botones -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Fondo rosa suave con patrón de puntitos inspirados en los detalles del logo */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fff0f5;
+            background-image: 
+                radial-gradient(#ffc2d1 15%, transparent 16%), 
+                radial-gradient(#ffc2d1 15%, transparent 16%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #4a4a4a;
+        }
+
+        /* Tarjeta principal con borde punteado simulando el encaje del logo */
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 12px 24px rgba(216, 27, 96, 0.15);
+            text-align: center;
+            border: 3px dashed #ff99bb;
+        }
+
+        /* Estilo de la imagen del logo */
+        .logo {
+            width: 190px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        /* Título con fuente cursiva similar al logo */
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #e91e63; /* Rosa fuerte */
+            font-size: 38px;
+            margin: 0 0 5px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Subtítulo */
+        h2 {
+            font-size: 18px;
+            color: #f06292;
+            margin: 0 0 25px 0;
+            font-weight: 700;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Botones generales */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Botón 1: Menú (Rosa principal) */
+        .btn-menu {
+            background-color: #e91e63;
+            color: white;
+            box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
+        }
+
+        /* Botón 2: WhatsApp (Borde rosa) */
+        .btn-whatsapp {
+            background-color: white;
+            color: #e91e63;
+            border: 2px solid #e91e63;
+        }
+
+        /* Botón 3: Reseñas (Rosa clarito) */
+        .btn-review {
+            background-color: #fce4ec;
+            color: #d81b60;
+            border: 2px solid transparent;
+        }
+
+        .icon {
+            font-size: 22px;
+            margin-right: 10px;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- Nombre exacto del archivo del logo que me pasaste -->
+        <img src="image_9558b8.jpg" alt="Logo Postres Brenn" class="logo">
+        
+        <h1>Postres Brenn</h1>
+        <h2>Un Dulce Comienzo</h2>
+
+        <div class="links-container">
+            <!-- Link del Catálogo/Menú -->
+            <a href="AQUI_VA_EL_LINK_DEL_MENU" class="btn btn-menu" target="_blank">
+                <span class="icon">🍰</span> Ver Menú de Postres
+            </a>
+
+            <!-- Link para Pedidos (WhatsApp) -->
+            <a href="AQUI_VA_EL_LINK_DE_WHATSAPP" class="btn btn-whatsapp" target="_blank">
+                <span class="icon">📱</span> Hacer un Pedido
+            </a>
+
+            <!-- Link de Google Maps para Reseñas -->
+            <a href="AQUI_VA_EL_LINK_DE_GOOGLE_MAPS" class="btn btn-review" target="_blank">
+                <span class="icon">⭐</span> Déjanos tu reseña
+            </a>
+        </div>
+
+        <div class="footer">
+            © 2026 Postres Brenn
+        </div>
+    </div>
+
+</body>
+</html>
