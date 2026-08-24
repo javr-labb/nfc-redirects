@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo VIP - YAN Fragance</title>
+    <!-- Fuentes de Alta Costura: Cinzel para títulos y Montserrat ultra-ligera para textos -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F3E5AB;
+            --gold-dark: #AA771C;
+            --bg-dark: #030303;
+        }
+        body {
+            background: radial-gradient(circle at top, #151515 0%, var(--bg-dark) 100%);
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Animación de entrada suave */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            padding: 50px 20px 30px;
+            width: 100%;
+            animation: fadeUp 1s ease-out;
+        }
+        .logo-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+            object-fit: cover;
+        }
+        h1 {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(to right, var(--gold-dark), var(--gold-light), var(--gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+            margin: 0;
+            letter-spacing: 4px;
+            font-weight: 600;
+        }
+        .subtitle {
+            color: #888;
+            font-weight: 200;
+            letter-spacing: 3px;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .catalog-container {
+            width: 90%;
+            max-width: 500px;
+            padding: 10px 0 100px 0;
+        }
+
+        .category {
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeUp 1s ease-out forwards;
+        }
+        /* Retrasos para que aparezcan una por una */
+        .category:nth-child(1) { animation-delay: 0.2s; }
+        .category:nth-child(2) { animation-delay: 0.4s; }
+        .category:nth-child(3) { animation-delay: 0.6s; }
+        .category:nth-child(4) { animation-delay: 0.8s; }
+        .category:nth-child(5) { animation-delay: 1.0s; }
+
+        .category-title {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-light);
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        /* Líneas elegantes a los lados del título */
+        .category-title::before, .category-title::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            margin: 0 15px;
+        }
+
+        .perfume-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .perfume-item {
+            padding: 15px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #e0e0e0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        /* Resalta sutilmente al tocar en el celular */
+        .perfume-item:active {
+            background-color: rgba(212, 175, 55, 0.05);
+            color: var(--gold);
+        }
+        
+        .marca-destacada {
+            color: var(--gold);
+            font-weight: 400;
+            font-family: 'Cinzel', serif;
+            letter-spacing: 1px;
+            font-size: 1rem;
+            margin-top: 20px;
+            border-bottom: none;
+        }
+
+        /* Botón flotante estilo Cristal/Lujo */
+        .fab-whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            color: var(--gold);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            text-decoration: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .fab-whatsapp:active {
+            transform: scale(0.92);
+            background: rgba(212, 175, 55, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="image_190221.png" alt="YAN Fragance Logo" class="logo-img">
+        <h1>CATÁLOGO</h1>
+        <div class="subtitle">La Esencia de la Exclusividad</div>
+    </div>
+
+    <div class="catalog-container">
+
+        <!-- CABALLEROS -->
+        <div class="category">
+            <div class="category-title">Caballeros</div>
+            <ul class="perfume-list">
+                <li class="perfume-item">The Noir 29</li>
+                <li class="perfume-item">París Hilton for Men</li>
+                <li class="perfume-item">Wanted By Night - Azzaro</li>
+                <li class="perfume-item">Silver Mountain Water - Creed</li>
+                <li class="perfume-item">Ombre Nómada - LV</li>
+                <li class="perfume-item">Acqua di Gio</li>
+                <li class="perfume-item">Spicebomb - Viktor&Rolf</li>
+                <li class="perfume-item">Spicebomb Extreme</li>
+                <li class="perfume-item">Phantom - Paco Rabanne</li>
+                <li class="perfume-item">Phantom Intense</li>
+                <li class="perfume-item">Explorer - Montblanc</li>
+                <li class="perfume-item">Explorer Ultra Blue - Montblanc</li>
+                <li class="perfume-item">Polo Blue</li>
+                <li class="perfume-item">Acqua di Gio Profumo</li>
+                <li class="perfume-item">Santal 33</li>
+                <li class="perfume-item">Imagination - LV</li>
+                <li class="perfume-item">CH for Men</li>
+                <li class="perfume-item">Invictus</li>
+                <li class="perfume-item">Sauvage</li>
+                <li class="perfume-item">MYSLF - YSL</li>
+                <li class="perfume-item">Born in Roma Intense - Valentino</li>
+                <li class="perfume-item">Green Stravaganza - Valentino</li>
+                <li class="perfume-item">Eros - Versace</li>
+                <li class="perfume-item">Energy - Versace</li>
+                <li class="perfume-item">212 / 212 VIP</li>
+                <li class="perfume-item">One Million / Lucky</li>
+                <li class="perfume-item">CK One</li>
+                <li class="perfume-item">L'Immensité - LV</li>
+                <li class="perfume-item">Light Blue - D&G</li>
+                <li class="perfume-item">Legend Black / Red / Spirit - Montblanc</li>
+                <li class="perfume-item">Voyage - Nautica</li>
+                <li class="perfume-item">Armani Code</li>
+                <li class="perfume-item">L.12.12 White - Lacoste</li>
+                <li class="perfume-item">Blue - Coach</li>
+                <li class="perfume-item">Bleu de Chanel</li>
+                <li class="perfume-item">Aventus / Absolu Aventus - Creed</li>
+                <li class="perfume-item">Khamrah - Lattafa</li>
+                <li class="perfume-item">Toy Boy</li>
+                <li class="perfume-item">Tobacco Vanille - Tom Ford</li>
+                <li class="perfume-item">Ombré Leather - Tom Ford</li>
+            </ul>
+        </div>
+
+        <!-- DAMAS -->
+        <div class="category">
+            <div class="category-title">Damas</div>
+            <ul class="perfume-list">
+                <li class="perfume-item">Toy 2</li>
+                <li class="perfume-item">Omnia Coral</li>
+                <li class="perfume-item">Flowerbomb - V&R</li>
+                <li class="perfume-item">212 / 212 VIP</li>
+                <li class="perfume-item">Her - Burberry</li>
+                <li class="perfume-item">Miss Dior</li>
+                <li class="perfume-item">Bright Crystal - Versace</li>
+                <li class="perfume-item">La Vie Est Belle - Lancôme</li>
+                <li class="perfume-item">Light Blue - D&G</li>
+                <li class="perfume-item">Sorbetto Rosso - Escada</li>
+                <li class="perfume-item">Cloud Pink - Ariana Grande</li>
+                <li class="perfume-item">Good Girl - CH</li>
+                <li class="perfume-item">Paris Hilton</li>
+                <li class="perfume-item">Toy 2 Bubble Gum</li>
+                <li class="perfume-item">Flora Gorgeous Gardenia - Gucci</li>
+                <li class="perfume-item">Love, Don't Be Shy - By Kilian</li>
+            </ul>
+        </div>
+
+        <!-- UNISEX -->
+        <div class="category">
+            <div class="category-title">Unisex</div>
+            <ul class="perfume-list">
+                <li class="perfume-item">Mandarín Sky</li>
+                <li class="perfume-item">Baccarat Rouge 540 - MFK</li>
+                <li class="perfume-item">Erba Pura</li>
+                <li class="perfume-item">King - Bharara</li>
+                <li class="perfume-item">Lost Cherry - Tom Ford</li>
+            </ul>
+        </div>
+
+        <!-- LÍNEAS EXCLUSIVAS -->
+        <div class="category">
+            <div class="category-title">Colecciones</div>
+            <ul class="perfume-list">
+                <li class="perfume-item marca-destacada">Jean Paul Gaultier</li>
+                <li class="perfume-item">Scandal</li>
+                <li class="perfume-item">Le Male / Le Parfum / Elixir</li>
+                <li class="perfume-item">Le Beau / Le Parfum</li>
+                
+                <li class="perfume-item marca-destacada">Hugo Boss</li>
+                <li class="perfume-item">Bottled / Bottled Night</li>
+                <li class="perfume-item">Orange / Just Different</li>
+                
+                <li class="perfume-item marca-destacada">Xerjoff</li>
+                <li class="perfume-item">Naxos</li>
+                <li class="perfume-item">Erba Pura</li>
+            </ul>
+        </div>
+
+        <!-- LÍNEA ÁRABE -->
+        <div class="category">
+            <div class="category-title">Línea Árabe</div>
+            <ul class="perfume-list">
+                <li class="perfume-item marca-destacada">Armaf</li>
+                <li class="perfume-item">Club de Nuit (Hombre)</li>
+                <li class="perfume-item">Mandarín Sky (Hombre)</li>
+                <li class="perfume-item">Odyssey Limoni Fresh (Unisex)</li>
+                <li class="perfume-item">Odyssey Dubai Chocolate (Mujer)</li>
+                <li class="perfume-item">Odyssey Spectra</li>
+                
+                <li class="perfume-item marca-destacada">Al Haramain & Otros</li>
+                <li class="perfume-item">L’Adventure (Hombre)</li>
+                <li class="perfume-item">Amber Oud Gold</li>
+                <li class="perfume-item">Amber Oud Aqua Dubai</li>
+                <li class="perfume-item">King - Bharara</li>
+                
+                <li class="perfume-item marca-destacada">Odyssey (Mujer & Hombre)</li>
+                <li class="perfume-item">Candy / Go Mango</li>
+                <li class="perfume-item">Li’chi Lush / Pink Pop / Black Forest</li>
+                <li class="perfume-item">Mega Man / Bahamas</li>
+                
+                <li class="perfume-item marca-destacada">Lattafa (Mujer)</li>
+                <li class="perfume-item">Yara / Yara Tous / Yara Candy</li>
+                <li class="perfume-item">Her Confession</li>
+                <li class="perfume-item">Eclaire</li>
+                <li class="perfume-item">Now Women</li>
+                
+                <li class="perfume-item marca-destacada">Afnan</li>
+                <li class="perfume-item">9PM / 9AM (Unisex)</li>
+                <li class="perfume-item">9PM Rebel (Hombre)</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- REEMPLAZA LOS CEROS POR EL NÚMERO DEL CLIENTE -->
+    <a href="https://wa.me/525500000000?text=Hola,%20estoy%20viendo%20el%20catálogo%20VIP%20y%20me%20interesa%20una%20fragancia." class="fab-whatsapp">
+        💬
+    </a>
+
+</body>
+</html>
