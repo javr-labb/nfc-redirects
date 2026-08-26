@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los Yuyos & Bonlesito</title>
+    <!-- Fuentes de Google: Lilita One (gruesa y divertida) y Nunito (redonda y clara) -->
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Fondo color crema con textura de puntitos tipo tortilla/maíz */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            background-color: #FFF8E1; 
+            background-image: 
+                radial-gradient(#FFE082 15%, transparent 16%), 
+                radial-gradient(#FFE082 15%, transparent 16%);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Tarjeta principal con borde rojo como las letras del logo */
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 15px 25px rgba(211, 47, 47, 0.2);
+            text-align: center;
+            border: 4px solid #D32F2F; 
+        }
+
+        /* Tamaño del logo ajustado */
+        .logo {
+            width: 240px;
+            height: auto;
+            margin-bottom: 10px;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
+        }
+
+        /* Título con sombra amarilla para resaltar */
+        h1 {
+            font-family: 'Lilita One', cursive;
+            color: #D32F2F; 
+            font-size: 34px;
+            margin: 0 0 5px 0;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #FFC107; 
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Diseño de botones estilo 3D juguetón */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 16px 20px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+            transition: transform 0.1s, box-shadow 0.1s;
+            /* Esta sombra le da el efecto de botón levantado */
+            box-shadow: 0 6px 0px rgba(0,0,0,0.2); 
+        }
+
+        /* Animación al hacer tap en el celular */
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px rgba(0,0,0,0.2);
+        }
+
+        /* Botón 1: Menú (Naranja intenso) */
+        .btn-menu {
+            background-color: #F57C00;
+        }
+
+        /* Botón 2: Pedidos (Verde como los chiles y el elote) */
+        .btn-order {
+            background-color: #4CAF50;
+        }
+
+        /* Botón 3: Reseñas (Azul como la motoneta y los lentes) */
+        .btn-review {
+            background-color: #2196F3;
+        }
+
+        .icon {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #aaa;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- AQUÍ PONES EL NOMBRE DEL ARCHIVO DE LA IMAGEN DE SU LOGO -->
+        <img src="TU_IMAGEN_DEL_LOGO.png" alt="Logo Los Yuyos" class="logo">
+        
+        <h1>Los Yuyos</h1>
+        <p>¿Qué se te antoja hoy? 🌮🍗</p>
+
+        <div class="links-container">
+            <!-- Link del Menú -->
+            <a href="https://canva.link/menu-yuyos" class="btn btn-menu" target="_blank">
+                <span class="icon">🌶️</span> Ver Menú
+            </a>
+
+
+            <!-- Link de Google Maps -->
+            <a href="https://www.google.com/maps/place/Taquer%C3%ADa+%22Los+Yuyos%22/@19.2979176,-99.0664758,20.35z/data=!4m8!3m7!1s0x85ce038380470487:0xef264bef8d57546b!8m2!3d19.2978155!4d-99.0662889!9m1!1b1!16s%2Fg%2F11g0hvts_d?entry=ttu&g_ep=EgoyMDI2MDgyMy4wIKXMDSoASAFQAw%3D%3D" class="btn btn-review" target="_blank">
+                <span class="icon">⭐</span> Califícanos
+            </a>
+        </div>
+
+        <div class="footer">
+            © 2026 Los Yuyos & Bonlesito
+        </div>
+    </div>
+
+</body>
+</html>
