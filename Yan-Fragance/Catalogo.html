@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo VIP - YAN Fragance</title>
-    <!-- Fuentes de Alta Costura: Cinzel para títulos y Montserrat ultra-ligera para textos -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+    <!-- Fuentes de Alta Costura: Cinzel para títulos y Montserrat para textos -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold: #D4AF37;
@@ -36,6 +36,7 @@
             padding: 50px 20px 30px;
             width: 100%;
             animation: fadeUp 1s ease-out;
+            box-sizing: border-box;
         }
         .logo-img {
             width: 130px;
@@ -76,7 +77,7 @@
             opacity: 0;
             animation: fadeUp 1s ease-out forwards;
         }
-        /* Retrasos para que aparezcan una por una */
+        /* Retrasos escalonados para animación */
         .category:nth-child(1) { animation-delay: 0.2s; }
         .category:nth-child(2) { animation-delay: 0.4s; }
         .category:nth-child(3) { animation-delay: 0.6s; }
@@ -109,7 +110,7 @@
             margin: 0;
         }
         .perfume-item {
-            padding: 15px 10px;
+            padding: 14px 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.9rem;
             font-weight: 300;
@@ -127,10 +128,13 @@
             color: var(--gold);
             font-weight: 400;
             font-family: 'Cinzel', serif;
-            letter-spacing: 1px;
-            font-size: 1rem;
-            margin-top: 20px;
-            border-bottom: none;
+            letter-spacing: 1.5px;
+            font-size: 1.05rem;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            text-transform: uppercase;
         }
 
         /* Botón flotante estilo Cristal/Lujo */
@@ -138,7 +142,7 @@
             position: fixed;
             bottom: 25px;
             right: 25px;
-            background: rgba(10, 10, 10, 0.8);
+            background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(212, 175, 55, 0.5);
             color: var(--gold);
@@ -198,18 +202,23 @@
                 <li class="perfume-item">Green Stravaganza - Valentino</li>
                 <li class="perfume-item">Eros - Versace</li>
                 <li class="perfume-item">Energy - Versace</li>
-                <li class="perfume-item">212 / 212 VIP</li>
-                <li class="perfume-item">One Million / Lucky</li>
+                <li class="perfume-item">212 - Carolina Herrera</li>
+                <li class="perfume-item">212 VIP - Carolina Herrera</li>
+                <li class="perfume-item">One Million - Paco Rabanne</li>
+                <li class="perfume-item">One Million Lucky - Paco Rabanne</li>
                 <li class="perfume-item">CK One</li>
                 <li class="perfume-item">L'Immensité - LV</li>
                 <li class="perfume-item">Light Blue - D&G</li>
-                <li class="perfume-item">Legend Black / Red / Spirit - Montblanc</li>
+                <li class="perfume-item">Legend Black - Montblanc</li>
+                <li class="perfume-item">Legend Red - Montblanc</li>
+                <li class="perfume-item">Legend Spirit - Montblanc</li>
                 <li class="perfume-item">Voyage - Nautica</li>
                 <li class="perfume-item">Armani Code</li>
                 <li class="perfume-item">L.12.12 White - Lacoste</li>
                 <li class="perfume-item">Blue - Coach</li>
                 <li class="perfume-item">Bleu de Chanel</li>
-                <li class="perfume-item">Aventus / Absolu Aventus - Creed</li>
+                <li class="perfume-item">Aventus - Creed</li>
+                <li class="perfume-item">Absolu Aventus - Creed</li>
                 <li class="perfume-item">Khamrah - Lattafa</li>
                 <li class="perfume-item">Toy Boy</li>
                 <li class="perfume-item">Tobacco Vanille - Tom Ford</li>
@@ -224,7 +233,8 @@
                 <li class="perfume-item">Toy 2</li>
                 <li class="perfume-item">Omnia Coral</li>
                 <li class="perfume-item">Flowerbomb - V&R</li>
-                <li class="perfume-item">212 / 212 VIP</li>
+                <li class="perfume-item">212 - Carolina Herrera</li>
+                <li class="perfume-item">212 VIP - Carolina Herrera</li>
                 <li class="perfume-item">Her - Burberry</li>
                 <li class="perfume-item">Miss Dior</li>
                 <li class="perfume-item">Bright Crystal - Versace</li>
@@ -252,18 +262,23 @@
             </ul>
         </div>
 
-        <!-- LÍNEAS EXCLUSIVAS -->
+        <!-- COLECCIONES -->
         <div class="category">
             <div class="category-title">Colecciones</div>
             <ul class="perfume-list">
                 <li class="perfume-item marca-destacada">Jean Paul Gaultier</li>
                 <li class="perfume-item">Scandal</li>
-                <li class="perfume-item">Le Male / Le Parfum / Elixir</li>
-                <li class="perfume-item">Le Beau / Le Parfum</li>
+                <li class="perfume-item">Le Male</li>
+                <li class="perfume-item">Le Male Le Parfum</li>
+                <li class="perfume-item">Le Male Elixir</li>
+                <li class="perfume-item">Le Beau</li>
+                <li class="perfume-item">Le Beau Le Parfum</li>
                 
                 <li class="perfume-item marca-destacada">Hugo Boss</li>
-                <li class="perfume-item">Bottled / Bottled Night</li>
-                <li class="perfume-item">Orange / Just Different</li>
+                <li class="perfume-item">Boss Bottled</li>
+                <li class="perfume-item">Boss Bottled Night</li>
+                <li class="perfume-item">Boss Orange</li>
+                <li class="perfume-item">Boss Just Different</li>
                 
                 <li class="perfume-item marca-destacada">Xerjoff</li>
                 <li class="perfume-item">Naxos</li>
@@ -289,26 +304,33 @@
                 <li class="perfume-item">King - Bharara</li>
                 
                 <li class="perfume-item marca-destacada">Odyssey (Mujer & Hombre)</li>
-                <li class="perfume-item">Candy / Go Mango</li>
-                <li class="perfume-item">Li’chi Lush / Pink Pop / Black Forest</li>
-                <li class="perfume-item">Mega Man / Bahamas</li>
+                <li class="perfume-item">Odyssey Candy</li>
+                <li class="perfume-item">Odyssey Go Mango</li>
+                <li class="perfume-item">Odyssey Li’chi Lush</li>
+                <li class="perfume-item">Odyssey Pink Pop</li>
+                <li class="perfume-item">Odyssey Black Forest</li>
+                <li class="perfume-item">Odyssey Mega Man</li>
+                <li class="perfume-item">Odyssey Bahamas</li>
                 
                 <li class="perfume-item marca-destacada">Lattafa (Mujer)</li>
-                <li class="perfume-item">Yara / Yara Tous / Yara Candy</li>
+                <li class="perfume-item">Yara</li>
+                <li class="perfume-item">Yara Tous</li>
+                <li class="perfume-item">Yara Candy</li>
                 <li class="perfume-item">Her Confession</li>
                 <li class="perfume-item">Eclaire</li>
                 <li class="perfume-item">Now Women</li>
                 
                 <li class="perfume-item marca-destacada">Afnan</li>
-                <li class="perfume-item">9PM / 9AM (Unisex)</li>
+                <li class="perfume-item">9PM (Hombre)</li>
+                <li class="perfume-item">9AM (Unisex)</li>
                 <li class="perfume-item">9PM Rebel (Hombre)</li>
             </ul>
         </div>
 
     </div>
 
-    <!-- REEMPLAZA LOS CEROS POR EL NÚMERO DEL CLIENTE -->
-    <a href="https://wa.me/5215622190752?text=Hola,+vengo+del+catálogo+VIP+✨+y+me+gustaría+asesoría+para+elegir+una+fragancia+😎" class="fab-whatsapp">
+    <!-- BOTÓN FLOTANTE DE WHATSAPP -->
+    <a href="https://wa.me/5215622190752?text=Hola,+vengo+del+catálogo+VIP+✨+y+me+gustaría+asesoría+para+elegir+una+fragancia+😎" class="fab-whatsapp" target="_blank" rel="noopener noreferrer">
         💬
     </a>
 
