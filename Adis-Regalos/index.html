@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adiss - Regalos & Sorpresas</title>
-    <!-- Fuentes de Google para darle un toque profesional y divertido -->
+
+    <!-- ⚡ REDIRECCIÓN INTELIGENTE PARA EL QR FÍSICO VIEJO ⚡ -->
+    <script>
+        if (window.location.hostname.includes("github.io")) {
+            window.location.replace("https://vr-tap.pages.dev/Adis-Regalos/");
+        }
+    </script>
+
+    <!-- Fuentes de Google -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
     
     <style>
@@ -88,27 +96,27 @@
             transform: scale(0.95);
         }
 
-        /* Botón 1: Catálogo (Tonos rosas/morados del logo) */
+        /* Botón 1: Catálogo */
         .btn-catalog {
             background: linear-gradient(135deg, #ff007f, #800080);
             color: white;
             border: 2px solid transparent;
         }
 
-        /* Botón 2: Reseñas (Tonos claros con borde) */
+        /* Botón 2: Reseñas */
         .btn-review {
             background: white;
             color: #800080;
             border: 2px solid #00c3ff;
         }
 
-        /* Iconos (Emojis para hacerlo ligero sin cargar imágenes extra) */
+        /* Iconos */
         .icon {
             font-size: 22px;
             margin-right: 10px;
         }
 
-        /* Footer pequeñito */
+        /* Footer */
         .footer {
             margin-top: 30px;
             font-size: 12px;
@@ -119,20 +127,17 @@
 <body>
 
     <div class="card">
-        <!-- AQUÍ VA EL NOMBRE DE LA IMAGEN DEL LOGO -->
         <img src="image_9406e3.jpg" alt="Logo Adiss" class="logo">
         
         <h1>¡Hola!</h1>
         <p>Encuentra nuestros enlaces rápidos aquí abajo 👇</p>
 
         <div class="links-container">
-            <!-- AQUÍ PONES EL LINK DEL CATÁLOGO DE WHATSAPP O PDF -->
-            <a href="https://canva.link/ooy0s3w0eiemlpd" class="btn btn-catalog" target="_blank">
+            <a href="https://canva.link/ooy0s3w0eiemlpd" class="btn btn-catalog" target="_blank" rel="noopener noreferrer">
                 <span class="icon">🎁</span> Ver Catálogo
             </a>
 
-            <!-- AQUÍ PONES EL LINK DE LAS RESEÑAS DE GOOGLE MAPS -->
-            <a href="https://www.facebook.com/share/1P88DEDwtZ/" class="btn btn-review" target="_blank">
+            <a href="https://www.facebook.com/share/1P88DEDwtZ/" class="btn btn-review" target="_blank" rel="noopener noreferrer">
                 <span class="icon">⭐</span> Déjanos tu reseña
             </a>
         </div>
