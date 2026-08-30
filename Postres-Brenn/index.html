@@ -4,58 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Postres Brenn - Un Dulce Comienzo</title>
-    <!-- Fuentes de Google: Dancing Script para el título y Quicksand para botones -->
+
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    
+
     <style>
-        /* Fondo rosa suave con patrón de puntitos inspirados en los detalles del logo */
         body {
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            box-sizing: border-box;
             font-family: 'Quicksand', sans-serif;
             background-color: #fff0f5;
-            background-image: 
-                radial-gradient(#ffc2d1 15%, transparent 16%), 
+            background-image:
+                radial-gradient(#ffc2d1 15%, transparent 16%),
                 radial-gradient(#ffc2d1 15%, transparent 16%);
             background-size: 40px 40px;
             background-position: 0 0, 20px 20px;
+
             display: flex;
             justify-content: center;
             align-items: center;
+
             min-height: 100vh;
             color: #4a4a4a;
         }
 
-        /* Tarjeta principal con borde punteado simulando el encaje del logo */
         .card {
             background-color: #ffffff;
-            backdrop-filter: blur(5px);
-            width: 90%;
+            width: 100%;
             max-width: 400px;
-            padding: 40px 20px;
+            padding: 35px 20px;
+            box-sizing: border-box;
             border-radius: 30px;
             box-shadow: 0 12px 24px rgba(216, 27, 96, 0.15);
             text-align: center;
             border: 3px dashed #ff99bb;
         }
 
-        /* Estilo de la imagen del logo */
         .logo {
             width: 190px;
+            max-width: 80%;
             height: auto;
             margin-bottom: 10px;
         }
 
-        /* Título con fuente cursiva similar al logo */
         h1 {
             font-family: 'Dancing Script', cursive;
-            color: #e91e63; /* Rosa fuerte */
+            color: #e91e63;
             font-size: 38px;
             margin: 0 0 5px 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
-        /* Subtítulo */
         h2 {
             font-size: 18px;
             color: #f06292;
@@ -67,18 +66,24 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            width: 100%;
         }
 
-        /* Botones generales */
         .btn {
             display: flex;
             align-items: center;
             justify-content: center;
+
+            width: 100%;
+            box-sizing: border-box;
+
             text-decoration: none;
             padding: 15px 20px;
             border-radius: 30px;
+
             font-size: 16px;
             font-weight: 700;
+
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
@@ -86,21 +91,18 @@
             transform: scale(0.95);
         }
 
-        /* Botón 1: Menú (Rosa principal) */
         .btn-menu {
             background-color: #e91e63;
             color: white;
             box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
         }
 
-        /* Botón 2: WhatsApp (Borde rosa) */
         .btn-whatsapp {
             background-color: white;
             color: #e91e63;
             border: 2px solid #e91e63;
         }
 
-        /* Botón 3: Reseñas (Rosa clarito) */
         .btn-review {
             background-color: #fce4ec;
             color: #d81b60;
@@ -117,31 +119,78 @@
             font-size: 13px;
             color: #aaa;
         }
+
+        /* Ajustes específicos para celulares */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 30px 18px;
+            }
+
+            .logo {
+                width: 170px;
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+
+            h2 {
+                font-size: 16px;
+                margin-bottom: 22px;
+            }
+
+            .btn {
+                font-size: 15px;
+                padding: 14px 15px;
+            }
+        }
     </style>
 </head>
+
 <body>
 
     <div class="card">
-        <!-- Nombre exacto del archivo del logo que me pasaste -->
-        <img src="image_9558b8.jpg" alt="Logo Postres Brenn" class="logo">
-        
+
+        <img src="image_9558b8.jpg"
+             alt="Logo Postres Brenn"
+             class="logo">
+
         <h1>Postres Brenn</h1>
+
         <h2>Un Dulce Comienzo</h2>
 
         <div class="links-container">
-            <!-- Link del Catálogo/Menú -->
-            <a href="https://www.canva.com/design/DAHTt58AaTg/w7yIHO7NR96tZ5CyPNqhwQ/view?utm_content=DAHTt58AaTg&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he4ab87200b" class="btn btn-menu" target="_blank">
-                <span class="icon">🍰</span> Ver Menú de Postres
+
+            <!-- MENÚ -->
+            <a href="https://www.canva.com/design/DAHTt58AaTg/w7yIHO7NR96tZ5CyPNqhwQ/view?utm_content=DAHTt58AaTg&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he4ab87200b"
+               class="btn btn-menu"
+               target="_blank">
+
+                <span class="icon">🍰</span>
+                Ver Menú de Postres
+
             </a>
 
-            <!-- Link de Google Maps para Reseñas -->
-            <a href="https://wa.me/525648627149?text=Realiza%20tu%20pedido%20aqui%20%F0%9F%98%8A%20%20Numero%20de%20cuenta%3A" class="btn btn-review" target="_blank">
-                <span class="icon">⭐</span> Pedidos y Cuenta
+            <!-- WHATSAPP -->
+            <a href="https://wa.me/525648627149?text=Realiza%20tu%20pedido%20aqui%20%F0%9F%98%8A%20%20Numero%20de%20cuenta%3A"
+               class="btn btn-review"
+               target="_blank">
+
+                <span class="icon">💬</span>
+                Pedidos y Cuenta
+
+            </a>
+
         </div>
 
         <div class="footer">
             © 2026 Postres Brenn
         </div>
+
     </div>
 
 </body>
