@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Postres Brenn - Un Dulce Comienzo</title>
 
+    <!-- ⚡ REDIRECCIÓN INTELIGENTE PARA EL QR FÍSICO VIEJO ⚡ -->
+    <script>
+        if (window.location.hostname.includes("github.io")) {
+            window.location.replace("https://vr-tap.pages.dev/Postres-Brenn/");
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
@@ -73,17 +80,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-
             width: 100%;
             box-sizing: border-box;
-
             text-decoration: none;
             padding: 15px 20px;
             border-radius: 30px;
-
             font-size: 16px;
             font-weight: 700;
-
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
@@ -120,7 +123,6 @@
             color: #aaa;
         }
 
-        /* Ajustes específicos para celulares */
         @media (max-width: 480px) {
             body {
                 padding: 15px;
@@ -168,7 +170,8 @@
             <!-- MENÚ -->
             <a href="https://www.canva.com/design/DAHTt58AaTg/w7yIHO7NR96tZ5CyPNqhwQ/view?utm_content=DAHTt58AaTg&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he4ab87200b"
                class="btn btn-menu"
-               target="_blank">
+               target="_blank"
+               rel="noopener noreferrer">
 
                 <span class="icon">🍰</span>
                 Ver Menú de Postres
@@ -178,7 +181,8 @@
             <!-- WHATSAPP -->
             <a href="https://wa.me/525648627149?text=Realiza%20tu%20pedido%20aqui%20%F0%9F%98%8A%20%20Numero%20de%20cuenta%3A"
                class="btn btn-review"
-               target="_blank">
+               target="_blank"
+               rel="noopener noreferrer">
 
                 <span class="icon">💬</span>
                 Pedidos y Cuenta
