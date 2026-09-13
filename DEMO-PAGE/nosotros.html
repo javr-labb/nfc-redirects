@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nosotros — YAN Fragance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="logo">YAN Fragance</a>
+    <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-menu" data-nav-menu>
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="nosotros.html" class="is-current">Nosotros</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="carrito.html" class="cart-link">Carrito <span class="cart-badge" data-cart-count>0</span></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container page-head">
+    <h1>Sobre YAN Fragance</h1>
+  </div>
+
+  <section class="section" style="padding-top:24px">
+    <div class="container story">
+      <div class="story-visual" id="story-visual"></div>
+      <div class="story-copy">
+        <p>YAN Fragance empezó como una búsqueda personal: encontrar fragancias que aguantaran un día completo sin perder personalidad. De ahí salió la idea de formular las propias.</p>
+        <p>Trabajamos en lotes pequeños, probamos cada fórmula durante semanas antes de sacarla, y preferimos tener pocas fragancias bien hechas que un catálogo enorme sin criterio.</p>
+        <p>Por ahora todos los pedidos se coordinan directo por WhatsApp: eso nos deja resolver dudas de notas, duración o tamaños antes de que compres, y armar tu envío contigo mismo.</p>
+        <a href="https://wa.me/525535123355" target="_blank" rel="noopener" class="btn btn-primary">Escríbenos por WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 YAN Fragance. Todos los derechos reservados.</span>
+      <a href="https://www.instagram.com/yan_fragance/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/products-data.js"></script>
+<script src="js/bottle-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.getElementById("story-visual").innerHTML = `<div class="bottle-art">${bottleArtSVG("#263a2f")}</div>`;
+</script>
+</body>
+</html>

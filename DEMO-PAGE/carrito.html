@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu carrito — YAN Fragance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="logo">YAN Fragance</a>
+    <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-menu" data-nav-menu>
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="catalogo.html?genero=mujer">Ella</a>
+      <a href="catalogo.html?genero=hombre">Él</a>
+      <a href="nosotros.html">Nosotros</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="carrito.html" class="cart-link">
+        Carrito <span class="cart-badge" data-cart-count>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container page-head">
+    <h1>Tu carrito</h1>
+  </div>
+
+  <section class="section" style="padding-top:24px">
+    <div class="container">
+      <div class="cart-layout">
+        <div>
+          <div id="cart-list"></div>
+          <p id="cart-empty" hidden>Tu carrito está vacío. <a href="catalogo.html">Ver catálogo →</a></p>
+        </div>
+        <div class="cart-summary-box" id="cart-summary">
+          <div class="summary-line"><span>Subtotal</span><span id="cart-subtotal">$0</span></div>
+          <div class="summary-line"><span>Envío</span><span id="cart-shipping">$0</span></div>
+          <div class="summary-line summary-total"><span>Total</span><span id="cart-total">$0</span></div>
+          <a href="checkout.html" class="btn btn-primary btn-full" style="margin-top:18px">Ir a pagar</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 YAN Fragance. Todos los derechos reservados.</span>
+      <a href="https://wa.me/525535123355" target="_blank" rel="noopener">¿Dudas? Escríbenos por WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/products-data.js"></script>
+<script src="js/bottle-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>initCartPage();</script>
+</body>
+</html>

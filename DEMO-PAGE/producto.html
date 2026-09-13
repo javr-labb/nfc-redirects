@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YAN Fragance — Perfumes de autor</title>
-<meta name="description" content="Perfumes de autor hechos para durar. Envíos a todo México, pago por transferencia.">
+<title>Producto — YAN Fragance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -19,8 +18,8 @@
       <span></span><span></span><span></span>
     </button>
     <nav class="nav-menu" data-nav-menu>
-      <a href="index.html" class="is-current">Inicio</a>
-      <a href="catalogo.html">Catálogo</a>
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html" class="is-current">Catálogo</a>
       <a href="catalogo.html?genero=mujer">Ella</a>
       <a href="catalogo.html?genero=hombre">Él</a>
       <a href="nosotros.html">Nosotros</a>
@@ -34,59 +33,22 @@
 </header>
 
 <main>
-
-  <section class="hero">
+  <section class="section" style="padding-top:40px">
     <div class="container">
-      <div class="hero-copy">
-        <p class="hero-eyebrow">Perfumería de autor</p>
-        <h1>Fragancias con presencia, no con ruido.</h1>
-        <p class="lede">Frascos de 50ml formulados para durar todo el día. Sin intermediarios, directo de nuestro taller a tu puerta.</p>
-        <div class="hero-ctas">
-          <a href="catalogo.html" class="btn btn-primary">Ver catálogo</a>
-          <a href="nosotros.html" class="btn btn-secondary">Conoce la marca</a>
-        </div>
+      <div class="product-detail" id="product-detail">
+        <!-- Se llena por JS -->
       </div>
-      <div class="hero-visual" id="hero-visual"></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="section-head">
-        <h2>Los más buscados</h2>
-        <a href="catalogo.html" class="see-all">Ver todo el catálogo →</a>
-      </div>
-      <div class="grid" id="featured-grid"></div>
     </div>
   </section>
 
   <section class="section section-alt">
     <div class="container">
-      <div class="story">
-        <div class="story-visual" id="story-visual"></div>
-        <div class="story-copy">
-          <p class="hero-eyebrow">Nuestra historia</p>
-          <h2>Hecho para quien ya sabe lo que quiere oler.</h2>
-          <p>YAN Fragance nace de una obsesión con las fragancias que se notan sin gritar. Elegimos cada nota pensando en climas reales y días largos, no en vitrinas.</p>
-          <p>Cada frasco se prepara en lotes pequeños. Cuando se agota una fragancia, esperamos a hacerla bien otra vez — no rellenamos con lo que sea.</p>
-          <a href="nosotros.html" class="btn btn-secondary">Leer más sobre nosotros</a>
-        </div>
+      <div class="section-head">
+        <h2>Combina bien con</h2>
       </div>
+      <div class="grid" id="suggested-grid"></div>
     </div>
   </section>
-
-  <section class="section">
-    <div class="container">
-      <div class="cta-band">
-        <div>
-          <h2>¿Ya sabes cuál quieres?</h2>
-          <p>Haz tu pedido y coordina tu envío directo por WhatsApp.</p>
-        </div>
-        <a class="btn btn-primary" href="catalogo.html">Empezar mi pedido</a>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <footer class="site-footer">
@@ -102,7 +64,6 @@
           <li><a href="catalogo.html">Catálogo completo</a></li>
           <li><a href="catalogo.html?genero=mujer">Para ella</a></li>
           <li><a href="catalogo.html?genero=hombre">Para él</a></li>
-          <li><a href="catalogo.html?genero=unisex">Unisex</a></li>
         </ul>
       </div>
       <div>
@@ -132,10 +93,6 @@
 <script src="js/bottle-art.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
-<script>
-  document.getElementById("hero-visual").innerHTML = `<div class="bottle-art">${bottleArtSVG("#a9803f")}</div>`;
-  document.getElementById("story-visual").innerHTML = `<div class="bottle-art">${bottleArtSVG("#8a4a6b")}</div>`;
-  initHomePage();
-</script>
+<script>initProductPage();</script>
 </body>
 </html>

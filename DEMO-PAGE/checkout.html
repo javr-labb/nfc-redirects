@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finalizar pedido — YAN Fragance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="logo">YAN Fragance</a>
+    <button class="nav-toggle" data-nav-toggle aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-menu" data-nav-menu>
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="carrito.html">Carrito</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="carrito.html" class="cart-link">
+        Carrito <span class="cart-badge" data-cart-count>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container page-head">
+    <h1>Finalizar pedido</h1>
+    <p>Completa tus datos. Al confirmar, se abrirá WhatsApp con tu pedido listo para enviarnos.</p>
+  </div>
+
+  <section class="section" style="padding-top:24px">
+    <div class="container">
+
+      <p id="checkout-empty" hidden>Tu carrito está vacío. <a href="catalogo.html">Ver catálogo →</a></p>
+
+      <div class="checkout-layout">
+        <form id="checkout-form">
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="nombre">Nombre completo</label>
+              <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-field">
+              <label for="telefono">Teléfono</label>
+              <input type="tel" id="telefono" name="telefono" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="calle">Calle y número</label>
+            <input type="text" id="calle" name="calle" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="colonia">Colonia</label>
+              <input type="text" id="colonia" name="colonia" required>
+            </div>
+            <div class="form-field">
+              <label for="cp">Código postal</label>
+              <input type="text" id="cp" name="cp" inputmode="numeric" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="ciudad">Ciudad / Municipio</label>
+              <input type="text" id="ciudad" name="ciudad" required>
+            </div>
+            <div class="form-field">
+              <label for="estado">Estado</label>
+              <input type="text" id="estado" name="estado" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="referencias">Referencias de entrega (opcional)</label>
+            <input type="text" id="referencias" name="referencias" placeholder="Ej. portón negro, entre calles...">
+          </div>
+
+          <div class="form-field">
+            <label>Método de pago</label>
+            <div class="pay-options">
+              <label class="pay-option">
+                <input type="radio" name="metodoPago" value="transferencia" checked>
+                <span>
+                  <strong>Transferencia bancaria</strong>
+                  <span>Te compartimos los datos abajo. Envías tu comprobante por WhatsApp.</span>
+                </span>
+              </label>
+              <label class="pay-option is-disabled">
+                <input type="radio" name="metodoPago" value="tarjeta" disabled>
+                <span>
+                  <strong>Tarjeta de crédito/débito</strong>
+                  <span>Próximamente. Por ahora, pide por transferencia.</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="bank-box" id="bank-details">
+            <strong>Datos para tu transferencia</strong>
+            <dl>
+              <dt>Banco:</dt><dd id="bank-name"></dd>
+              <dt>Titular:</dt><dd id="bank-holder"></dd>
+              <dt>CLABE:</dt><dd id="bank-clabe"></dd>
+              <dt>Concepto:</dt><dd id="bank-concept"></dd>
+            </dl>
+          </div>
+
+          <div class="form-field">
+            <label for="notas">Notas adicionales (opcional)</label>
+            <textarea id="notas" name="notas" rows="3" placeholder="Algo más que debamos saber sobre tu pedido o entrega"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">Confirmar pedido por WhatsApp</button>
+        </form>
+
+        <div class="checkout-summary-box" id="checkout-summary"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2026 YAN Fragance. Todos los derechos reservados.</span>
+      <a href="https://wa.me/525535123355" target="_blank" rel="noopener">¿Dudas? Escríbenos por WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/products-data.js"></script>
+<script src="js/bottle-art.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/whatsapp-order.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.getElementById("bank-name").textContent = BRAND_CONFIG.bankTransfer.bankName;
+  document.getElementById("bank-holder").textContent = BRAND_CONFIG.bankTransfer.accountHolder;
+  document.getElementById("bank-clabe").textContent = BRAND_CONFIG.bankTransfer.clabe;
+  document.getElementById("bank-concept").textContent = BRAND_CONFIG.bankTransfer.concept;
+  initCheckoutPage();
+</script>
+</body>
+</html>
