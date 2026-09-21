@@ -129,16 +129,23 @@
     transition: opacity 1s ease .6s, transform 1s ease .6s;
   }
   .reveal.show { opacity: 1; transform: none; }
+  .reveal.hiding { transition-duration: .7s; transition-delay: 0s; } /* salida rápida al cambiar de mensaje */
   .reveal h2 {
     font-family: "Fraunces", Georgia, serif; font-weight: 700;
     font-size: clamp(2.4rem, 10vw, 5rem); color: var(--gold);
     text-shadow: 0 0 18px rgba(255, 200, 70, .7), 0 0 50px rgba(255, 170, 30, .45);
   }
   .reveal p {
-    margin: 14px auto 0; max-width: 30ch; font-weight: 800;
+    margin: 14px auto 0; max-width: 32ch; font-weight: 800;
     font-size: clamp(1.05rem, 3.6vw, 1.5rem); line-height: 1.4; color: #fff2cf;
     text-shadow: 0 2px 14px rgba(20, 8, 50, .7);
   }
+  /* mensaje del aguacate: verde en vez de dorado */
+  .reveal.avo h2 {
+    color: #c8f28a;
+    text-shadow: 0 0 18px rgba(140, 220, 80, .6), 0 0 50px rgba(90, 190, 60, .4);
+  }
+  .reveal.avo p { color: #eaffd0; }
 
   @media (prefers-reduced-motion: reduce) {
     :root { --dur: .2s; }
@@ -162,8 +169,8 @@
 
   <canvas id="garden"></canvas>
   <section class="reveal" id="reveal">
-    <h2>¡Lo sabía! 🌻</h2>
-    <p>Por eso soy tu compa, estas son pa ti, mi real. Att: 𝔸𝕟𝕥</p>
+    <h2 id="revealTitle">¡Lo sabía! 🌻</h2>
+    <p id="revealText">Por eso soy tu compa, estas son pa ti, mi real. Att: 𝔸𝕟𝕥</p>
   </section>
 
 <script>
@@ -171,9 +178,13 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const card = $('card'), yes = $('yes'), no = $('no'), slot = $('slot'),
-        taunt = $('taunt'), canvas = $('garden'), reveal = $('reveal');
+        taunt = $('taunt'), canvas = $('garden'), reveal = $('reveal'),
+        revealTitle = $('revealTitle'), revealText = $('revealText');
   const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+  /* ⏱️ Cuánto tardan las flores en "cambiar" al árbol de aguacates (en milisegundos) */
+  const T2 = 15000;
 
   /* =====================================================
      BOTÓN "NO": escapa por la pantalla
@@ -267,7 +278,7 @@
      JARDÍN: flores en canvas
      ===================================================== */
   const ctx = canvas.getContext('2d');
-  let W = 0, H = 0, flowers = [], fall = [];
+  let W = 0, H = 0, flowers = [], fall = [], tree = null;
   const K = REDUCE ? 2.5 : 1; // acelera el crecimiento si hay reduced-motion
 
   function fit() { // canvas nítido en pantallas retina
@@ -356,9 +367,11 @@
     }
   }
 
+  // Pétalos que caen; después del cambio se vuelven hojitas verdes
   function drawFall(t, dt) {
     const a = clamp((t - 1200) / 2000);
-    ctx.fillStyle = 'rgba(255,222,100,.85)';
+    const m = clamp((t - T2 - 800) / 2500);
+    ctx.fillStyle = `rgba(${Math.round(255 - 135 * m)},${Math.round(222 - 22 * m)},100,.85)`;
     for (const p of fall) {
       p.y += p.v * dt; p.rot += p.sp * dt;
       if (p.y > H + 20) { p.y = -20; p.x = Math.random() * W; }
@@ -369,8 +382,165 @@
     }
   }
 
+  /* =====================================================
+     ÁRBOL DE AGUACATES
+     ===================================================== */
+  // Datos del árbol en unidades relativas al radio de la copa (R)
+  function buildTree() {
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const blobs = Array.from({ length: 30 }, () => {
+      const a = Math.random() * 6.283, rr = Math.sqrt(Math.random()) * .85;
+      return { x: Math.cos(a) * rr * 1.05, y: Math.sin(a) * rr * .62, r: rnd(.28, .42), d: rnd(0, 1300), h: rnd(112, 134) };
+    }).sort((p, q) => p.y - q.y);
+    const leaves = Array.from({ length: 46 }, () => {
+      const a = Math.random() * 6.283, rr = Math.sqrt(Math.random());
+      return { x: Math.cos(a) * rr * 1.05, y: Math.sin(a) * rr * .68, ang: Math.random() * 6.283, len: rnd(.16, .26), d: rnd(0, 1800) };
+    });
+    const n = 9;
+    const avos = Array.from({ length: n }, (_, i) => {
+      const a = Math.PI * (.1 + .8 * (i + .5) / n) + rnd(-.05, .05), k = rnd(.72, 1);
+      return { x: Math.cos(a) * .9 * k, y: Math.sin(a) * .68 * k, stem: rnd(.13, .2), rot: rnd(-.1, .1),
+               ph: rnd(0, 6.28), st: 4000 + rnd(0, 3200) };
+    });
+    return { blobs, leaves, avos };
+  }
+
+  // Un aguacatito con carita, colgando de su tallito (origen = punta de arriba)
+  function drawAvocado(r) {
+    ctx.beginPath();
+    ctx.moveTo(0, -1.4 * r);
+    ctx.bezierCurveTo(.5 * r, -1.4 * r, .55 * r, -.5 * r, .95 * r, .2 * r);
+    ctx.bezierCurveTo(1.15 * r, .8 * r, .6 * r, 1.1 * r, 0, 1.1 * r);
+    ctx.bezierCurveTo(-.6 * r, 1.1 * r, -1.15 * r, .8 * r, -.95 * r, .2 * r);
+    ctx.bezierCurveTo(-.55 * r, -.5 * r, -.5 * r, -1.4 * r, 0, -1.4 * r);
+    ctx.closePath();
+    const g = ctx.createRadialGradient(-.35 * r, -.1 * r, .1 * r, 0, .2 * r, 1.4 * r);
+    g.addColorStop(0, '#b9e070'); g.addColorStop(.55, '#7cb342'); g.addColorStop(1, '#3e6b1e');
+    ctx.fillStyle = g; ctx.fill();
+    ctx.strokeStyle = 'rgba(20,48,10,.85)'; ctx.lineWidth = Math.max(1.2, r * .09); ctx.stroke();
+
+    // brillo
+    ctx.fillStyle = 'rgba(255,255,255,.28)';
+    ctx.beginPath(); ctx.ellipse(-.45 * r, -.05 * r, .16 * r, .34 * r, .25, 0, 7); ctx.fill();
+
+    // capuchón del tallo
+    ctx.fillStyle = '#5b3a1c';
+    ctx.beginPath(); ctx.arc(0, -1.38 * r, .13 * r, 0, 7); ctx.fill();
+
+    // carita
+    ctx.fillStyle = 'rgba(255,120,140,.38)';
+    ctx.beginPath(); ctx.arc(-.6 * r, .58 * r, .15 * r, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(.6 * r, .58 * r, .15 * r, 0, 7); ctx.fill();
+    ctx.fillStyle = '#1b2a10';
+    ctx.beginPath(); ctx.arc(-.33 * r, .3 * r, .09 * r, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(.33 * r, .3 * r, .09 * r, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#1b2a10'; ctx.lineWidth = Math.max(1, r * .08); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(0, .42 * r, .2 * r, .2 * Math.PI, .8 * Math.PI); ctx.stroke();
+  }
+
+  function drawTree(t) {
+    const tt = (t - T2 - 1400) * K;   // tiempo propio del árbol
+    if (tt <= 0) return;
+    const R = Math.min(W * .36, H * .25), cx = W / 2, cy = H - R * 1.8;
+    const baseY = H + 4, topY = cy + R * .4, th = baseY - topY;
+    const sw = REDUCE ? 0 : Math.sin(t * .0009) * R * .018;   // vaivén suave de la copa
+
+    // lomita de pasto
+    ctx.save();
+    ctx.globalAlpha = clamp(tt / 900);
+    ctx.translate(cx, H); ctx.scale(1, .16);
+    let g = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 2.4);
+    g.addColorStop(0, '#3f8f3a'); g.addColorStop(.7, '#256a2c'); g.addColorStop(1, 'rgba(37,106,44,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R * 2.4, 0, 7); ctx.fill();
+    ctx.restore();
+
+    // tronco: crece de abajo hacia arriba
+    const gp = easeOutCubic(clamp(tt / 1800));
+    const N = 24, L = [], Rr = [];
+    for (let i = 0; i <= N; i++) {
+      const u = gp * i / N, y = baseY - th * u;
+      const x = cx + Math.sin(u * 2.4) * R * .05 + sw * u * u * .5;
+      const w = R * .15 * (1 - u) + R * .075 * u + R * .06 * Math.pow(1 - u, 4);
+      L.push([x - w, y]); Rr.push([x + w, y]);
+    }
+    g = ctx.createLinearGradient(cx - R * .2, 0, cx + R * .2, 0);
+    g.addColorStop(0, '#4b2e16'); g.addColorStop(.5, '#8b5a2b'); g.addColorStop(1, '#3f2712');
+    ctx.fillStyle = g; ctx.beginPath();
+    L.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+    for (let i = N; i >= 0; i--) ctx.lineTo(Rr[i][0], Rr[i][1]);
+    ctx.closePath(); ctx.fill();
+
+    // ramas
+    const bp = easeOutCubic(clamp((tt - 1000) / 1100));
+    if (bp > 0) {
+      ctx.strokeStyle = '#6b4423'; ctx.lineCap = 'round'; ctx.lineWidth = Math.max(3, R * .05);
+      [[-1, .55], [1, .62]].forEach(([s, u0]) => {
+        const sx = cx + Math.sin(u0 * 2.4) * R * .05, sy = baseY - th * u0;
+        const ex = cx + s * R * .7 + sw, ey = cy + R * .2, qx = cx + s * R * .12, qy = cy + R * .5;
+        ctx.beginPath();
+        for (let i = 0; i <= 16; i++) {
+          const p = bp * i / 16, a = 1 - p;
+          const x = a * a * sx + 2 * a * p * qx + p * p * ex, y = a * a * sy + 2 * a * p * qy + p * p * ey;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+      });
+    }
+
+    // copa, hojas y aguacates (con el vaivén)
+    ctx.save(); ctx.translate(sw, 0);
+
+    tree.blobs.forEach(b => {
+      const s = easeOutBack(clamp((tt - 1300 - b.d) / 800));
+      if (s <= 0) return;
+      const x = cx + b.x * R, y = cy + b.y * R, r = b.r * R * s;
+      const l = 26 + (1 - (b.y + .55) / 1.1) * 14;   // arriba más clarito
+      const gr = ctx.createRadialGradient(x - r * .3, y - r * .35, r * .1, x, y, r);
+      gr.addColorStop(0, `hsl(${b.h},55%,${l + 12}%)`); gr.addColorStop(1, `hsl(${b.h},55%,${l}%)`);
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    });
+
+    tree.leaves.forEach(l => {
+      const s = easeOutCubic(clamp((tt - 1900 - l.d) / 700));
+      if (s <= 0) return;
+      leaf(cx + l.x * R, cy + l.y * R, l.ang, l.len * R * s);
+    });
+
+    const ar = Math.max(11, R * .125);
+    tree.avos.forEach(a => {
+      const s = easeOutBack(clamp((tt - a.st) / 900));
+      if (s <= 0) return;
+      const stem = a.stem * R;
+      const swing = REDUCE ? 0 : Math.sin(t * .0018 + a.ph) * .07;
+      ctx.save();
+      ctx.translate(cx + a.x * R, cy + a.y * R);
+      ctx.rotate(a.rot + swing); ctx.scale(s, s);
+      ctx.strokeStyle = '#5b8a2f'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, stem); ctx.stroke();
+      ctx.translate(0, stem + ar * 1.4);
+      drawAvocado(ar);
+      ctx.restore();
+    });
+
+    ctx.restore();
+  }
+
+  // Cambia el mensaje: "ah pero si cierto, no te gustan las flores"
+  function swapReveal() {
+    reveal.classList.add('hiding');
+    reveal.classList.remove('show');
+    setTimeout(() => {
+      revealTitle.textContent = 'Ah, pero si cierto… 🥑';
+      revealText.textContent = 'No te gustan las flores 🥀 Mejor toma, un árbol de aguacates pa\' ti. Att: 𝔸𝕟𝕥';
+      reveal.classList.add('avo');
+      reveal.classList.remove('hiding');
+      reveal.classList.add('show');
+    }, 800);
+  }
+
   function startGarden() {
     fit();
+    tree = buildTree();
     const n = clamp(Math.round(W / 95), 5, 15);
     const base = clamp(W / n * .4, 20, 54);
     flowers = Array.from({ length: n }, (_, i) => ({
@@ -387,13 +557,24 @@
       x: Math.random() * W, y: -Math.random() * H, s: 5 + Math.random() * 7, v: 28 + Math.random() * 45,
       ph: Math.random() * 6.28, sw: 14 + Math.random() * 26, rot: Math.random() * 6.28, sp: (Math.random() - .5) * 2.2
     }));
-    let t0 = 0, last = 0;
+    let t0 = 0, last = 0, swapped = false;
     (function frame(now) {
       if (!t0) t0 = last = now;
       const t = now - t0, dt = Math.min(.05, (now - last) / 1000); last = now;
       ctx.clearRect(0, 0, W, H);
-      flowers.forEach(f => drawStem(f, t));
+
+      // las flores se desvanecen a los T2 ms
+      const fa = 1 - easeOutCubic(clamp((t - T2) / 1800));
+      if (fa > 0) {
+        ctx.globalAlpha = fa;
+        flowers.forEach(f => drawStem(f, t));
+        ctx.globalAlpha = 1;
+      }
+
+      if (t > T2 + 1200) drawTree(t);
       drawFall(t, dt);
+
+      if (!swapped && t >= T2) { swapped = true; swapReveal(); }
       requestAnimationFrame(frame);
     })(performance.now());
   }
