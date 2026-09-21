@@ -90,13 +90,38 @@ footer{color:var(--mut);font-size:.82rem;padding:24px 0 56px;border-top:1px soli
 @media(max-width:860px){.hero,.grid,.two{grid-template-columns:1fr}.hero{padding-top:40px;gap:36px}.grid{gap:28px}form.card{position:static}.nav{flex-direction:column;align-items:stretch;gap:0;padding-top:12px}.tabs button{padding:12px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.hw{opacity:1}.pay-ok circle,.pay-ok path{stroke-dashoffset:0}}
 @media print{.top,.giros,form.card,.acts,.pay{display:none}body{background:#fff;color:#111}}
+.wz{max-width:680px;padding:56px 0 24px}
+.prog{height:3px;background:var(--line);border-radius:3px;margin-bottom:44px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--acc);transition:width .5s var(--ease)}
+.q{animation:slide .45s var(--ease)}@keyframes slide{from{opacity:0;transform:translateX(28px)}}
+.q h2{font-size:clamp(2rem,4.6vw,3rem);margin:8px 0 26px}
+.opts{display:grid;gap:10px}.opts.two-c{grid-template-columns:1fr 1fr}
+.opts button{text-align:left;background:var(--surf);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:16px 18px;font:500 1rem var(--sans);cursor:pointer;transition:all .2s var(--ease)}
+.opts button:hover{border-color:var(--ink);transform:translateX(4px)}.opts button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.lnk{background:none;border:0;color:var(--mut);font:500 .9rem var(--sans);margin-top:22px;cursor:pointer;text-decoration:underline}
+.rep>*{animation:in .6s var(--ease) both;animation-delay:calc(var(--i,0)*80ms)}
+#wout{padding-top:48px}#wout>.card:first-child{border-top:0;padding-top:0}
+.hl{font-size:clamp(1.9rem,4.4vw,3rem);max-width:22ch;margin-bottom:12px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:22px 0 8px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:20px 36px}
+.tile{display:flex;gap:14px}.tile b{display:block}
+.dot{flex:none;width:12px;height:12px;border-radius:50%;margin-top:7px}.dot.g{background:var(--ok)}.dot.y{background:#E0A526}.dot.r{background:#E5484D}
+.gl{border-bottom:1px solid var(--line);padding:14px 0}.gl summary{cursor:pointer;font-weight:500;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.gl summary::after{content:"+";color:var(--mut);transition:transform .25s var(--ease)}.gl[open] summary::after{transform:rotate(45deg)}
+.gl p{color:var(--mut);margin-top:10px;max-width:62ch;animation:in .35s var(--ease)}
+.gh{font:500 .95rem var(--sans);color:var(--acc);margin:28px 0 4px}
+.ob{list-style:none}.ob li{padding:12px 0;border-bottom:1px solid var(--line);display:grid;gap:2px}.ob span{color:var(--mut);font-size:.92rem}
+@media(max-width:860px){.row3,.tiles,.opts.two-c{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="top"><div class="w nav"><span class="brand">VR<span>+</span> Colabs</span>
-<nav class="tabs" role="tablist" aria-label="Secciones"><button data-t="prop" role="tab" aria-selected="true">Propuesta</button><button data-t="sim" role="tab" aria-selected="false">Simulador</button><button data-t="iva" role="tab" aria-selected="false">Calculadora de IVA</button><button data-t="pre" role="tab" aria-selected="false">Calculadora de precios</button><i class="ind"></i></nav></div></div>
+<nav class="tabs" role="tablist" aria-label="Secciones"><button data-t="dx" role="tab" aria-selected="true">Diagnóstico</button><button data-t="prop" role="tab" aria-selected="false">Propuesta</button><button data-t="sim" role="tab" aria-selected="false">Simulador</button><button data-t="iva" role="tab" aria-selected="false">Calculadora de IVA</button><button data-t="pre" role="tab" aria-selected="false">Calculadora de precios</button><i class="ind"></i></nav></div></div>
 <div class="w">
-<section class="tab" id="prop">
+<section class="tab" id="dx">
+<div class="wz" id="wzbox"><div class="prog"><i id="wprog"></i></div><div id="wz"></div></div>
+<div id="wout" class="rep" hidden></div>
+</section>
+<section class="tab" id="prop" hidden>
 <div class="hero"><div>
 <h1 class="split">Tus clientes ya quieren pagar con tarjeta. Solo falta que tú les digas que sí.</h1>
 <p class="sub">Cada vez que alguien dice "no traigo efectivo", esa venta se queda en el mostrador. Con una terminal sencilla cobras al momento y sin perder ni una compra más.</p>
@@ -265,11 +290,76 @@ const PV={},RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 function ani(n,pre,suf,from,v,d,ms,delay=0){const t0=performance.now()+delay;(function f(now){if(!n.isConnected)return;const p=Math.min(1,Math.max(0,(now-t0)/ms)),x=from+(v-from)*(1-Math.pow(1-p,3));n.textContent=pre+x.toLocaleString('es-MX',{minimumFractionDigits:d,maximumFractionDigits:d})+suf;if(p<1)requestAnimationFrame(f)})(performance.now())}
 function tween(root){if(RM)return;root.querySelectorAll('.big,.stat b').forEach((n,i)=>{const t=n.textContent,m=t.match(/[\d,]+(?:\.\d+)?/);if(!m)return;
  const v=parseFloat(m[0].replace(/,/g,'')),d=(m[0].split('.')[1]||'').length,k=root.id+i,from=PV[k]??0;PV[k]=v;if(from!==v)ani(n,t.slice(0,m.index),t.slice(m.index+m[0].length),from,v,d,450)})}
-['out','iout','pout'].forEach(id=>new MutationObserver(()=>tween(el(id))).observe(el(id),{childList:true}));
+['out','iout','pout','wout'].forEach(id=>new MutationObserver(()=>tween(el(id))).observe(el(id),{childList:true}));
 function ind(){const b=document.querySelector('.tabs [aria-selected=true]'),i=document.querySelector('.ind');i.style.width=b.offsetWidth+'px';i.style.transform='translateX('+b.offsetLeft+'px)'}
 document.querySelectorAll('.split').forEach(h=>{const t=h.textContent;h.setAttribute('aria-label',t);h.innerHTML=t.split(' ').map((w,i)=>`<span class="hw" aria-hidden="true" style="--i:${i}">${w}</span>`).join(' ')});
 if(!RM)ani(el('payamt'),'$','',0,185,2,1200,700);
 addEventListener('resize',ind);document.fonts.ready.then(ind);ind();
+
+const Q=[
+{k:'g',t:'¿Qué vende tu negocio?',o:G.map(x=>[x.id,x.n])},
+{k:'reg',t:'¿Cómo estás dado de alta hoy?',o:[['no','Aún no tengo RFC ni estoy en el SAT'],['pf','Persona física, con RFC a mi nombre'],['pm','Empresa (persona moral)'],['ns','No sé']]},
+{k:'inc',t:'¿Cuánto vendes al mes, más o menos?',o:[['15000','Hasta $25,000'],['40000','$25,000 a $50,000'],['75000','$50,000 a $100,000'],['190000','$100,000 a $290,000'],['320000','Más de $290,000']]},
+{k:'emp',t:'¿Cuántas personas trabajan contigo con sueldo?',o:[['0','Nadie, soy yo o mi familia'],['1','De 1 a 5 personas'],['2','Más de 5']]},
+{k:'fac',t:'¿Das facturas a tus clientes?',o:[['si','Sí, cuando me la piden'],['no','No sé cómo hacerlo'],['nunca','Nunca me han pedido una']]},
+{k:'pay',t:'¿Cómo te pagan hoy?',o:[['ef','Casi todo en efectivo'],['tr','Efectivo y transferencias'],['tj','Ya acepto tarjeta']]},
+{k:'lvl',t:'¿Qué tanto sabes de impuestos?',o:[['0','Nada, explícamelo desde cero'],['1','Lo básico'],['2','Ya sé bastante']]}];
+const S={};let qi=0;
+const GL=[
+['¿Por qué se cobra IVA?','Es un impuesto de 16% sobre casi todo lo que se vende. Lo paga el cliente al comprar; tú solo lo recolectas y se lo entregas al SAT. No es tu ganancia. Cada mes restas el IVA que tú pagaste en compras y gastos con factura, y entregas la diferencia.'],
+['¿Qué es el ISR?','Es el impuesto sobre lo que gana el negocio. En RESICO se paga un porcentaje pequeño y fijo de lo que cobras cada mes (de 1% a 2.5%), sin calcular utilidades.'],
+['¿Qué es una factura (CFDI)?','Es un comprobante digital que avisa al SAT de una venta. Tus clientes con negocio la necesitan para deducir; para el público en general se hace una factura global por periodo.'],
+['¿Qué es el RFC?','Es la clave con la que el SAT te identifica. Sin ella no puedes facturar ni declarar.'],
+['¿Qué es RESICO?','Es un régimen para negocios pequeños con ingresos de hasta 3.5 millones de pesos al año: tasas bajas de ISR y trámites más simples.'],
+['¿Y la comisión de la tarjeta?','Es lo que cobra el proveedor por procesar el pago. Se cubre con un ajuste pequeño en tus precios; en el simulador ves cuánto.'],
+['¿Qué pasa si no declaro?','Vienen multas y recargos que crecen con el tiempo. Cobrar con tarjeta deja registro de tus ingresos, así que conviene tener todo en orden desde el inicio.']];
+function ask(){const q=Q[qi],w=el('wz');el('wprog').style.width=(qi/Q.length*100)+'%';
+ w.innerHTML=`<div class="q"><p class="muted sm">Pregunta ${qi+1} de ${Q.length}</p><h2>${q.t}</h2><div class="opts ${q.k==='g'?'two-c':''}">${q.o.map(([v,l])=>`<button type="button" data-v="${v}" class="${S[q.k]===v?'on':''}">${l}</button>`).join('')}</div>${qi?'<button class="lnk" type="button" id="bk">Atrás</button>':''}</div>`;
+ w.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{S[q.k]=b.dataset.v;b.classList.add('on');setTimeout(()=>{++qi<Q.length?ask():done()},220)});
+ if(qi)el('bk').onclick=()=>{qi--;ask()}}
+function done(){el('wzbox').hidden=true;report();el('wout').hidden=false;scrollTo(0,0)}
+function go(t){if(t!=='prop'){const x=G.find(y=>y.id===S.g),i=x.iva;pick(x,box.querySelector('[data-id="'+x.id+'"]'));el('pers').value=S.reg==='pm'?'pm':'pf';el('inc').value=S.inc;calc();
+ el('iv16').value=i==='16'||i==='mix'?S.inc:0;el('ivx').value=i==='ex'?S.inc:0;el('pt').value=i==='mix'?'16':i;el('ps').value=x.s;el('icm').value=''}tab(t)}
+function report(){
+ const x=G.find(y=>y.id===S.g),m=+S.inc,pm=S.reg==='pm',s=x.s/100,up=1/(1-s*.035*(x.iva==='0'?1:1.16))-1,cost=m*s*.035*(x.iva==='ex'||x.iva==='0'?1:1.16);
+ el('pers').value=pm?'pm':'pf';const r=regime(m),emp=S.emp!=='0',fd=['aba','fon','caf','tor'].includes(x.id);
+ const T=[['Registro ante el SAT',S.reg==='no'?['r','Sin RFC no puedes facturar ni operar formalmente. Es el primer paso.']:S.reg==='ns'?['y','Descarga tu Constancia de Situación Fiscal en el portal del SAT para saber en qué régimen estás.']:['g','Ya estás dado de alta. Falta confirmar que tu régimen sea el que más te conviene.']],
+ ['Facturación',S.fac==='si'?['g','Ya facturas. Verifica que uses la versión CFDI 4.0.']:['y','Aprende a emitir CFDI. Hay opciones gratuitas y de bajo costo, y tu contador puede configurarlas.']],
+ ['Empleados',emp?['y','Con sueldos hay IMSS, nómina y retenciones. Se trabaja de la mano del contador.']:['g','Sin sueldos por ahora, tienes menos obligaciones.']],
+ ['Cobro digital',S.pay==='tj'?['g','Ya aceptas tarjeta. Revisa que tus precios cubran la comisión.']:['y','Hoy pierdes la venta de quien no trae efectivo. Una terminal lo resuelve.']]];
+ const grp=(h,a)=>a.length?`<div class="gh">${h}</div><ul class="ob">${a.map(([t,w])=>`<li><b>${t}</b><span>${w}</span></li>`).join('')}</ul>`:'';
+ const sat=[S.reg==='no'&&['Inscribirte al RFC','Es la clave con la que el SAT te identifica. Se tramita con tu CURP y un comprobante de domicilio.'],
+ ['Elegir tu régimen fiscal',r.t+': es la forma en que pagas impuestos. Tu contador confirma cuál te conviene.'],
+ ['Activar e.firma y buzón tributario','La e.firma es tu firma electrónica para trámites. En el buzón el SAT te manda avisos, y ignorarlos genera multas.'],
+ ['Emitir facturas (CFDI 4.0)','A quien te la pida y, para el público en general, con una factura global por periodo.'],
+ ['Declarar cada mes','ISR e IVA a más tardar el día 17 del mes siguiente, incluso en un mes flojo.'],
+ ['Declaración anual ('+(pm?'marzo':'abril')+')','Resumen del año. Tu contador la prepara con tus facturas.'],
+ r.isr===undefined&&['Contabilidad electrónica','Registros contables que el contador envía al SAT cada mes.']].filter(Boolean);
+ const mon=[[x.iva==='16'||x.iva==='mix'?'Cobrar el 16% de IVA en tus ventas':x.iva==='0'?'Vender con IVA 0%':'Vender sin IVA (exento)',x.iva==='ex'?'Tu actividad está exenta: no cobras IVA, pero tampoco puedes restar el IVA de tus compras.':x.iva==='0'?'No le cobras IVA al cliente, pero sí lo declaras y puedes restar el de tus compras.':'Lo paga tu cliente al comprar; tú lo recolectas y lo entregas al SAT. No es ganancia tuya.'+(x.iva==='mix'?' Tus productos mezclan tasas: el contador las separa.':'')],
+ ['Guardar facturas de compras y gastos','Con ellas restas el IVA que tú pagaste y compruebas tus gastos.'],
+ ['Separar la cuenta del negocio de la personal','Facilita tus declaraciones y evita confusiones sobre de dónde viene cada depósito.']];
+ const em=emp?[['Alta patronal en IMSS','Registras a cada trabajador y pagas cuotas obrero-patronales.'],['Nómina con recibo CFDI','Cada pago de sueldo se timbra y, cuando corresponde, se retiene ISR.'],['INFONAVIT y SAR','Aportaciones por trabajador, según el contador.'],['Impuesto estatal sobre nómina','Cada estado lo cobra distinto. El contador confirma el tuyo.']]:[];
+ const loc=[['Licencia de funcionamiento y protección civil','Se tramitan en tu municipio o alcaldía. Piden uso de suelo y medidas de seguridad.'],
+ fd&&['Aviso sanitario para alimentos','Según tu estado, se avisa a la autoridad sanitaria que vendes alimentos.'],
+ x.id==='sal'&&['Cédula profesional y permisos sanitarios','Para dar servicios de salud se piden título, cédula y permisos.'],
+ x.id==='esc'&&['RVOE de la SEP','El reconocimiento oficial permite que tus colegiaturas sean exentas de IVA.'],
+ x.id==='tal'&&['Manejo de residuos','Aceite, filtros y llantas usados se entregan a empresas autorizadas.']].filter(Boolean);
+ const cal=[['Día 17 de cada mes','Declaración de ISR e IVA del mes anterior.'],['Cada periodo','Factura global de ventas al público. Tu contador te dice cada cuándo.'],[pm?'Marzo':'Abril','Declaración anual.']];if(emp)cal.push(['Cada mes y bimestre','Cuotas de IMSS, INFONAVIT y nómina. Fechas exactas con tu contador.']);
+ const isrTxt=r.isr!==undefined?`pagarías ISR de ${r.r}% sobre lo que cobras`:'el contador calcula tu ISR';
+ const sum=`Escenario: ${x.n}, ventas de ${$(m)} al mes\nRégimen sugerido: ${r.t}\nAjuste de precios por tarjeta: +${(up*100).toFixed(1)}%\nRFC: ${{no:'sin RFC',pf:'persona física',pm:'persona moral',ns:'no sabe'}[S.reg]} | Facturas: ${S.fac} | Empleados: ${emp?'sí':'no'} | Cobro: ${S.pay}`;
+ el('wout').innerHTML=`<div class="card"><span class="pill">Tu escenario</span><h2 class="hl">${x.n} con ventas de unos ${$(m)} al mes</h2>
+<p class="sub">Régimen que suele encajar: ${r.t}. Con él ${isrTxt}. ${S.reg==='no'?'Como aún no tienes RFC, ese es el primer paso.':''}</p>
+<div class="row3"><div class="stat"><span class="muted sm">Ajuste de precios sugerido</span><b>+${(up*100).toFixed(1)}%</b></div><div class="stat"><span class="muted sm">Comisiones al mes (referencia)</span><b>${$(cost)}</b></div><div class="stat"><span class="muted sm">${r.isr!==undefined?'ISR estimado al mes':'ISR'}</span><b>${r.isr!==undefined?$(r.isr):'Con contador'}</b></div></div></div>
+<div class="card"><h2>Cómo estás hoy</h2><div class="tiles">${T.map(([t,[c,d]])=>`<div class="tile"><i class="dot ${c}"></i><div><b>${t}</b><span class="muted sm">${d}</span></div></div>`).join('')}</div></div>
+${S.lvl==='2'?'':`<div class="card"><h2>Lo básico, explicado fácil</h2>${GL.map(([q,a],i)=>`<details class="gl" ${S.lvl==='0'&&i<3?'open':''}><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`}
+<div class="card"><h2>Lo que tienes que cumplir</h2>${grp('Con el SAT',sat)}${grp('Precios e IVA',mon)}${grp('Con tus empleados',em)}${grp('Tu local y tu giro',loc)}${grp('Calendario',cal)}
+<p class="note">Guía general: tu contador confirma régimen, fechas y obligaciones según tu caso, tu estado y tu municipio.</p></div>
+<div class="card"><h2>Siguiente paso</h2><div class="acts"><button class="btn" data-g2="sim">Abrir el simulador con estos datos</button><button class="btn g" data-g2="pre">Calcular mis precios</button><button class="btn g" data-g2="prop">Ver la propuesta</button><button class="btn g" id="cs">Copiar resumen</button><button class="btn g" id="rd">Rehacer cuestionario</button></div></div>`;
+ const o=el('wout');[...o.children].forEach((c,i)=>c.style.setProperty('--i',i));
+ o.querySelectorAll('[data-g2]').forEach(b=>b.onclick=()=>go(b.dataset.g2));
+ el('cs').onclick=async()=>{try{await navigator.clipboard.writeText(sum);el('cs').textContent='Copiado'}catch(_){prompt('Copia el resumen:',sum)}};
+ el('rd').onclick=()=>{Object.keys(S).forEach(k=>delete S[k]);qi=0;el('wzbox').hidden=false;o.hidden=true;ask()}}
+ask();
 </script>
 </body>
 </html>
