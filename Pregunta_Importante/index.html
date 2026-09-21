@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Una pregunta importante</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌻</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Base ---------- */
+  :root {
+    --gold: #ffd15c;
+    --gold-deep: #f5a623;
+    --ink: #fff5da;
+    --dur: .65s; /* duración del escape del botón "No" */
+    --ease: cubic-bezier(.22, 1.2, .36, 1);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    min-height: 100dvh;
+    display: grid; place-items: center;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+             max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: radial-gradient(120% 90% at 20% 0%, #2b1b62 0%, #150e36 45%, #0a0820 100%);
+  }
+
+  /* ---------- Orbes de luz flotantes ---------- */
+  .orb {
+    position: fixed; border-radius: 50%; filter: blur(70px);
+    pointer-events: none; will-change: transform; z-index: 0;
+  }
+  .orb.purple {
+    width: 52vmax; height: 52vmax; left: -14vmax; top: -12vmax;
+    background: radial-gradient(circle, #8a5bff, transparent 68%); opacity: .6;
+    animation: driftA 26s ease-in-out infinite alternate;
+  }
+  .orb.gold {
+    width: 44vmax; height: 44vmax; right: -12vmax; bottom: -14vmax;
+    background: radial-gradient(circle, #ffb833, transparent 68%); opacity: .38;
+    animation: driftB 32s ease-in-out infinite alternate;
+  }
+  @keyframes driftA { to { transform: translate(16vmax, 12vmax) scale(1.12); } }
+  @keyframes driftB { to { transform: translate(-14vmax, -10vmax) scale(1.1); } }
+
+  /* ---------- Tarjeta glassmorphism ---------- */
+  .card {
+    position: relative; z-index: 2;
+    width: min(100%, 640px);
+    padding: clamp(26px, 6vw, 52px) clamp(20px, 5vw, 44px);
+    text-align: center;
+    background: rgba(255, 255, 255, .07);
+    border: 1px solid rgba(255, 209, 92, .38);
+    border-radius: 40px;
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+    box-shadow: 0 30px 80px rgba(6, 3, 26, .65), inset 0 1px 0 rgba(255, 255, 255, .14);
+    transition: opacity .8s ease, transform .8s ease, visibility 0s .8s;
+  }
+  .card.gone { opacity: 0; transform: scale(.88); visibility: hidden; pointer-events: none; }
+
+  h1 {
+    font-family: "Fraunces", Georgia, "Times New Roman", serif;
+    font-weight: 700; font-size: clamp(1.35rem, 4.8vw, 2.3rem);
+    line-height: 1.28; letter-spacing: -.01em; text-wrap: balance;
+    text-shadow: 0 2px 24px rgba(255, 190, 70, .25);
+  }
+
+  /* ---------- Botones ---------- */
+  .buttons {
+    margin-top: clamp(24px, 5vw, 38px);
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px 22px;
+  }
+  .btn {
+    font: 800 1.05rem/1 "Nunito", system-ui, sans-serif;
+    padding: 16px 30px; border-radius: 999px; border: 0;
+    white-space: nowrap; cursor: pointer; touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+  .yes {
+    position: relative; overflow: hidden; color: #3a2500;
+    background: linear-gradient(135deg, #ffe07a 0%, var(--gold-deep) 55%, #ffcf4d 100%);
+    transform: scale(var(--s, 1));
+    transition: transform .45s cubic-bezier(.34, 1.56, .64, 1);
+    animation: glow 2.6s ease-in-out infinite;
+  }
+  .yes::after { /* brillo que barre el botón */
+    content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .65), transparent);
+    transform: skewX(-20deg); animation: shine 3.4s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 18px rgba(255, 193, 60, .5), 0 8px 22px rgba(245, 166, 35, .35); }
+    50%      { box-shadow: 0 0 34px rgba(255, 209, 92, .85), 0 8px 26px rgba(245, 166, 35, .5); }
+  }
+  @keyframes shine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+
+  .slot { display: inline-block; } /* espaciador: conserva el tamaño del "No" */
+  .no {
+    color: #eee9ff; background: rgba(255, 255, 255, .09);
+    border: 1px solid rgba(255, 255, 255, .32);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 8px 24px rgba(0, 0, 0, .25);
+  }
+  .no.floating { /* se mueve solo con transform */
+    position: fixed; left: 0; top: 0; z-index: 5; will-change: transform;
+    transition: transform var(--dur) var(--ease), opacity .5s ease;
+  }
+  .no.fade { opacity: 0; pointer-events: none; }
+
+  .taunt {
+    min-height: 1.6em; margin-top: 20px; font-weight: 700; font-size: 1.05rem; color: var(--gold);
+  }
+  .taunt.pop { animation: pop .35s ease; }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- Final: jardín + mensaje ---------- */
+  #garden { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+  .reveal {
+    position: fixed; z-index: 3; left: 0; right: 0; top: 0; text-align: center;
+    padding: calc(env(safe-area-inset-top) + 5vh) 24px 0; pointer-events: none;
+    opacity: 0; transform: translateY(-12px);
+    transition: opacity 1s ease .6s, transform 1s ease .6s;
+  }
+  .reveal.show { opacity: 1; transform: none; }
+  .reveal h2 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 700;
+    font-size: clamp(2.4rem, 10vw, 5rem); color: var(--gold);
+    text-shadow: 0 0 18px rgba(255, 200, 70, .7), 0 0 50px rgba(255, 170, 30, .45);
+  }
+  .reveal p {
+    margin: 14px auto 0; max-width: 30ch; font-weight: 800;
+    font-size: clamp(1.05rem, 3.6vw, 1.5rem); line-height: 1.4; color: #fff2cf;
+    text-shadow: 0 2px 14px rgba(20, 8, 50, .7);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root { --dur: .2s; }
+    .orb, .yes, .yes::after { animation: none; }
+    .card, .reveal { transition-duration: .2s; transition-delay: 0s; }
+  }
+</style>
+</head>
+<body>
+  <div class="orb purple"></div>
+  <div class="orb gold"></div>
+
+  <main class="card" id="card">
+    <h1>𝔸𝕟𝕥 es el mejor, más guapo, genial, riatudo, honesto, increíble e inteligente compa que tengo</h1>
+    <div class="buttons">
+      <button class="btn yes" id="yes">Sí, obvio 💛</button>
+      <span class="slot" id="slot"><button class="btn no" id="no">No</button></span>
+    </div>
+    <p class="taunt" id="taunt" aria-live="polite"></p>
+  </main>
+
+  <canvas id="garden"></canvas>
+  <section class="reveal" id="reveal">
+    <h2>¡Lo sabía! 🌻</h2>
+    <p>Por eso soy tu compa, estas son pa ti, mi real. Att: 𝔸𝕟𝕥</p>
+  </section>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const card = $('card'), yes = $('yes'), no = $('no'), slot = $('slot'),
+        taunt = $('taunt'), canvas = $('garden'), reveal = $('reveal');
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+
+  /* =====================================================
+     BOTÓN "NO": escapa por la pantalla
+     ===================================================== */
+  const PHRASES = ['Uy, casi 😏', 'Ni lo intentes', 'Resbala, ¿verdad?', 'Se te fue 🐢',
+                   'Ese botón no coopera', 'Mejor dile que sí 💛', 'Qué necio, compa', 'Eso no era…'];
+  let floating = false, done = false, timer = null, dodges = 0, lastDodge = 0;
+  let pos = { x: 0, y: 0, rot: 0 };
+
+  const hit = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+  const grow = (r, p) => ({ left: r.left - p, top: r.top - p, right: r.right + p, bottom: r.bottom + p });
+  const place = () => { no.style.transform = `translate(${pos.x}px, ${pos.y}px) rotate(${pos.rot}deg)`; };
+
+  // Saca el botón de la tarjeta (backdrop-filter rompe position: fixed) y deja un espaciador
+  function detach() {
+    const r = no.getBoundingClientRect();
+    slot.style.width = r.width + 'px';
+    slot.style.height = r.height + 'px';
+    document.body.appendChild(no);
+    no.classList.add('floating');
+    no.style.transition = 'none';
+    pos = { x: r.left, y: r.top, rot: 0 };
+    place();
+    void no.offsetWidth;          // reflow para arrancar la animación desde aquí
+    no.style.transition = '';
+    floating = true;
+  }
+
+  // Elige un lugar lejano, sin tapar el "Sí" y (si se puede) fuera de la tarjeta
+  function pickSpot() {
+    const w = innerWidth, h = innerHeight, bw = no.offsetWidth, bh = no.offsetHeight, m = 16;
+    const maxX = Math.max(m, w - bw - m), maxY = Math.max(m, h - bh - m);
+    const yesR = grow(yes.getBoundingClientRect(), 24), cardR = grow(card.getBoundingClientRect(), 10);
+    const minD = Math.min(w, h) * .4;
+    let best = null, bestD = -1;
+    for (let i = 0; i < 120; i++) {
+      const x = m + Math.random() * (maxX - m), y = m + Math.random() * (maxY - m);
+      const box = { left: x, top: y, right: x + bw, bottom: y + bh };
+      if (hit(box, yesR)) continue;
+      const d = Math.hypot(x - pos.x, y - pos.y);
+      if (d >= minD * (1 - i / 160) && (i >= 60 || !hit(box, cardR))) return { x, y };
+      if (d > bestD) { best = { x, y }; bestD = d; }
+    }
+    return best || { x: m, y: m };
+  }
+
+  function moveNo() {
+    const s = pickSpot();
+    pos = { x: s.x, y: s.y, rot: (Math.random() * 2 - 1) * 14 };
+    place();
+  }
+
+  // Movimiento autónomo cada 1 a 1.7 s
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(() => { moveNo(); schedule(); }, 1000 + Math.random() * 700);
+  }
+
+  // El usuario intenta tocarlo: escapa, frase nueva y el "Sí" crece
+  function dodge(e) {
+    if (done) return;
+    if (e.type === 'click') e.preventDefault();
+    const now = performance.now();
+    if (now - lastDodge < 400) return;  // un mismo toque dispara varios eventos
+    lastDodge = now;
+    if (!floating) detach();
+    moveNo();
+    schedule();
+    taunt.textContent = PHRASES[dodges % PHRASES.length];
+    taunt.classList.remove('pop'); void taunt.offsetWidth; taunt.classList.add('pop');
+    dodges++;
+    yes.style.setProperty('--s', Math.min(1.4, 1 + dodges * .05).toFixed(3));
+  }
+  ['pointerenter', 'pointerdown', 'click', 'focus'].forEach(t => no.addEventListener(t, dodge));
+
+  /* =====================================================
+     "SÍ": desaparece todo y crece el jardín
+     ===================================================== */
+  yes.addEventListener('click', () => {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    no.classList.add('fade');
+    setTimeout(() => no.remove(), 600);
+    card.classList.add('gone');
+    reveal.classList.add('show');
+    startGarden();
+  });
+
+  /* =====================================================
+     JARDÍN: flores en canvas
+     ===================================================== */
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, flowers = [], fall = [];
+  const K = REDUCE ? 2.5 : 1; // acelera el crecimiento si hay reduced-motion
+
+  function fit() { // canvas nítido en pantallas retina
+    const dpr = Math.min(devicePixelRatio || 1, 3);
+    W = innerWidth; H = innerHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
+  const easeOutBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
+  // Un juego de pétalos: n pétalos de largo L con degradado del centro a la punta
+  function petals(n, L, off, c0, c1) {
+    const g = ctx.createLinearGradient(0, 0, L, 0);
+    g.addColorStop(.05, c0); g.addColorStop(1, c1);
+    ctx.fillStyle = g; ctx.strokeStyle = 'rgba(190,120,0,.28)'; ctx.lineWidth = 1;
+    for (let i = 0; i < n; i++) {
+      ctx.save(); ctx.rotate(off + i * Math.PI * 2 / n);
+      ctx.beginPath(); ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(L * .25, -L * .42, L * .85, -L * .36, L, 0);
+      ctx.bezierCurveTo(L * .85, L * .36, L * .25, L * .42, 0, 0);
+      ctx.fill(); ctx.stroke(); ctx.restore();
+    }
+  }
+
+  function drawFlower(x, y, s, b, rot) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+    const hr = s * 2.3 * b;                       // halo de brillo
+    let g = ctx.createRadialGradient(0, 0, 0, 0, 0, hr);
+    g.addColorStop(0, 'rgba(255,214,90,.5)'); g.addColorStop(1, 'rgba(255,214,90,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, hr, 0, 7); ctx.fill();
+    petals(10, s * b, 0, '#f59e0b', '#ffe066');                     // capa trasera
+    petals(8, s * .78 * b, Math.PI / 8, '#ffb300', '#fff2a8');      // capa delantera
+    const cr = s * .34 * b;                                         // centro café
+    g = ctx.createRadialGradient(-cr * .3, -cr * .3, 0, 0, 0, cr);
+    g.addColorStop(0, '#b47a3f'); g.addColorStop(.6, '#6b3d18'); g.addColorStop(1, '#3b210d');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, cr, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+
+  function leaf(x, y, ang, len) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang);
+    const g = ctx.createLinearGradient(0, 0, len, 0);
+    g.addColorStop(0, '#2e7d32'); g.addColorStop(1, '#79c86a');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(len * .5, -len * .38, len, 0);
+    ctx.quadraticCurveTo(len * .5, len * .38, 0, 0);
+    ctx.fill(); ctx.restore();
+  }
+
+  function drawStem(f, t) {
+    const tg = (t - f.d) * K;
+    if (tg < 0) return;
+    const x0 = f.fx * W, y0 = H + 6, sh = f.sh * H, bend = f.bend * H;
+    const cx = x0 - bend * .8, cy = y0 - sh * .5, tx = x0 + bend, ty = y0 - sh;
+    const sway = REDUCE ? 0 : Math.sin(t * .0012 + f.ph) * 9;
+    // punto de la curva en u (con viento que crece hacia arriba)
+    const B = u => { const a = 1 - u;
+      return [a * a * x0 + 2 * a * u * cx + u * u * tx + sway * u * u, a * a * y0 + 2 * a * u * cy + u * u * ty]; };
+    const gp = easeOutCubic(clamp(tg / 1500));
+    const size = f.size;
+
+    // tallo curvo
+    const g = ctx.createLinearGradient(x0, y0, tx, ty);
+    g.addColorStop(0, '#2a6f31'); g.addColorStop(1, '#7fcf6a');
+    ctx.strokeStyle = g; ctx.lineWidth = Math.max(3, size * .11); ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (let i = 0; i <= 28; i++) { const [px, py] = B(gp * i / 28); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+    ctx.stroke();
+
+    // 2 hojas
+    [[.38, -1, 700], [.6, 1, 950]].forEach(([u, side, at]) => {
+      const lp = easeOutCubic(clamp((tg - at) / 700));
+      if (lp <= 0) return;
+      const [px, py] = B(u), [qx, qy] = B(u + .02);
+      leaf(px, py, Math.atan2(qy - py, qx - px) + side * .95, size * 1.05 * lp);
+    });
+
+    // flor que se abre con rebote
+    const bp = clamp((tg - 1400) / 900);
+    if (bp > 0) {
+      const [px, py] = B(gp);
+      const rot = (REDUCE ? 0 : Math.sin(t * .0012 + f.ph) * .08 + f.spin * t);
+      drawFlower(px, py, size, easeOutBack(bp), rot);
+    }
+  }
+
+  function drawFall(t, dt) {
+    const a = clamp((t - 1200) / 2000);
+    ctx.fillStyle = 'rgba(255,222,100,.85)';
+    for (const p of fall) {
+      p.y += p.v * dt; p.rot += p.sp * dt;
+      if (p.y > H + 20) { p.y = -20; p.x = Math.random() * W; }
+      ctx.save(); ctx.globalAlpha = a;
+      ctx.translate(p.x + Math.sin(t * .001 + p.ph) * p.sw, p.y); ctx.rotate(p.rot);
+      ctx.beginPath(); ctx.ellipse(0, 0, p.s, p.s * .55, 0, 0, 7); ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function startGarden() {
+    fit();
+    const n = clamp(Math.round(W / 95), 5, 15);
+    const base = clamp(W / n * .4, 20, 54);
+    flowers = Array.from({ length: n }, (_, i) => ({
+      fx: (i + .5 + (Math.random() - .5) * .5) / n,   // posiciones repartidas con azar
+      sh: .26 + Math.random() * .34,                  // altura del tallo (fracción de la pantalla)
+      bend: (Math.random() - .5) * .09,               // curvatura
+      size: base * (.8 + Math.random() * .4),
+      d: (REDUCE ? 100 : 250) + Math.random() * 2200, // delay propio
+      ph: Math.random() * 6.28,
+      spin: (Math.random() < .5 ? -1 : 1) * (.00008 + Math.random() * .00008)
+    }));
+    const m = REDUCE ? 0 : clamp(Math.round(W / 16), 24, 70);
+    fall = Array.from({ length: m }, () => ({
+      x: Math.random() * W, y: -Math.random() * H, s: 5 + Math.random() * 7, v: 28 + Math.random() * 45,
+      ph: Math.random() * 6.28, sw: 14 + Math.random() * 26, rot: Math.random() * 6.28, sp: (Math.random() - .5) * 2.2
+    }));
+    let t0 = 0, last = 0;
+    (function frame(now) {
+      if (!t0) t0 = last = now;
+      const t = now - t0, dt = Math.min(.05, (now - last) / 1000); last = now;
+      ctx.clearRect(0, 0, W, H);
+      flowers.forEach(f => drawStem(f, t));
+      drawFall(t, dt);
+      requestAnimationFrame(frame);
+    })(performance.now());
+  }
+
+  /* ---------- Resize: reacomoda el "No" y el canvas ---------- */
+  addEventListener('resize', () => {
+    if (done) { fit(); return; }
+    if (floating) moveNo();
+  });
+})();
+</script>
+</body>
+</html>
