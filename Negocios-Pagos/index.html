@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de cobro con tarjeta | VR+ Colabs</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:#F6F7F9;--ink:#0D1526;--mut:#5B6577;--line:#E1E5EC;--surf:#fff;--acc:#2447F5;--soft:#E8EDFF;--ok:#0E9F6E;--warn:#9A6B12;
+--serif:'Instrument Serif',Georgia,serif;--sans:'Geist','Segoe UI',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}
+@media(prefers-color-scheme:dark){:root{--bg:#0A0E19;--ink:#EDF0F7;--mut:#8F9BB3;--line:#1F283B;--surf:#101725;--acc:#7C97FF;--soft:#141D38;--ok:#4ADE9E;--warn:#E5B85C}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
+.w{max-width:1040px;margin:0 auto;padding:0 24px}
+.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:64px}
+.brand{font:400 1.5rem var(--serif)}.brand span{color:var(--acc)}
+.tabs{position:relative;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs button{background:none;border:0;color:var(--mut);font:500 .92rem var(--sans);padding:22px 12px;cursor:pointer;white-space:nowrap;transition:color .2s}
+.tabs button:hover,.tabs button[aria-selected=true]{color:var(--ink)}
+.ind{position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--acc);border-radius:2px;transition:transform .35s var(--ease),width .35s var(--ease)}
+.tab{animation:in .5s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.015em;line-height:1.05}
+h2{font-size:1.9rem;margin-bottom:18px}
+.muted{color:var(--mut)}.sm{font-size:.9rem}
+.intro{padding:56px 0 30px}.intro h1{font-size:clamp(2.4rem,5vw,3.6rem);margin-bottom:12px}
+.intro p,.sub{color:var(--mut);max-width:58ch;font-size:1.08rem}
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:56px;align-items:center;padding:72px 0 64px}
+.hero h1{font-size:clamp(2.7rem,6.2vw,4.9rem);line-height:1;margin-bottom:22px}
+.hw{display:inline-block;opacity:0;animation:rise .8s var(--ease) forwards;animation-delay:calc(var(--i)*60ms)}
+@keyframes rise{from{opacity:0;transform:translateY(.35em);filter:blur(8px)}to{opacity:1;filter:none}}
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{background:var(--ink);color:var(--bg);border:1px solid var(--ink);border-radius:99px;padding:13px 26px;font:500 1rem var(--sans);cursor:pointer;transition:transform .2s var(--ease)}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.97)}
+.btn.g{background:transparent;color:var(--ink);border-color:var(--line)}
+a.btn{display:inline-block;text-decoration:none}
+.pay{background:var(--surf);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 30px 60px -34px var(--acc);animation:in .9s .3s var(--ease) both}
+.pay small{color:var(--mut)}.pay-amt{font:400 3.3rem/1 var(--serif);margin:8px 0 22px;font-variant-numeric:tabular-nums}
+.pay-ok{display:flex;align-items:center;gap:10px;color:var(--ok);font-weight:500}
+.pay-ok svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pay-ok circle{stroke-dasharray:63;stroke-dashoffset:63;animation:draw .6s 1.7s var(--ease) forwards}
+.pay-ok path{stroke-dasharray:20;stroke-dashoffset:20;animation:draw .4s 2.15s var(--ease) forwards}
+.pay-ok span{animation:in .5s 1.9s both}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pay-row{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:22px;padding-top:14px;font-size:.92rem;color:var(--mut)}.pay-row b{color:var(--ink);font-weight:500}
+.giros{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 44px}
+.giros button{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:99px;padding:10px 18px;font:500 .95rem var(--sans);cursor:pointer;transition:all .2s var(--ease)}
+.giros button span{display:none}.giros button:hover{border-color:var(--ink)}.giros button:active{transform:scale(.96)}
+.giros button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:56px;align-items:start;padding-bottom:40px}
+.card{border-top:1px solid var(--line);padding:30px 0}
+form.card,.grid>.card,#iva .grid>div:first-child>.card{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:24px;margin-bottom:18px}
+form.card{position:sticky;top:84px}
+#out>.card:first-child,#iout>.card:first-child,#pout>.card:first-child{border-top:0;padding-top:0}
+label{display:block;font-weight:500;font-size:.9rem;margin:16px 0 6px}label small{display:block;font-weight:400;color:var(--mut);font-size:.8rem}
+input,select{width:100%;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:400 1rem var(--sans);transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 3px var(--soft)}
+.big{font:400 clamp(3.2rem,8vw,5.2rem)/1 var(--serif);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px}
+.stat{border-left:2px solid var(--line);padding-left:16px}.stat b{display:block;font:400 1.9rem/1.2 var(--serif);font-variant-numeric:tabular-nums}
+.pill{display:block;color:var(--acc);font-weight:500;font-size:.9rem;margin-bottom:10px}
+.note{border-left:2px solid var(--warn);padding-left:14px;color:var(--mut);font-size:.9rem;margin-top:18px}
+table{width:100%;border-collapse:collapse;margin-top:18px;font-size:.95rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:11px 0;border-bottom:1px solid var(--line)}th{color:var(--mut);font-weight:400}
+td:nth-child(n+2),th:nth-child(n+2){text-align:right}td.n{color:var(--ok);font-weight:600}
+ul.ck{list-style:none;display:grid;gap:12px;margin-top:8px}
+ul.ck label{display:flex;gap:12px;margin:0;font-weight:400;font-size:1rem;cursor:pointer;align-items:flex-start}
+ul.ck input{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin-top:3px;padding:0;border-radius:6px;border:1.5px solid var(--mut);display:grid;place-content:center;transition:all .2s var(--ease)}
+ul.ck input::after{content:"";width:9px;height:5px;border:solid var(--bg);border-width:0 0 2px 2px;transform:rotate(-45deg) scale(0);transition:transform .2s var(--ease);margin-top:-2px}
+ul.ck input:checked{background:var(--ok);border-color:var(--ok)}ul.ck input:checked::after{transform:rotate(-45deg) scale(1)}
+ul.ck input:checked+span{color:var(--mut);text-decoration:line-through}
+.empty{border:1px dashed var(--line);border-radius:18px;padding:60px 24px;text-align:center;color:var(--mut)}
+.mix{display:flex;height:14px;border-radius:99px;overflow:hidden;background:var(--line);margin:4px 0 12px}
+.mix i{display:block;height:100%;width:0;transition:width .7s var(--ease)}
+.c1{background:color-mix(in srgb,var(--ink) 85%,transparent)}.c2{background:color-mix(in srgb,var(--ink) 55%,transparent)}.c3{background:color-mix(in srgb,var(--ink) 30%,transparent)}.c4{background:color-mix(in srgb,var(--ink) 15%,transparent)}.c5{background:var(--ok)}
+.lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--mut);margin-bottom:22px}.lg span{display:flex;align-items:center;gap:6px}.lg i{width:9px;height:9px;border-radius:50%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:8px 0 72px}
+.opt{position:relative;padding:32px;border:1px solid var(--line);border-radius:20px}
+.opt.rec{background:var(--soft);border-color:var(--acc)}.opt h3{font-size:1.7rem}
+.tag{position:absolute;top:-12px;left:24px;background:var(--acc);color:#fff;font-size:.8rem;font-weight:500;padding:3px 12px;border-radius:99px}
+.opt ul{list-style:none;display:grid;gap:12px;margin-top:18px}.opt li{padding-left:26px;position:relative}
+.opt li::before{content:"";position:absolute;left:2px;top:.5em;width:10px;height:6px;border:solid var(--ok);border-width:0 0 2px 2px;transform:rotate(-45deg)}
+.soft li::before{border:0;border-top:2px solid var(--mut);width:9px;height:0;transform:none;top:.75em}
+.fear{border-top:1px solid var(--line);padding-top:22px}.fear h3{font-size:1.5rem}
+.cta{background:var(--ink);color:var(--bg);border:0;border-radius:26px;padding:64px 24px;text-align:center;margin:0 0 72px}
+.cta .muted{color:inherit;opacity:.7}.cta .btn{background:var(--bg);color:var(--ink);border-color:var(--bg)}
+footer{color:var(--mut);font-size:.82rem;padding:24px 0 56px;border-top:1px solid var(--line)}
+@media(max-width:860px){.hero,.grid,.two{grid-template-columns:1fr}.hero{padding-top:40px;gap:36px}.grid{gap:28px}form.card{position:static}.nav{flex-direction:column;align-items:stretch;gap:0;padding-top:12px}.tabs button{padding:12px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.hw{opacity:1}.pay-ok circle,.pay-ok path{stroke-dashoffset:0}}
+@media print{.top,.giros,form.card,.acts,.pay{display:none}body{background:#fff;color:#111}}
+</style>
+</head>
+<body>
+<div class="top"><div class="w nav"><span class="brand">VR<span>+</span> Colabs</span>
+<nav class="tabs" role="tablist" aria-label="Secciones"><button data-t="prop" role="tab" aria-selected="true">Propuesta</button><button data-t="sim" role="tab" aria-selected="false">Simulador</button><button data-t="iva" role="tab" aria-selected="false">Calculadora de IVA</button><button data-t="pre" role="tab" aria-selected="false">Calculadora de precios</button><i class="ind"></i></nav></div></div>
+<div class="w">
+<section class="tab" id="prop">
+<div class="hero"><div>
+<h1 class="split">Tus clientes ya quieren pagar con tarjeta. Solo falta que tú les digas que sí.</h1>
+<p class="sub">Cada vez que alguien dice "no traigo efectivo", esa venta se queda en el mostrador. Con una terminal sencilla cobras al momento y sin perder ni una compra más.</p>
+<div class="acts"><button class="btn" data-go="sim">Simular mi negocio</button><button class="btn g" onclick="el('opc').scrollIntoView({behavior:'smooth'})">Ver mis opciones</button></div></div>
+<div class="pay" aria-hidden="true"><small>Cobro con tarjeta</small><div class="pay-amt" id="payamt">$185.00</div>
+<div class="pay-ok"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M7 12.5l3.2 3.2L17 9"/></svg><span>Pago aprobado</span></div>
+<div class="pay-row"><span>Dinero disponible</span><b>Al instante</b></div></div></div>
+<h2 id="opc" style="font-size:1.6rem">Dos caminos buenos. Uno es más fácil.</h2>
+<div class="two">
+<article class="card opt soft"><h3>Openpay</h3><p class="muted">Respaldo de BBVA</p>
+<ul><li>Viene de un banco muy sólido, eso da confianza.</li><li>Funciona bien, pero el alta es más burocrática: más papeles, más pasos y más espera.</li><li>Buena opción si ya tienes todo tu papeleo al día y no traes prisa.</li></ul></article>
+<article class="card opt rec"><span class="tag">Nuestra recomendada</span><h3>Mercado Pago Point Smart 2</h3><p class="muted">Pensada para negocios como el tuyo</p>
+<ul><li>Pantalla táctil: cobrar es tan fácil como usar tu celular.</li><li>Imprime el ticket ahí mismo, como tus clientes esperan.</li><li>Internet incluido, sin plan aparte ni wifi.</li><li>Tu dinero disponible al instante.</li><li>Tu saldo genera rendimientos mientras decides qué hacer con él.</li></ul></article></div>
+<h2 style="font-size:1.6rem">Los dos miedos de siempre, resueltos</h2>
+<div class="two">
+<div class="fear"><h3>"Las comisiones se van a comer mi ganancia."</h3><p class="muted" style="margin-top:8px">Se maneja. Con un ajuste pequeño en tus precios la absorbes sin que tus clientes lo noten, y lo que ganas es lo que hoy pierdes cuando alguien se va por no traer efectivo. En el simulador te decimos cuánto exactamente.</p></div>
+<div class="fear"><h3>"El SAT me va a complicar la vida."</h3><p class="muted" style="margin-top:8px">Si te inscribes en RESICO, pagas solo entre 1% y 2.5% de ISR sobre tus ingresos, según tu nivel. Es un régimen hecho para negocios pequeños como el tuyo.</p></div></div>
+<div class="card cta"><h2 style="font-size:1.6rem">No tienes que hacerlo sola. Nosotros nos encargamos.</h2>
+<p class="muted" style="max-width:56ch;margin:0 auto 20px">En VR+ Colabs te acompañamos de principio a fin: te asesoramos, instalamos contigo tu terminal y seguimos ahí si algo se atora.</p>
+<a class="btn" href="https://wa.me/52XXXXXXXXXX?text=Hola%2C%20quiero%20aceptar%20pagos%20con%20tarjeta%20en%20mi%20negocio">Escríbenos por WhatsApp</a></div>
+</section>
+<div class="tab" id="sim" hidden>
+<section class="intro">
+<h1>Cobrar con tarjeta sin perder ganancia</h1>
+<p>Elige el giro del negocio, captura sus números y te decimos cuánto ajustar precios, qué régimen le conviene y qué pedirle a su contador.</p>
+</section>
+
+<h2>1. ¿Qué giro tiene el negocio?</h2>
+<div class="giros" id="giros" role="group" aria-label="Giro del negocio"></div>
+
+<div class="grid">
+<form class="card" id="f" onsubmit="return false" hidden>
+<h2>2. Sus números</h2>
+<label for="pers">Tipo de contribuyente</label>
+<select id="pers"><option value="pf">Persona física (el dueño a su nombre)</option><option value="pm">Persona moral (S.A., S. de R.L., etc.)</option></select>
+<label for="inc">Ventas al mes, sin IVA <small>Aproximado, en pesos</small></label>
+<input id="inc" type="number" min="0" step="1000" value="60000">
+<label for="tk">Ticket promedio <small>Lo que gasta un cliente por visita, en pesos</small></label>
+<input id="tk" type="number" min="1" value="120">
+<label for="sh">Ventas que pasarán por tarjeta (%) <small>Empieza con lo típico del giro; ajústalo</small></label>
+<input id="sh" type="number" min="1" max="100" value="35">
+<label for="cm">Comisión de la terminal (%, sin IVA) <small>Valor de referencia. Confirma la tarifa vigente del contrato</small></label>
+<input id="cm" type="number" min="0" step="0.01" value="3.5">
+</form>
+
+<div id="out"><div class="empty">Elige un giro arriba para empezar la simulación.</div></div>
+</div>
+
+</div>
+<section class="tab" id="iva" hidden>
+<div class="intro"><h1>Calculadora de IVA</h1><p>Agrega o separa el IVA de un precio y estima cuánto IVA pagaría el negocio en el mes.</p></div>
+<div class="grid"><div>
+<div class="card"><h2>Un precio</h2>
+<label for="im">Monto</label><input id="im" type="number" min="0" value="1000">
+<label for="imode">Ese monto es</label><select id="imode"><option value="sin">Precio sin IVA (agregar IVA)</option><option value="con">Precio con IVA incluido (separar IVA)</option></select>
+<label for="it">Tasa de IVA</label><select id="it"><option value="16">16% (general)</option><option value="0">0% (alimentos, medicinas, libros)</option><option value="ex">Exento (educación, servicios médicos)</option></select></div>
+<div class="card"><h2>IVA del mes</h2>
+<label for="iv16">Ventas con IVA 16% <small>Sin IVA, en pesos</small></label><input id="iv16" type="number" min="0" value="60000">
+<label for="ivx">Ventas exentas <small>Si no tienes, deja 0</small></label><input id="ivx" type="number" min="0" value="0">
+<label for="icp">Compras y gastos con factura e IVA 16% <small>Sin IVA</small></label><input id="icp" type="number" min="0" value="25000">
+<label for="icm">Comisiones de la terminal <small>Sin IVA. Se llena con el simulador</small></label><input id="icm" type="number" min="0" placeholder="0"></div>
+</div><div id="iout"></div></div></section>
+<section class="tab" id="pre" hidden>
+<div class="intro"><h1>¿A cuánto debo vender?</h1><p>Calcula el precio al público que cubre costo, gastos, IVA, comisión de tarjeta, ISR y tu ganancia.</p></div>
+<div class="grid"><div class="card"><h2>Datos del producto</h2>
+<label for="pc">Costo del producto <small>Lo que te cuesta, sin IVA</small></label><input id="pc" type="number" min="0" step="0.5" value="60">
+<label for="pg">Otros gastos por unidad <small>Renta, luz, sueldos, empaque y merma entre las unidades que vendes</small></label><input id="pg" type="number" min="0" step="0.5" value="10">
+<label for="pgm">Ganancia deseada (%) <small>Sobre el precio sin IVA</small></label><input id="pgm" type="number" min="0" max="80" value="30">
+<label for="pt">Tasa de IVA del producto</label><select id="pt"><option value="16">16% (general)</option><option value="0">0% (alimentos, medicinas, libros)</option><option value="ex">Exento</option></select>
+<label for="ps">Ventas con tarjeta (%)</label><input id="ps" type="number" min="0" max="100" value="40">
+<label for="pcm">Comisión de la terminal (%, sin IVA) <small>Referencia. Confirma tu tarifa</small></label><input id="pcm" type="number" min="0" step="0.01" value="3.5">
+<label for="pi">ISR sobre ventas (%) <small>En RESICO es la tasa de 1% a 2.5%. En otro régimen, un estimado del contador</small></label><input id="pi" type="number" min="0" step="0.1" value="1"></div>
+<div><div class="mix" id="pbar" aria-hidden="true"><i id="b1" class="c1"></i><i id="b2" class="c2"></i><i id="b3" class="c3"></i><i id="b4" class="c4"></i><i id="b5" class="c5"></i></div>
+<div class="lg" aria-hidden="true"><span><i class="c1"></i>Costo</span><span><i class="c2"></i>Gastos</span><span><i class="c3"></i>Comisión</span><span><i class="c4"></i>ISR</span><span><i class="c5"></i>Ganancia</span></div>
+<div id="pout"></div></div></div></section>
+<footer>Estimaciones orientativas para asesoría comercial, no sustituyen a un contador. Confirma con el contador las tablas del SAT vigentes (se actualizan) y con el proveedor la tarifa de comisión.</footer>
+</div>
+
+<script>
+const G=[
+{id:'pap',n:'Papelería y útiles',e:'✏️',iva:'16',s:35,t:120,i:[['Cuaderno profesional',45],['Kit de geometría',89],['Mochila',350]],tip:'En regreso a clases los tickets suben y las comisiones pesan más: conviene tener el precio ya ajustado antes de temporada.'},
+{id:'aba',n:'Abarrotes y miscelánea',e:'🛒',iva:'mix',s:25,t:90,i:[['Refresco 600 ml',20],['Botana',18],['Leche 1 L',28]],tip:'Mezcla productos con IVA 0% y 16%. Pídele al contador que separe las ventas por tasa.'},
+{id:'fon',n:'Fonda o restaurante',e:'🍽️',iva:'16',s:45,t:180,i:[['Comida corrida',90],['Cerveza',45],['Postre',55]],tip:'Define cómo se maneja la propina en la terminal y cómo se reparte al equipo.'},
+{id:'caf',n:'Cafetería y alimentos preparados',e:'☕',iva:'16',s:50,t:95,i:[['Café americano',38],['Frappé',68],['Sándwich',75]],tip:'Tickets chicos y muchos: la comisión por operación se nota, así que revisa bien el ajuste.'},
+{id:'est',n:'Estética, barbería y spa',e:'💇',iva:'16',s:40,t:250,i:[['Corte',150],['Tinte',600],['Manicure',220]],tip:'Los servicios de mayor precio (tintes, tratamientos) son donde más cliente paga con tarjeta.'},
+{id:'rop',n:'Ropa, accesorios y regalos',e:'👗',iva:'16',s:55,t:450,i:[['Playera',250],['Jeans',550],['Bolsa',700]],tip:'Casi la mitad de las ventas suele ir a tarjeta: ajusta el precio de lista para todos.'},
+{id:'fer',n:'Ferretería y materiales',e:'🔧',iva:'16',s:40,t:300,i:[['Cinta',45],['Taladro',900],['Pintura 4 L',420]],tip:'Tickets altos con clientes de obra: valida si necesitan factura (CFDI) casi siempre.'},
+{id:'tal',n:'Taller mecánico y auto',e:'🚗',iva:'16',s:50,t:1200,i:[['Cambio de aceite',650],['Afinación',1200],['Frenos',1800]],tip:'Ticket alto: cuida el costo por comisión y ofrécele factura al cliente.'},
+{id:'pro',n:'Servicios profesionales',e:'💼',iva:'16',s:60,t:1500,i:[['Consulta por hora',800],['Logo y branding',2500],['Asesoría mensual',3000]],tip:'Casi todo cliente pide factura: emitir CFDI 4.0 a tiempo es parte del servicio.'},
+{id:'esc',n:'Escuela o academia',e:'🎓',iva:'ex',s:40,t:1200,i:[['Mensualidad',1200],['Inscripción',900],['Taller',450]],tip:'La educación con RVOE está exenta de IVA: el IVA de la comisión no se puede acreditar, es un costo real.'},
+{id:'sal',n:'Consultorio y salud',e:'🩺',iva:'ex',s:50,t:700,i:[['Consulta',700],['Limpieza dental',900],['Estudio',500]],tip:'Los servicios médicos profesionales suelen ser exentos de IVA: la comisión con IVA se vuelve costo.'},
+{id:'tor',n:'Tortillería, frutería y carnicería',e:'🥩',iva:'0',s:20,t:90,i:[['Kilo de tortilla',24],['Kilo de jitomate',30],['Kilo de pollo',95]],tip:'Alimentos con IVA 0%: margen ajustado, así que revisa con cuidado si conviene mover precios o el volumen.'},
+{id:'otr',n:'Otro giro',e:'🏪',iva:'16',s:40,t:250,i:[['Producto ligero',100],['Producto medio',250],['Producto alto',500]],tip:'Captura sus números reales y ajusta el porcentaje de tarjeta que esperan.'}
+];
+const $=n=>n.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});
+const el=id=>document.getElementById(id);
+let g=null;
+const box=el('giros');
+G.forEach(x=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed','false');b.dataset.id=x.id;b.innerHTML=`<span aria-hidden="true">${x.e}</span>${x.n}`;b.onclick=()=>pick(x,b);box.appendChild(b)});
+function pick(x,b){g=x;box.querySelectorAll('button').forEach(k=>k.setAttribute('aria-pressed',k===b));el('sh').value=x.s;el('tk').value=x.t;el('f').hidden=false;calc()}
+['pers','inc','tk','sh','cm'].forEach(i=>el(i).addEventListener('input',calc));
+const rnd=p=>p<100?Math.ceil(p):p<1000?Math.ceil(p/5)*5:Math.ceil(p/10)*10;
+function regime(m){const a=m*12;
+ if(el('pers').value==='pm')return{t:'Persona moral',d:a<=35e6?'Puede evaluar RESICO de Personas Morales (ingresos hasta $35 millones al año) o el Régimen General. El contador decide según socios y utilidad.':'Régimen General de Ley de Personas Morales.'};
+ if(a<=3.5e6){const r=m<=25000?1:m<=50000?1.1:m<=83333.33?1.5:m<=208333.33?2:2.5;
+  return{t:'RESICO Personas Físicas',d:`Ingresos anuales estimados de ${$(a)}, dentro del tope de $3.5 millones. Paga ISR mensual solo sobre lo que cobra, con tasa de ${r}% para su nivel.`,isr:m*r/100,r}}
+ return{t:'Actividad empresarial y profesional (PFAE)',d:`Ingresos anuales estimados de ${$(a)}, arriba del tope de $3.5 millones de RESICO. Paga ISR progresivo con deducciones; el contador lo calcula.`}}
+function calc(){if(!g)return;
+ const m=+el('inc').value||0,tk=+el('tk').value||0,s=(+el('sh').value||0)/100,c=(+el('cm').value||0)/100,pm=el('pers').value==='pm';
+ const ex=g.iva==='ex',e=c*(g.iva==='0'?1:1.16),x=1/(1-s*e)-1,cardM=m*s;
+ const cost=cardM*c*(ex||g.iva==='0'?1:1.16),ivaC=cost*.16,r=regime(m);window.Lc=cost;
+ const rows=g.i.map(([n,p])=>{const q=rnd(p/(1-s*e));return`<tr><td>${n}</td><td>${$(p)}</td><td class="n">${$(q)}</td><td>+${$(q-p)}</td></tr>`}).join('');
+ const steps=[
+ 'Pedir al cliente su Constancia de Situación Fiscal y confirmar el régimen actual.',
+ 'Verificar e.firma vigente y buzón tributario activo.',
+ pm?'Confirmar con el contador el régimen de la empresa y la contabilidad electrónica.':(r.isr!==undefined?'Si aún no está en RESICO, el contador presenta el cambio de régimen ante el SAT y valida que no tenga impedimentos (por ejemplo, ser socio de una empresa).':'El contador valida su régimen y las deducciones del negocio.'),
+ 'Dar de alta la terminal con RFC y una CLABE del negocio, separada de su cuenta personal.',
+ 'Emitir CFDI 4.0 a quien lo pida y factura global al público en general.',
+ 'Declarar ISR e IVA cada mes, a más tardar el día 17 del mes siguiente. Todo lo cobrado con tarjeta cuenta como ingreso.',
+ `Actualizar lista de precios (+${(x*100).toFixed(1)}%) antes de encender la terminal.`,
+ 'Cerrar con el contador: dudas de IVA por tasa, deducciones y declaración anual.'];
+ const sum=`Giro: ${g.n}\nVentas mensuales: ${$(m)} | Tarjeta: ${(s*100).toFixed(0)}% | Comisión: ${(c*100).toFixed(2)}% + IVA\nAjuste sugerido de precios: +${(x*100).toFixed(1)}%\nRégimen sugerido: ${r.t}${r.isr!==undefined?` (ISR estimado ${$(r.isr)}/mes)`:''}\nPasos:\n- ${steps.join('\n- ')}`;
+ el('out').innerHTML=`
+<div class="card"><span class="pill">${g.n}</span><h2>Cuánto subir los precios</h2>
+<div class="big">+${(x*100).toFixed(1)}%</div>
+<p class="muted sm" style="margin-top:8px">Con este ajuste, lo que le cuesta cobrar con tarjeta queda cubierto y su utilidad se queda igual. Se aplica a todos los clientes, sin recargo por pagar con tarjeta.</p>
+<table><thead><tr><th>Ejemplo</th><th>Hoy</th><th>Nuevo</th><th>Sube</th></tr></thead><tbody>${rows}</tbody></table>
+<p class="note">${g.tip}</p></div>
+<div class="card"><h2>Lo que le cuesta cobrar con tarjeta</h2><div class="row">
+<div class="stat"><span class="muted sm">Comisión al mes</span><b>${$(cost)}</b><span class="muted sm">más ${$(ivaC)} de IVA</span></div>
+<div class="stat"><span class="muted sm">En un ticket de ${$(tk)}</span><b>${$(tk*c)}</b><span class="muted sm">de comisión</span></div></div>
+<p class="note">${ex?'Giro exento de IVA: el IVA de la comisión no se acredita y es costo real. Ya está dentro del ajuste.':'La comisión se cobra sobre el total con IVA y su IVA se acredita en la declaración mensual. Ambos efectos ya están dentro del ajuste.'}</p></div>
+<div class="card"><h2>Régimen fiscal sugerido</h2><span class="pill">${r.t}</span>
+<p class="sm">${r.d}</p>
+${r.isr!==undefined?`<div class="row"><div class="stat"><span class="muted sm">ISR estimado al mes</span><b>${$(r.isr)}</b></div><div class="stat"><span class="muted sm">Tasa RESICO</span><b>${r.r}%</b></div></div>`:''}
+<p class="note">El IVA es aparte: se cobra según la tasa de cada producto o servicio y se declara cada mes.</p></div>
+<div class="card"><h2>Plan de acción con su contador</h2>
+<ul class="ck">${steps.map((t,i)=>`<li><label><input type="checkbox"><span>${t}</span></label></li>`).join('')}</ul></div>
+<div class="acts"><button class="btn" id="cp" type="button">Copiar resumen para el contador</button><button class="btn g" type="button" onclick="print()">Imprimir o guardar PDF</button></div>`;
+ el('cp').onclick=async()=>{try{await navigator.clipboard.writeText(sum);el('cp').textContent='Copiado'}catch(_){prompt('Copia el resumen:',sum)}}}
+
+const num=i=>+el(i).value||0,$2=n=>n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+function ivaCalc(){
+ const a=num('im'),t=el('it').value,r=t==='16'?.16:0,b=el('imode').value==='sin'?a:a/(1+r);
+ const cob=num('iv16')*.16,ac=(num('icp')+num('icm'))*.16,res=cob-ac;
+ el('iout').innerHTML=`<div class="card"><h2>Un precio</h2><div class="row"><div class="stat"><span class="muted sm">Precio sin IVA</span><b>${$2(b)}</b></div><div class="stat"><span class="muted sm">IVA ${t==='ex'?'(exento)':'('+(r*100)+'%)'}</span><b>${$2(b*r)}</b></div></div><div class="big" style="margin-top:18px">${$2(b*(1+r))}</div><p class="muted sm">Precio final al público</p></div>
+<div class="card"><h2>IVA del mes</h2><div class="row"><div class="stat"><span class="muted sm">IVA que cobraste</span><b>${$(cob)}</b></div><div class="stat"><span class="muted sm">IVA acreditable</span><b>${$(ac)}</b></div></div><div class="big" style="margin-top:18px">${$(Math.abs(res))}</div><p class="muted sm">${res>=0?'IVA a pagar al SAT':'Saldo a favor'}</p>
+<p class="note">El IVA se paga sobre lo efectivamente cobrado y solo se acredita con facturas (CFDI) de compras y gastos. ${num('ivx')>0?'Con ventas exentas, solo se acredita la parte proporcional: lo calcula el contador. ':''}Se declara a más tardar el día 17 del mes siguiente.</p></div>`}
+function preCalc(){
+ const c=num('pc'),g=num('pg'),mg=num('pgm')/100,s=num('ps')/100,t=el('pt').value,r=t==='16'?.16:0,e=num('pcm')/100*(t==='0'?1:1.16),isr=num('pi')/100,den=1-mg-s*e-isr;
+ if(den<=.02){el('pout').innerHTML='<div class="card"><p class="note">Con esa ganancia, comisión e ISR ya no hay margen posible. Baja la ganancia deseada.</p></div>';return}
+ const final=rnd((c+g)/den*(1+r)),base=final/(1+r),com=base*s*e,tax=base*isr,gan=base-c-g-com-tax;[c,g,com,tax,gan].forEach((v,k)=>el("b"+(k+1)).style.width=Math.max(0,v/base*100)+"%");
+ el('pout').innerHTML=`<div class="card"><h2>Precio al público</h2><div class="big">${$2(final)}</div><p class="muted sm" style="margin-top:8px">${t==='ex'?'Producto exento: no lleva IVA.':'Incluye '+$2(final-base)+' de IVA.'} Redondeado hacia arriba, así la ganancia real queda igual o mayor a la deseada.</p>
+<table><thead><tr><th>Cómo se reparte (sin IVA)</th><th>Monto</th></tr></thead><tbody>
+<tr><td>Precio sin IVA</td><td>${$2(base)}</td></tr><tr><td>Costo del producto</td><td>${$2(c)}</td></tr><tr><td>Otros gastos</td><td>${$2(g)}</td></tr>
+<tr><td>Comisión de tarjeta (promedio)</td><td>${$2(com)}</td></tr><tr><td>ISR estimado</td><td>${$2(tax)}</td></tr><tr><td>Ganancia neta</td><td class="n">${$2(gan)} (${(gan/base*100).toFixed(1)}%)</td></tr></tbody></table>
+<p class="note">La comisión promedio ya reparte el costo entre ventas en efectivo y con tarjeta, y considera que se cobra sobre el total con IVA.</p></div>`}
+['im','imode','it','iv16','ivx','icp','icm'].forEach(i=>el(i).addEventListener('input',ivaCalc));
+['pc','pg','pgm','pt','ps','pcm','pi'].forEach(i=>el(i).addEventListener('input',preCalc));
+function tab(t){document.querySelectorAll('.tab').forEach(s=>s.hidden=s.id!==t);document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));
+ if(t==='iva'&&window.Lc&&!el('icm').value)el('icm').value=Math.round(window.Lc);ivaCalc();preCalc();scrollTo(0,0);ind()}
+document.querySelectorAll('[data-t],[data-go]').forEach(b=>b.onclick=()=>tab(b.dataset.t||b.dataset.go));
+ivaCalc();preCalc();
+
+const PV={},RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function ani(n,pre,suf,from,v,d,ms,delay=0){const t0=performance.now()+delay;(function f(now){if(!n.isConnected)return;const p=Math.min(1,Math.max(0,(now-t0)/ms)),x=from+(v-from)*(1-Math.pow(1-p,3));n.textContent=pre+x.toLocaleString('es-MX',{minimumFractionDigits:d,maximumFractionDigits:d})+suf;if(p<1)requestAnimationFrame(f)})(performance.now())}
+function tween(root){if(RM)return;root.querySelectorAll('.big,.stat b').forEach((n,i)=>{const t=n.textContent,m=t.match(/[\d,]+(?:\.\d+)?/);if(!m)return;
+ const v=parseFloat(m[0].replace(/,/g,'')),d=(m[0].split('.')[1]||'').length,k=root.id+i,from=PV[k]??0;PV[k]=v;if(from!==v)ani(n,t.slice(0,m.index),t.slice(m.index+m[0].length),from,v,d,450)})}
+['out','iout','pout'].forEach(id=>new MutationObserver(()=>tween(el(id))).observe(el(id),{childList:true}));
+function ind(){const b=document.querySelector('.tabs [aria-selected=true]'),i=document.querySelector('.ind');i.style.width=b.offsetWidth+'px';i.style.transform='translateX('+b.offsetLeft+'px)'}
+document.querySelectorAll('.split').forEach(h=>{const t=h.textContent;h.setAttribute('aria-label',t);h.innerHTML=t.split(' ').map((w,i)=>`<span class="hw" aria-hidden="true" style="--i:${i}">${w}</span>`).join(' ')});
+if(!RM)ani(el('payamt'),'$','',0,185,2,1200,700);
+addEventListener('resize',ind);document.fonts.ready.then(ind);ind();
+</script>
+</body>
+</html>
