@@ -122,7 +122,20 @@ Resultado: Vout se queda fijo en ≈ <b>5.1 V</b>, sin importar que Vin siga sub
 <section class="sec" id="circuito"><div class="wrap rev"><h2 class="sh"><em>03</em>Cómo funciona el circuito</h2><p class="lead">Ejemplo: VS = 9 V, VZ = 5.1 V y RS = 220 Ω</p>
 <div class="two"><div class="card"><h2>Cálculo principal</h2><div class="fm">IS = (VS − VZ) / RS</div>
 <details><summary>Ver paso a paso</summary><div class="fm">IS = (9 − 5.1) / 220<br>IS = 3.9 / 220 ≈ <b>17.7 mA</b></div><p>La resistencia absorbe la diferencia de tensión y limita la corriente.</p></details></div>
-<div class="card"><h2>Resultado</h2><div class="fm">Vout ≈ <b>5.1 V</b></div><p>Mientras el Zener opere en su región adecuada, la salida se queda alrededor de VZ. <a href="#sim" style="color:var(--acc)">Compruébalo en el simulador →</a></p></div><div class="card" style="grid-column:1/-1"><h2>Calculadora libre</h2><div class="two">
+<div class="card"><h2>Resultado</h2><div class="fm">Vout ≈ <b>5.1 V</b></div><p>Mientras el Zener opere en su región adecuada, la salida se queda alrededor de VZ. <a href="#sim" style="color:var(--acc)">Compruébalo en el simulador →</a></p></div><div class="card" style="grid-column:1/-1"><h2>¿Por qué RS = 220 Ω? (cálculo de diseño)</h2>
+<p>El valor de RS no se elige al azar: se calcula para fijar cuánta corriente pasa por el Zener sin que se queme, despejando la misma fórmula pero al revés.</p>
+<div class="fm">RS = (VS − VZ) / IZ</div>
+<details open><summary>Paso a paso</summary>
+<ol>
+<li><b>Corriente máxima que aguanta el Zener (dato del datasheet):</b> IZM = Pmax / VZ = 1000 mW / 5.1 V ≈ <b>196 mA</b> (1N4733A, 1 W).</li>
+<li><b>Elegir una corriente de diseño (IZ):</b> se usa un valor bien por debajo del máximo, para dejar margen de seguridad. Aquí se eligió <b>IZ ≈ 18 mA</b> (un valor típico de diseño).</li>
+<li><b>Despejar RS:</b> RS = (VS − VZ) / IZ = (9 − 5.1) / 0.018 ≈ <b>216.7 Ω</b>.</li>
+<li><b>Redondear al valor comercial más cercano:</b> las resistencias no vienen en cualquier número; el más cercano de la serie estándar es <b>220 Ω</b>, por eso se usa ese valor en todo el proyecto.</li>
+</ol>
+</details>
+<p class="hint">Si RS fuera más chica, pasaría más corriente y el Zener podría sobrecalentarse; si fuera más grande, pasaría muy poca corriente y el Zener podría salir de la zona de ruptura y dejar de regular.</p>
+</div>
+<div class="card" style="grid-column:1/-1"><h2>Calculadora libre</h2><div class="two">
 <div><div class="row"><label>Fuente VS <b id="kA"></b></label><input type="range" id="kv" min="0" max="30" step=".1" value="9"></div>
 <div class="row"><label>Zener VZ <b id="kB"></b></label><input type="range" id="kz" min="2" max="12" step=".1" value="5.1"></div>
 <div class="row"><label>Resistencia RS <b id="kC"></b></label><input type="range" id="kr" min="47" max="1000" step="1" value="220"></div></div>
@@ -258,7 +271,7 @@ $('cz').onclick=e=>{if(e.target.dataset.vz){S.vz=+e.target.dataset.vz;PMAX=+e.ta
 $('bNo').onclick=()=>{S.noise=!S.noise;sync()};$('bSp').onclick=()=>{S.spike=.6};
 $('bRe').onclick=()=>{S.dA=S.dB=false;S.spike=0};$('bEj').onclick=()=>{Object.assign(S,{vin:9,rs:220,vz:5.1,rl:Infinity,noise:false});PMAX=1000;sync()};
 
-const VZ=5.1,RS=220,EV={
+const VZ=5.1,RS=220,EVSLOW=.45,EV={
  wrong:{n:'🔌 Adaptador de 12 V',d:2.5,f:s=>12,x:'Conectaron un adaptador de 12 V en vez de 5 V. Sin Zener, todo ese voltaje llega a la CPU. Con Zener, RS absorbe el exceso y la CPU se queda en 5.1 V.'},
  hot:{n:'⚡ Conexión en caliente',d:1.8,f:s=>5+15*Math.exp(-s/.35)*Math.abs(Math.cos(s*14)),x:'Al enchufar con la placa energizada aparece un pico corto con rebotes. Dura milisegundos, pero basta para matar un chip sin protección.'},
  ind:{n:'🧲 Golpe de motor/relé',d:1.8,f:s=>5+19*Math.exp(-s/.4),x:'Al apagar un motor o un relé, su bobina suelta un golpe de voltaje. Es de las fallas más comunes en electrónica real.'},
@@ -266,7 +279,7 @@ const VZ=5.1,RS=220,EV={
  noise:{n:'🌊 Fuente ruidosa',d:3.5,f:s=>5+2.4*Math.sin(s*12)+1.1*Math.sin(s*35),x:'Una fuente barata mete ruido. El Zener recorta los picos hacia arriba, pero las bajadas no: por eso ambas placas se reinician.'},
  brown:{n:'📉 Caída de voltaje',d:2,f:s=>5-2.6*Math.min(1,Math.sin(Math.PI*s/2)*2),x:'El voltaje cae. El Zener no puede inventar voltaje: ambas placas se reinician. Solo protege contra subidas, y es importante decirlo.'},
  xtreme:{n:'☠️ Falla extrema 60 V',d:1.4,f:s=>60,x:'A 60 V ni el Zener alcanza: se sobrecalienta y falla en corto. Se sacrifica para salvar la CPU. Por eso en la vida real también hay fusibles.'}};
-const M={ev:null,t:0,t0:0,dead:[false,false],zb:false,rb:[0,0],chaos:false,nx:1,acc:0,H:[]};
+const M={ev:null,t:0,t0:0,evT:0,capturing:false,evPeakVin:0,evPeakPz:0,dead:[false,false],zb:false,rb:[0,0],chaos:false,nx:1,acc:0,H:[]};
 function pcHTML(z,title){
   const sx=z?165:240,sy=z?72:24;
   return `<h2>${title}</h2><svg viewBox="0 0 300 130" width="100%">
@@ -284,7 +297,18 @@ ${z?`<rect x="90" y="55" width="50" height="20" rx="3" fill="var(--card)" stroke
 $('pcA').innerHTML=pcHTML(0,'❌ Sin Zener');$('pcB').innerHTML=pcHTML(1,'✅ Con Zener');
 $('ev').innerHTML=Object.entries(EV).map(([k,e])=>`<button class="chip" data-e="${k}">${e.n}</button>`).join('');
 function note(txt){const li=document.createElement('li');li.textContent=`[${M.t.toFixed(1)} s] ${txt}`;$('blog').prepend(li);while($('blog').children.length>7)$('blog').lastChild.remove()}
-function go(k){M.ev=k;M.t0=M.t;$('m2msg').textContent=EV[k].x;note('▶ '+EV[k].n)}
+function go(k){M.ev=k;M.capturing=true;M.evT=0;M.evPeakVin=0;M.evPeakPz=0;M.H=[];
+  $('m2msg').innerHTML=`<b>${EV[k].n}</b><br>${EV[k].x}<br><small>⏳ Generando la gráfica en cámara lenta…</small>`;
+  note('▶ '+EV[k].n)}
+function finishEvent(k){
+  const m=M,peakI=Math.max(0,(m.evPeakVin-VZ)/RS*1000),conduce=m.evPeakVin>VZ,sobre=m.evPeakPz>PMAX;
+  $('m2msg').innerHTML=`<b>${EV[k].n} — qué acabas de ver</b><br>${EV[k].x}<br><br>`
+   +`📈 <b>Línea amarilla (Vin, sin Zener):</b> llegó a un pico de <b>${m.evPeakVin.toFixed(1)} V</b>. `
+   +(conduce?'Como supera VZ, el Zener entró en ruptura para regularlo.':'Nunca superó VZ = '+VZ+' V, así que el Zener se quedó apagado (zona de bloqueo) y no tuvo que actuar.')+'<br>'
+   +`🔵 <b>Línea turquesa (Vout, con Zener):</b> `+(conduce?`se mantuvo cerca de ${VZ} V mientras RS absorbía el resto.`:'siguió igual que Vin, porque el Zener no estaba conduciendo.')+'<br>'
+   +`🧮 <b>Corriente aproximada en el pico:</b> IS = (${m.evPeakVin.toFixed(1)} − ${VZ}) / ${RS} ≈ <b>${peakI.toFixed(1)} mA</b><br>`
+   +`🔥 <b>Potencia máxima en el Zener:</b> ${m.evPeakPz.toFixed(0)} mW de ${PMAX} mW máximos → `+(sobre?'<b>se pasó del límite</b> (por eso se sacrificó).':'se mantuvo dentro de lo seguro.');
+}
 function plot(id){const c=$(id),x=c.getContext('2d');let W=0,Hh=0;
   const fit=()=>{const d=devicePixelRatio||1;W=c.clientWidth;Hh=c.clientHeight;c.width=W*d;c.height=Hh*d;x.setTransform(d,0,0,d,0,0)};fit();
   return{fit,draw(ser,lim,floor){
@@ -306,14 +330,19 @@ function upd2(vin,vA,vB,pz){
   speed('fw1',m.zb?0:vin<VZ?vin*1.5:8+(vin-VZ)/RS*1000);
   $('zg1').setAttribute('opacity',m.zb?0:Math.min(.6,pz/900))}
 function step2(dt){
-  const m=M;m.t+=dt;let vin=5;
-  if(m.ev){const s=m.t-m.t0;if(s>EV[m.ev].d)m.ev=null;else vin=Math.max(0,EV[m.ev].f(s))}
+  const m=M;m.t+=dt;let vin=5,capturingNow=false;
+  if(m.ev){
+    capturingNow=true;const k=m.ev;m.evT+=dt*EVSLOW;const s=m.evT;
+    if(s>EV[k].d){vin=Math.max(0,EV[k].f(EV[k].d));m.ev=null;m.capturing=false;finishEvent(k)}
+    else{vin=Math.max(0,EV[k].f(s));m.evPeakVin=Math.max(m.evPeakVin,vin);
+      m.evPeakPz=Math.max(m.evPeakPz,Math.max(0,VZ*(vin-VZ)/RS*1000))}
+  }
   else if(m.chaos&&(m.nx-=dt)<=0){const k=Object.keys(EV).filter(x=>x!=='xtreme');go(k[Math.random()*k.length|0]);m.nx=1+Math.random()*2}
   const pz=Math.max(0,VZ*(vin-VZ)/RS*1000);let vA=vin,vB=m.zb?0:Math.min(vin,VZ);
   if(!m.zb&&pz>PMAX){m.zb=true;vB=0;note(`🔥 El Zener disipó ${pz.toFixed(0)} mW (máx ${PMAX}) y falló en corto: la placa se apagó pero la CPU sigue viva.`)}
   if(!m.dead[0]&&vA>LIM){m.dead[0]=true;note(`💥 Sin Zener: la CPU recibió ${vA.toFixed(1)} V (máx 5.5 V) y se dañó.`)}
   [vA,vB].forEach((v,i)=>{m.rb[i]=(!m.dead[i]&&!(i&&m.zb)&&v<4.3)?1.2:Math.max(0,m.rb[i]-dt)});
-  m.H.push([vin,vB,pz]);if(m.H.length>300)m.H.shift();
+  if(capturingNow){m.H.push([vin,vB,pz]);if(m.H.length>560)m.H.shift()}
   const h=m.H;p2.draw([{d:h.map(p=>p[0]),c:'--warn',w:1.5},{d:h.map(p=>p[1]),c:'--acc',w:2.5}],LIM,12);
   p3.draw([{d:h.map(p=>p[2]),c:'--warn',w:2}],PMAX,Math.max(1100, PMAX*1.1));
   if((m.acc+=dt)>.1){m.acc=0;upd2(vin,vA,vB,pz)}}
