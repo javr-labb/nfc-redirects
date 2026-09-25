@@ -78,6 +78,9 @@ details{background:var(--card);border:1px solid var(--line);border-radius:12px;p
 .led{position:absolute;right:6px;bottom:-5px;width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
 footer{text-align:center;padding:30px 14px;color:var(--mut);font-size:13px}
 #w3 canvas{display:block}
+.zlegend{display:grid;gap:6px;margin-top:10px;font-size:13px}
+.zlegend div{display:flex;gap:8px;align-items:flex-start}
+.zlegend i{width:14px;height:14px;border-radius:4px;flex:0 0 14px;margin-top:2px}
 </style></head>
 <body>
 <nav id="nav"><b>⚡ ZENER</b><div id="links"><a href="#problema">Problema</a><a href="#solucion">Solución</a><a href="#circuito">Circuito</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bPr">🎤 Exposición</button><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
@@ -99,7 +102,18 @@ footer{text-align:center;padding:30px 14px;color:var(--mut);font-size:13px}
 <div class="two"><div class="card"><h2>Curva I–V interactiva</h2>
 <svg id="iv" viewBox="0 0 400 230" width="100%"><g id="ivg"></g><circle id="dot" r="7" fill="var(--warn)" stroke="var(--bg)" stroke-width="2"/></svg>
 <div class="row"><label>Voltaje de la fuente Vin <b id="ivL">9 V</b></label><input type="range" id="ivS" min="0" max="14" step="0.1" value="9"></div>
-<div class="msg" id="ivM"></div></div>
+<div class="msg" id="ivM"></div>
+<div class="zlegend">
+<div><i style="background:#8a97a8"></i><span><b style="color:var(--ink)">Zona directa</b> (izquierda de 0 V): el Zener conduce como un diodo normal, con una caída fija de ≈0.7 V. No se usa en este circuito.</span></div>
+<div><i style="background:#c98200"></i><span><b style="color:var(--ink)">Zona de bloqueo</b> (entre 0 V y VZ): está en inversa pero aún no llega a su voltaje de ruptura; casi no pasa corriente (idealmente 0).</span></div>
+<div><i style="background:var(--acc)"></i><span><b style="color:var(--ink)">Zona de ruptura Zener</b> (a partir de VZ): el voltaje se "planta" en VZ y la corriente crece muy rápido. Aquí es donde el componente regula.</span></div>
+</div>
+<div class="fm"><b>Ejemplo numérico (con los datos del circuito):</b><br>
+Vin = 9 V &nbsp;·&nbsp; VZ = 5.1 V &nbsp;·&nbsp; RS = 220 Ω<br>
+Como Vin &gt; VZ → el diodo entra en la zona de ruptura (punto naranja en la curva).<br>
+IS = (Vin − VZ) / RS = (9 − 5.1) / 220 ≈ <b>17.7 mA</b><br>
+Resultado: Vout se queda fijo en ≈ <b>5.1 V</b>, sin importar que Vin siga subiendo.</div>
+</div>
 <div><details><summary>Se usa polarizado en inversa</summary><p>Normalmente se conecta al revés que un diodo común: el cátodo va hacia el voltaje positivo.</p></details>
 <details><summary>Al llegar a <span class="tip" tabindex="0" data-tip="Voltaje Zener: donde el diodo entra en ruptura">VZ</span> se “planta”</summary><p>La tensión se mantiene casi constante mientras cambia la corriente.</p></details>
 <details><summary>La resistencia serie RS lo protege</summary><p>Limita la corriente para evitar exceder la zona segura.</p></details>
@@ -133,7 +147,7 @@ footer{text-align:center;padding:30px 14px;color:var(--mut);font-size:13px}
 <circle cx="34" cy="77" r="16" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" x="29" y="81">+ −</text>
 <text class="t" x="56" y="74">Vin</text><text class="t" id="cVin" x="56" y="88" style="font-weight:700">0 V</text>
 <rect x="95" y="24" width="50" height="20" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" id="cRs" x="120" y="38" text-anchor="middle">220 Ω</text>
-<polygon points="190,84 210,84 200,60" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/><path d="M190 58H210" stroke="var(--acc)" stroke-width="3"/>
+<polygon points="192,84 208,84 200,60" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/><path d="M188 52L194 58H206L212 64" stroke="var(--acc)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 <text class="t" x="216" y="80">Zener</text><text class="t" id="cVo" x="214" y="52" style="font-weight:700;fill:var(--acc);font-size:13px">0 V</text>
 <g id="gl"><rect x="291" y="60" width="18" height="30" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" x="314" y="79">Carga</text></g>
 </svg>
@@ -261,7 +275,7 @@ ${z?'<circle id="zg1" cx="165" cy="92" r="20" fill="var(--acc)" opacity="0"/>':'
 <path d="${z?'M22 65H90M140 65H205':'M22 65H205'}" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <path class="flow" id="fw${z}" d="M22 65H205" stroke="var(--warn)"/>
 <rect x="10" y="52" width="12" height="26" rx="2" fill="var(--mut)"/><text class="t" x="8" y="46" style="font-size:9px">entrada</text>
-${z?`<rect x="90" y="55" width="50" height="20" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" x="115" y="69" text-anchor="middle">220 Ω</text><path d="M165 65V78M165 102V118M150 118H180" stroke="var(--mut)" stroke-width="2" fill="none"/><polygon points="155,102 175,102 165,80" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/><path d="M155 78H175" stroke="var(--acc)" stroke-width="3"/><text class="t" x="182" y="94">Zener</text>`:''}
+${z?`<rect x="90" y="55" width="50" height="20" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" x="115" y="69" text-anchor="middle">220 Ω</text><path d="M165 65V78M165 102V118M150 118H180" stroke="var(--mut)" stroke-width="2" fill="none"/><polygon points="157,102 173,102 165,80" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/><path d="M149 72L157 78H173L181 84" stroke="var(--acc)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text class="t" x="182" y="94">Zener</text>`:''}
 <path d="M215 38V30M240 38V30M265 38V30M215 92V100M240 92V100M265 92V100" stroke="var(--mut)" stroke-width="2"/>
 <rect id="ch${z}" x="205" y="38" width="70" height="54" rx="6" fill="var(--card)" stroke="var(--ok)" stroke-width="3"/>
 <text class="t" x="240" y="62" text-anchor="middle" style="font-weight:700">CPU</text><text class="t" id="cv${z}" x="240" y="79" text-anchor="middle">5.0 V</text>
