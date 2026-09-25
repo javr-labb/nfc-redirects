@@ -201,6 +201,11 @@ Resultado: Vout se queda fijo en ≈ <b>5.1 V</b>, sin importar que Vin siga sub
 <div class="card"><h2>Eventos reales</h2><div class="chips" id="ev"></div>
 <div class="chips" style="margin-top:8px"><button class="chip" id="bCh">🎲 Modo caos</button><button class="chip" id="bR2">🔧 Reparar todo</button></div>
 <div class="msg" id="m2msg">Elige un evento para empezar.</div></div>
+<div class="card" style="border:2px solid var(--ok)"><h2>🎯 Cierre: ejemplo real y funcional</h2>
+<p>El mismo caso que planteamos al inicio, ya calculado: VS = 9 V, VZ = 5.1 V, RS = 220 Ω.</p>
+<div class="fm">IS = (9 − 5.1) / 220 ≈ <b>17.7 mA</b> &nbsp;·&nbsp; Vout ≈ <b>5.1 V</b></div>
+<p class="hint">Úsalo para cerrar la exposición: al darle clic, las gráficas de abajo se generan en vivo con estos mismos números.</p>
+<button class="chip" id="bIdeal" style="border-color:var(--ok);color:var(--ok)">▶ Ejecutar ejemplo final</button></div>
 <div class="card"><h2>Voltaje que llega a la CPU</h2><small><span style="color:var(--warn)">━</span> Vin (lo que ve la PC sin Zener) &nbsp; <span style="color:var(--acc)">━</span> lo que ve la PC con Zener &nbsp; <span style="color:var(--bad)">┅</span> límite 5.5 V</small><canvas id="scope2"></canvas></div>
 <div class="card"><h2>Potencia que aguanta el Zener</h2><small><span style="color:var(--warn)">━</span> Potencia en el Zener &nbsp; <span style="color:var(--bad)">┅</span> máximo dinámico</small><canvas id="scope3"></canvas></div>
 <div class="card"><h2>Bitácora</h2><ul id="blog"></ul></div>
@@ -247,12 +252,16 @@ addEventListener('resize',fit);fit();
 const col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 function draw(){
   const YM=36,y=v=>Hh-4-v/YM*(Hh-8);cx.clearRect(0,0,W,Hh);cx.lineWidth=1;cx.strokeStyle=col('--line');
-  for(let v=0;v<=YM;v+=6){cx.beginPath();cx.moveTo(0,y(v));cx.lineTo(W,y(v));cx.stroke()}
+  cx.font='10px system-ui,sans-serif';cx.textBaseline='middle';
+  for(let v=0;v<=YM;v+=6){cx.beginPath();cx.moveTo(0,y(v));cx.lineTo(W,y(v));cx.stroke();cx.fillStyle=col('--mut');cx.fillText(v+'V',3,y(v)-6)}
   cx.setLineDash([5,4]);
-  for(const[v,c]of[[LIM,'--bad'],[S.vz,'--acc']]){cx.strokeStyle=col(c);cx.beginPath();cx.moveTo(0,y(v));cx.lineTo(W,y(v));cx.stroke()}
+  for(const[v,c,lbl]of[[LIM,'--bad','límite '+LIM+' V'],[S.vz,'--acc','VZ '+S.vz+' V']]){cx.strokeStyle=col(c);cx.beginPath();cx.moveTo(0,y(v));cx.lineTo(W,y(v));cx.stroke();cx.fillStyle=col(c);cx.fillText(lbl,W-84,y(v)-6)}
   cx.setLineDash([]);cx.lineWidth=2;
   for(const[k,c]of[[0,'--warn'],[1,'--acc']]){cx.strokeStyle=col(c);cx.beginPath();
-    H.forEach((p,i)=>{const x=i*W/299;i?cx.lineTo(x,y(p[k])):cx.moveTo(x,y(p[k]))});cx.stroke()}}
+    H.forEach((p,i)=>{const x=i*W/299;i?cx.lineTo(x,y(p[k])):cx.moveTo(x,y(p[k]))});cx.stroke()}
+  if(H.length){const last=H[H.length-1];cx.font='11px system-ui,sans-serif';
+    cx.fillStyle=col('--warn');cx.fillText('Vin '+last[0].toFixed(1)+'V',W-92,14);
+    cx.fillStyle=col('--acc');cx.fillText('Vout '+last[1].toFixed(1)+'V',W-92,28)}}
 let t=0,last=performance.now(),acc=0;
 function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;if(S.spike>0)S.spike=Math.max(0,S.spike-dt);
@@ -272,6 +281,7 @@ $('bNo').onclick=()=>{S.noise=!S.noise;sync()};$('bSp').onclick=()=>{S.spike=.6}
 $('bRe').onclick=()=>{S.dA=S.dB=false;S.spike=0};$('bEj').onclick=()=>{Object.assign(S,{vin:9,rs:220,vz:5.1,rl:Infinity,noise:false});PMAX=1000;sync()};
 
 const VZ=5.1,RS=220,EVSLOW=.45,EV={
+ ideal:{n:'📌 Ejemplo calculado (9V→5.1V)',d:4,f:s=>9,x:'Este es el ejemplo que planteamos al inicio: fuente VS=9V, Zener VZ=5.1V y RS=220Ω. Míralo en vivo: Vin se mantiene fijo en 9V y Vout se queda regulado en 5.1V.'},
  wrong:{n:'🔌 Adaptador de 12 V',d:2.5,f:s=>12,x:'Conectaron un adaptador de 12 V en vez de 5 V. Sin Zener, todo ese voltaje llega a la CPU. Con Zener, RS absorbe el exceso y la CPU se queda en 5.1 V.'},
  hot:{n:'⚡ Conexión en caliente',d:1.8,f:s=>5+15*Math.exp(-s/.35)*Math.abs(Math.cos(s*14)),x:'Al enchufar con la placa energizada aparece un pico corto con rebotes. Dura milisegundos, pero basta para matar un chip sin protección.'},
  ind:{n:'🧲 Golpe de motor/relé',d:1.8,f:s=>5+19*Math.exp(-s/.4),x:'Al apagar un motor o un relé, su bobina suelta un golpe de voltaje. Es de las fallas más comunes en electrónica real.'},
@@ -295,7 +305,7 @@ ${z?`<rect x="90" y="55" width="50" height="20" rx="3" fill="var(--card)" stroke
 <g id="sm${z}" style="opacity:0">${[-14,0,14].map((d,i)=>`<circle class="smk" cx="${sx+d}" cy="${sy}" r="6" fill="var(--mut)" style="animation-delay:${i*.45}s"/>`).join('')}</g>
 </svg><p style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><span class="pill" id="s${z}">✅</span><b id="v${z}">5.0 V</b></p><div class="mon"><div class="scr" id="sc${z}"></div><i class="led" id="ld${z}"></i></div>`}
 $('pcA').innerHTML=pcHTML(0,'❌ Sin Zener');$('pcB').innerHTML=pcHTML(1,'✅ Con Zener');
-$('ev').innerHTML=Object.entries(EV).map(([k,e])=>`<button class="chip" data-e="${k}">${e.n}</button>`).join('');
+$('ev').innerHTML=Object.entries(EV).filter(([k])=>k!=='ideal').map(([k,e])=>`<button class="chip" data-e="${k}">${e.n}</button>`).join('');
 function note(txt){const li=document.createElement('li');li.textContent=`[${M.t.toFixed(1)} s] ${txt}`;$('blog').prepend(li);while($('blog').children.length>7)$('blog').lastChild.remove()}
 function go(k){M.ev=k;M.capturing=true;M.evT=0;M.evPeakVin=0;M.evPeakPz=0;M.H=[];
   $('m2msg').innerHTML=`<b>${EV[k].n}</b><br>${EV[k].x}<br><small>⏳ Generando la gráfica en cámara lenta…</small>`;
@@ -311,12 +321,19 @@ function finishEvent(k){
 }
 function plot(id){const c=$(id),x=c.getContext('2d');let W=0,Hh=0;
   const fit=()=>{const d=devicePixelRatio||1;W=c.clientWidth;Hh=c.clientHeight;c.width=W*d;c.height=Hh*d;x.setTransform(d,0,0,d,0,0)};fit();
-  return{fit,draw(ser,lim,floor){
-    let mx=floor;ser.forEach(s=>s.d.forEach(v=>mx=Math.max(mx,v)));mx*=1.08;const y=v=>Hh-4-v/mx*(Hh-8);
-    x.clearRect(0,0,W,Hh);x.globalAlpha=.25;x.fillStyle=col('--bad');x.beginPath();x.moveTo(0,y(lim));
+  return{fit,draw(ser,lim,floor,unit,limLbl){
+    let mx=floor;ser.forEach(s=>s.d.forEach(v=>mx=Math.max(mx,v)));mx*=1.08;const y=v=>Hh-4-v/mx*(Hh-8),u=unit||'';
+    x.clearRect(0,0,W,Hh);x.lineWidth=1;x.strokeStyle=col('--line');x.font='10px system-ui,sans-serif';x.textBaseline='middle';
+    const step=Math.max(1,Math.round(mx/4/5)*5);
+    for(let v=0;v<=mx;v+=step){x.beginPath();x.moveTo(0,y(v));x.lineTo(W,y(v));x.stroke();x.fillStyle=col('--mut');x.fillText(Math.round(v)+u,3,y(v)-6)}
+    x.globalAlpha=.25;x.fillStyle=col('--bad');x.beginPath();x.moveTo(0,y(lim));
     ser[0].d.forEach((v,i)=>x.lineTo(i*W/299,y(Math.max(lim,v))));x.lineTo(W,y(lim));x.fill();x.globalAlpha=1;
     x.setLineDash([5,4]);x.lineWidth=1;x.strokeStyle=col('--bad');x.beginPath();x.moveTo(0,y(lim));x.lineTo(W,y(lim));x.stroke();x.setLineDash([]);
-    ser.forEach(s=>{x.strokeStyle=col(s.c);x.lineWidth=s.w;x.beginPath();s.d.forEach((v,i)=>i?x.lineTo(i*W/299,y(v)):x.moveTo(0,y(v)));x.stroke()})}}}
+    x.fillStyle=col('--bad');x.fillText(limLbl||(lim+u),W-96,y(lim)-6);
+    ser.forEach(s=>{x.strokeStyle=col(s.c);x.lineWidth=s.w;x.beginPath();s.d.forEach((v,i)=>i?x.lineTo(i*W/299,y(v)):x.moveTo(0,y(v)));x.stroke()});
+    if(ser[0].d.length){x.font='11px system-ui,sans-serif';let ty=14;
+      ser.forEach(s=>{const last=s.d[s.d.length-1];x.fillStyle=col(s.c);x.fillText((s.name||'')+' '+last.toFixed(1)+u,W-118,ty);ty+=14})}
+  }}}
 const p2=plot('scope2'),p3=plot('scope3');
 addEventListener('resize',()=>{p2.fit();p3.fit()});
 function upd2(vin,vA,vB,pz){
@@ -337,16 +354,16 @@ function step2(dt){
     else{vin=Math.max(0,EV[k].f(s));m.evPeakVin=Math.max(m.evPeakVin,vin);
       m.evPeakPz=Math.max(m.evPeakPz,Math.max(0,VZ*(vin-VZ)/RS*1000))}
   }
-  else if(m.chaos&&(m.nx-=dt)<=0){const k=Object.keys(EV).filter(x=>x!=='xtreme');go(k[Math.random()*k.length|0]);m.nx=1+Math.random()*2}
+  else if(m.chaos&&(m.nx-=dt)<=0){const k=Object.keys(EV).filter(x=>x!=='xtreme'&&x!=='ideal');go(k[Math.random()*k.length|0]);m.nx=1+Math.random()*2}
   const pz=Math.max(0,VZ*(vin-VZ)/RS*1000);let vA=vin,vB=m.zb?0:Math.min(vin,VZ);
   if(!m.zb&&pz>PMAX){m.zb=true;vB=0;note(`🔥 El Zener disipó ${pz.toFixed(0)} mW (máx ${PMAX}) y falló en corto: la placa se apagó pero la CPU sigue viva.`)}
   if(!m.dead[0]&&vA>LIM){m.dead[0]=true;note(`💥 Sin Zener: la CPU recibió ${vA.toFixed(1)} V (máx 5.5 V) y se dañó.`)}
   [vA,vB].forEach((v,i)=>{m.rb[i]=(!m.dead[i]&&!(i&&m.zb)&&v<4.3)?1.2:Math.max(0,m.rb[i]-dt)});
   if(capturingNow){m.H.push([vin,vB,pz]);if(m.H.length>560)m.H.shift()}
-  const h=m.H;p2.draw([{d:h.map(p=>p[0]),c:'--warn',w:1.5},{d:h.map(p=>p[1]),c:'--acc',w:2.5}],LIM,12);
-  p3.draw([{d:h.map(p=>p[2]),c:'--warn',w:2}],PMAX,Math.max(1100, PMAX*1.1));
+  const h=m.H;p2.draw([{d:h.map(p=>p[0]),c:'--warn',w:1.5,name:'Vin'},{d:h.map(p=>p[1]),c:'--acc',w:2.5,name:'Vout'}],LIM,12,'V','límite '+LIM+'V');
+  p3.draw([{d:h.map(p=>p[2]),c:'--warn',w:2,name:'P Zener'}],PMAX,Math.max(1100, PMAX*1.1),'mW','máx '+PMAX+'mW');
   if((m.acc+=dt)>.1){m.acc=0;upd2(vin,vA,vB,pz)}}
-$('ev').onclick=e=>{if(e.target.dataset.e)go(e.target.dataset.e)};$('bCh').onclick=()=>{M.chaos=!M.chaos;$('bCh').classList.toggle('on',M.chaos)};$('bR2').onclick=()=>{M.dead=[false,false];M.zb=false;M.rb=[0,0];M.ev=null;note('🔧 Placas reparadas')};
+$('ev').onclick=e=>{if(e.target.dataset.e)go(e.target.dataset.e)};$('bIdeal').onclick=()=>go('ideal');$('bCh').onclick=()=>{M.chaos=!M.chaos;$('bCh').classList.toggle('on',M.chaos)};$('bR2').onclick=()=>{M.dead=[false,false];M.zb=false;M.rb=[0,0];M.ev=null;note('🔧 Placas reparadas')};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   $('m1').hidden=b.dataset.m!=='1';$('m2').hidden=b.dataset.m!=='2';
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));fit();p2.fit();p3.fit()});
