@@ -67,12 +67,12 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <p class="lead">Un microcontrolador mide voltaje con un ADC, lo convierte a un número, y el software decide qué hacer. Ese camino completo toma microsegundos. Un pico de sobrevoltaje real puede durar mucho menos que eso.</p>
 <div class="g2">
 <div class="vs"><i>SENSOR</i><h3>🧊 El Zener</h3><p>No mide ni convierte nada a números. Es un sensor físico: en el instante en que el voltaje cruza VZ, empieza a conducir. No hay ciclo de reloj, no hay interrupción, no hay firmware.</p></div>
-<div class="vs"><i>GATILLO</i><h3>🔀 El transistor/SCR</h3><p>Recibe esa corriente y actúa como un gatillo de alta potencia: provoca un cortocircuito intencional, con la fuerza suficiente para fundir un fusible en milisegundos.</p></div></div>
+<div class="vs"><i>GATILLO</i><h3>🔀 El transistor BJT</h3><p>Recibe la corriente de base que manda el Zener y actúa como un gatillo de alta potencia: mientras esa corriente exista, el transistor se mantiene saturado, provocando un cortocircuito intencional con la fuerza suficiente para fundir un fusible en milisegundos.</p></div></div>
 <p class="thesis">El circuito Crowbar funciona como un <b>sistema inmunológico de hardware</b>: detecta y neutraliza la amenaza por sí mismo, con un reflejo analógico, antes de que cualquier capa de software pueda enterarse de que ocurrió algo.</p>
 </div></section>
 
 <section class="sec" id="circuito"><div class="wrap rev"><h2 class="sh"><em class="n">02</em>El circuito</h2>
-<p class="lead">Vin → Fusible en serie → nodo de salida (CPU) → rama del Zener hacia la base del transistor/SCR → a tierra.</p>
+<p class="lead">Vin → Fusible en serie → nodo de salida (CPU) → rama del Zener hacia la base de un transistor BJT (NPN) → colector a Vin, emisor a tierra.</p>
 <div class="two">
 <div class="card"><svg viewBox="0 0 340 200" width="100%">
 <text class="t" x="10" y="22">Vin</text>
@@ -90,7 +90,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <text class="tm" x="165" y="90">Zener 5.1 V</text>
 <path d="M150 100V130" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <path class="flow" id="f4" d="M150 100V130" stroke="var(--acc2)"/>
-<rect id="trg" x="132" y="130" width="36" height="24" rx="4" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" x="150" y="146" text-anchor="middle" style="font-size:10px">SCR</text>
+<rect id="trg" x="132" y="130" width="36" height="24" rx="4" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" x="150" y="146" text-anchor="middle" style="font-size:10px">BJT</text>
 <path d="M150 154V175" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <path d="M135 175H165M140 181H160M145 187H155" stroke="var(--mut)" stroke-width="2"/>
 <text class="tm" x="150" y="196" text-anchor="middle">tierra</text>
@@ -98,19 +98,20 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <path d="M260 115V130M245 130H275M245 130V170M275 130V170" stroke="var(--mut)" stroke-width="2" fill="none"/>
 </svg></div>
 <div><ol class="steps">
-<li><b>Normal:</b> Vin fluye por el fusible intacto hacia la CPU. El Zener no conduce, el SCR está en corte. Vout = Vin (hasta un máximo seguro de 5.5 V).</li>
-<li><b>Sobrevoltaje:</b> Vin supera VZ (5.1 V + margen). El Zener entra en ruptura instantáneamente y manda corriente a la compuerta del SCR.</li>
-<li><b>Disparo:</b> el SCR satura y crea un cortocircuito intencional entre Vin y tierra — el "crowbar". La corriente se dispara hacia el fusible.</li>
+<li><b>Normal:</b> Vin fluye por el fusible intacto hacia la CPU. El Zener no conduce, la base del BJT está en 0 V y el transistor permanece en corte. Vout = Vin (hasta un máximo seguro de 5.5 V).</li>
+<li><b>Sobrevoltaje:</b> Vin supera VZ (5.1 V + margen). El Zener entra en ruptura instantáneamente y manda corriente a la base del BJT.</li>
+<li><b>Disparo:</b> con corriente de base suficiente, el BJT entra en saturación (colector-emisor casi en corto) y crea el cortocircuito intencional entre Vin y tierra — el "crowbar". Mientras el Zener siga conduciendo, el BJT se mantiene saturado y el corto persiste. La corriente se dispara hacia el fusible.</li>
 <li><b>Sacrificio:</b> esa sobrecorriente funde el fusible en milisegundos. El enlace con la CPU queda roto permanentemente: Vout cae a 0 V y se queda así.</li>
 </ol>
-<p class="hint" style="font-size:12px;color:var(--mut)">El fusible no se repara solo: una vez quemado, el circuito permanece abierto hasta que alguien lo reemplaza físicamente — por eso en el simulador necesitas presionar "Reset".</p></div>
+<p class="hint" style="font-size:12px;color:var(--mut)">El fusible no se repara solo: una vez quemado, el circuito permanece abierto hasta que alguien lo reemplaza físicamente — por eso en el simulador necesitas presionar "Reset".</p>
+<details style="margin-top:10px"><summary>¿Por qué BJT y no un SCR?</summary><p>Un SCR se "enclava" solo: una vez disparado, sigue conduciendo aunque desaparezca la señal de compuerta, hasta que se corta la corriente. Un BJT no se enclava: conduce <i>mientras</i> haya corriente de base. Por eso el disparo depende de que el Zener se mantenga conduciendo durante el sobrevoltaje — suficiente para fundir un fusible en milisegundos, que es justo lo que necesita este circuito.</p></details></div>
 </div></div></section>
 
 <section class="sec" id="sim"><div class="wrap rev"><h2 class="sh"><em class="n">03</em>Simulador interactivo</h2>
 <div class="card">
 <div class="row"><label>Voltaje de entrada Vin <b id="vL">0.0 V</b></label><input type="range" id="vin" min="0" max="16" step="0.1" value="0"></div>
 <div class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="chip danger" id="bSpike">⚡ Enviar pico de 15 V</button><button class="chip" id="bReset">🔧 Reemplazar fusible (Reset)</button></div>
-<div class="tiles"><div class="tile"><span>Vin</span><b id="tVin">0.0 V</b></div><div class="tile"><span>Vout (CPU)</span><b id="tVout">0.0 V</b></div><div class="tile"><span>Fusible</span><b id="tFuse">intacto</b></div><div class="tile"><span>SCR</span><b id="tScr">corte</b></div></div>
+<div class="tiles"><div class="tile"><span>Vin</span><b id="tVin">0.0 V</b></div><div class="tile"><span>Vout (CPU)</span><b id="tVout">0.0 V</b></div><div class="tile"><span>Fusible</span><b id="tFuse">intacto</b></div><div class="tile"><span>BJT</span><b id="tScr">corte</b></div></div>
 <p style="margin-top:10px"><span class="pill" id="st">✅ Sistema normal</span></p>
 <div class="alert" id="alFuse">🔥 FUSIBLE QUEMADO</div>
 <div class="alert" id="alLink">🔌 ENLACE ROTO · CPU DESCONECTADA</div>
@@ -121,10 +122,10 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 </div></section>
 
 <section class="sec" id="conclusion"><div class="wrap rev"><h2 class="sh"><em class="n">04</em>Conclusión</h2>
-<p class="thesis">La tesis de este trabajo: en un sistema digital, la primera línea de defensa nunca es el software. Un ADC y un microcontrolador necesitan ciclos de reloj que un transitorio de voltaje no les da. El circuito Crowbar demuestra que la electrónica analógica —un diodo Zener y un transistor/SCR— puede sentir, decidir y actuar en el mismo instante físico en que ocurre el peligro, sacrificando un componente de bajo costo (el fusible) para salvar uno de alto costo (la CPU).</p>
+<p class="thesis">La tesis de este trabajo: en un sistema digital, la primera línea de defensa nunca es el software. Un ADC y un microcontrolador necesitan ciclos de reloj que un transitorio de voltaje no les da. El circuito Crowbar demuestra que la electrónica analógica —un diodo Zener y un transistor BJT en conmutación— puede sentir, decidir y actuar en el mismo instante físico en que ocurre el peligro, sacrificando un componente de bajo costo (el fusible) para salvar uno de alto costo (la CPU).</p>
 <details><summary>Referencia</summary><p>Malvino, A. P. &amp; Bates, D. J. — <i>Principios de Electrónica</i>, 7.ª ed., cap. 5: diodos de propósito especial y el uso del Zener como sensor de referencia en circuitos de protección.</p></details>
 </div></section>
-<footer>Trabajo argumentativo de Electrónica Analógica · circuito Crowbar (Zener + SCR/Transistor + Fusible)</footer>
+<footer>Trabajo argumentativo de Electrónica Analógica · circuito Crowbar (Zener + Transistor BJT + Fusible)</footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -147,8 +148,8 @@ function ui(r){
   st.textContent=isFuseBlown?'🔥 Protección activada · fusible abierto':r.zenerOn?'⚠️ Zener conduce, armando el disparo':'✅ Sistema normal';
   st.style.color=isFuseBlown?'var(--bad)':r.zenerOn?'var(--warn)':'var(--ok)';
   $('alFuse').classList.toggle('show',isFuseBlown);$('alLink').classList.toggle('show',isFuseBlown);
-  $('msg').textContent=isFuseBlown?`El pico superó ${TRIG} V, el SCR se disparó y el fusible se fundió. Vout quedó en 0 V de forma permanente: así es como el hardware se sacrifica sin esperar al software. Presiona Reset para reemplazar el fusible.`
-    :r.zenerOn?`Vin = ${r.vin.toFixed(1)} V ya supera VZ (${VZ} V): el Zener está conduciendo y arma el disparo. Si Vin llega a ${TRIG} V, el SCR dispara y el fusible se funde.`
+  $('msg').textContent=isFuseBlown?`El pico superó ${TRIG} V, el BJT saturó y el fusible se fundió. Vout quedó en 0 V de forma permanente: así es como el hardware se sacrifica sin esperar al software. Presiona Reset para reemplazar el fusible.`
+    :r.zenerOn?`Vin = ${r.vin.toFixed(1)} V ya supera VZ (${VZ} V): el Zener está conduciendo y arma el disparo. Si Vin llega a ${TRIG} V, el BJT satura y el fusible se funde.`
     :`Vin = ${r.vin.toFixed(1)} V está en rango seguro. El Zener no conduce y Vout sigue a Vin sin ninguna intervención.`;
   speed('f1',r.vin>0.1);speed('f2',!isFuseBlown&&r.vin>0.1);speed('f3',r.zenerOn);speed('f4',r.scrOn);
   $('fuseL').setAttribute('stroke-dasharray',isFuseBlown?'4 4':'none');$('fuseL').setAttribute('stroke',isFuseBlown?'var(--bad)':'var(--mut)');
