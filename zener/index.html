@@ -54,9 +54,18 @@ canvas{width:100%;height:160px;display:block}
 .fm{font:15px "JetBrains Mono",monospace;background:var(--bg);padding:10px;border-radius:10px;margin:8px 0;color:var(--ink)}
 details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}summary{cursor:pointer;font-weight:600}details p{margin:8px 0 0}
 footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
-</style></head>
+</head>
 <body>
-<nav id="nav"><b>🛡 LATENCIA CERO</b><div id="links"><a href="#problema">Problema</a><a href="#circuito">Circuito</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
+
+.spec{width:100%;border-collapse:collapse;font:13px "JetBrains Mono",monospace}
+.spec td{padding:8px 10px;border-top:1px solid var(--line)}.spec tr:first-child td{border-top:none}
+.spec td:first-child{color:var(--mut)}.spec td:last-child{text-align:right;color:var(--ink);font-weight:700}
+.badge{display:inline-block;background:var(--acc);color:#04221c;font-weight:700;font-size:11px;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+.cfg{border:1px solid var(--acc);border-radius:14px;padding:14px 16px;background:color-mix(in srgb,var(--acc) 8%,transparent);margin-top:14px}
+.cfg h3{font-size:15px;margin-bottom:8px}
+.cfg ul{margin:0;padding-left:18px}.cfg li{margin:5px 0;color:var(--ink)}.cfg b{color:var(--acc)}
+.lbl{fill:var(--acc2);font:700 12px "JetBrains Mono",monospace}
+</style><nav id="nav"><b>🛡 LATENCIA CERO</b><div id="links"><a href="#problema">Problema</a><a href="#circuito">Circuito</a><a href="#bjt">Hoja de datos</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
 
 <header class="sec hero"><div class="wrap rev"><span class="tag">ELECTRÓNICA ANALÓGICA · TRABAJO ARGUMENTATIVO</span>
 <h1>Latencia <span class="gl">Cero</span></h1>
@@ -72,41 +81,87 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 </div></section>
 
 <section class="sec" id="circuito"><div class="wrap rev"><h2 class="sh"><em class="n">02</em>El circuito</h2>
-<p class="lead">Vin → Fusible en serie → nodo de salida (CPU) → rama del Zener hacia la base de un transistor BJT (NPN) → colector a Vin, emisor a tierra.</p>
+<p class="lead">Esquemático estilo Proteus, con el transistor dibujado tal cual: terminales de Base, Colector y Emisor por separado, para que se vea exactamente cómo está conectado.</p>
 <div class="two">
-<div class="card"><svg viewBox="0 0 340 200" width="100%">
-<text class="t" x="10" y="22">Vin</text>
-<path d="M30 30V170" stroke="var(--mut)" stroke-width="2" fill="none"/>
-<circle cx="30" cy="100" r="14" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="tm" x="24" y="104">+ −</text>
+<div class="card"><svg viewBox="0 0 400 270" width="100%">
+<text class="t" x="8" y="22">Vin</text>
+<circle cx="30" cy="110" r="14" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="tm" x="24" y="114">+ −</text>
+<path d="M30 110V30H90" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <path class="flow" id="f1" d="M30 30H90" stroke="var(--warn)"/>
-<path d="M30 30H90" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <g id="fuseG"><path id="fuseL" d="M90 30H150" stroke="var(--mut)" stroke-width="2" fill="none"/><rect x="95" y="23" width="50" height="14" rx="6" fill="var(--card)" stroke="var(--acc2)" stroke-width="2"/><text class="tm" x="120" y="18" text-anchor="middle">fusible</text></g>
-<path class="flow" id="f2" d="M150 30H260" stroke="var(--warn)"/>
-<path d="M150 30H260" stroke="var(--mut)" stroke-width="2" fill="none"/>
-<path d="M150 30V70" stroke="var(--mut)" stroke-width="2" fill="none"/>
-<path class="flow" id="f3" d="M150 30V70" stroke="var(--acc)"/>
-<polygon points="140,100 160,100 150,78" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/>
-<path d="M134 72L140 78H160L166 84" stroke="var(--acc)" stroke-width="3" fill="none" stroke-linejoin="round"/>
-<text class="tm" x="165" y="90">Zener 5.1 V</text>
-<path d="M150 100V130" stroke="var(--mut)" stroke-width="2" fill="none"/>
-<path class="flow" id="f4" d="M150 100V130" stroke="var(--acc2)"/>
-<rect id="trg" x="132" y="130" width="36" height="24" rx="4" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="t" x="150" y="146" text-anchor="middle" style="font-size:10px">BJT</text>
-<path d="M150 154V175" stroke="var(--mut)" stroke-width="2" fill="none"/>
-<path d="M135 175H165M140 181H160M145 187H155" stroke="var(--mut)" stroke-width="2"/>
-<text class="tm" x="150" y="196" text-anchor="middle">tierra</text>
-<rect x="245" y="55" width="30" height="60" rx="6" fill="var(--card)" stroke="var(--ok)" stroke-width="3" id="cpuBox"/><text class="t" x="260" y="88" text-anchor="middle" style="font-weight:700">CPU</text>
-<path d="M260 115V130M245 130H275M245 130V170M275 130V170" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<path class="flow" id="f2" d="M150 30H330" stroke="var(--warn)"/>
+<path d="M150 30H330" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<circle cx="190" cy="30" r="3" fill="var(--ink)"/><text class="tm" x="183" y="46">nodo</text>
+<path d="M190 30V70" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<path class="flow" id="f3" d="M190 30V70" stroke="var(--acc)"/>
+<polygon points="180,100 200,100 190,78" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/>
+<path d="M174 72L180 78H200L206 84" stroke="var(--acc)" stroke-width="3" fill="none" stroke-linejoin="round"/>
+<text class="tm" x="203" y="90">Zener 5.1 V</text>
+<path d="M190 100V112" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<rect x="170" y="112" width="40" height="16" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="tm" x="190" y="124" text-anchor="middle">RB</text>
+<path d="M190 128V145H224" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<path class="flow" id="f4" d="M190 100V145H224" stroke="var(--acc2)"/>
+<text class="lbl" x="178" y="140">B</text>
+<path d="M265 30V95" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<path class="flow" id="fC" d="M265 30V95" stroke="var(--warn)"/>
+<text class="lbl" x="272" y="92">C</text>
+<circle cx="250" cy="145" r="26" fill="none" stroke="var(--mut)" stroke-width="2"/>
+<path d="M224 145H238" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<path d="M238 128V162" stroke="var(--mut)" stroke-width="2.5" fill="none"/>
+<path id="trC" d="M238 134L265 110V95" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<path id="trE" d="M238 156L265 180V196" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<polygon points="256,170 265,180 252,180" fill="var(--mut)"/>
+<text class="lbl" x="272" y="192">E</text>
+<path d="M265 196V215" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<path class="flow" id="fE" d="M265 196V215" stroke="var(--acc2)"/>
+<path d="M250 215H280M256 221H274M262 227H268" stroke="var(--mut)" stroke-width="2"/>
+<text class="tm" x="265" y="238" text-anchor="middle">tierra</text>
+<rect x="320" y="10" width="36" height="60" rx="6" fill="var(--card)" stroke="var(--ok)" stroke-width="3" id="cpuBox"/><text class="t" x="338" y="44" text-anchor="middle" style="font-weight:700">CPU</text>
 </svg></div>
-<div><ol class="steps">
+<div>
+<div class="cfg"><h3>📐 Configuración: emisor común — interruptor digital</h3><ul>
+<li><b>Colector (C):</b> conectado al nodo protegido. Por aquí pasa la gran corriente que se desvía a tierra cuando el transistor dispara.</li>
+<li><b>Base (B):</b> recibe la señal de control de baja corriente desde el Zener, a través de RB. Esta señal es la que decide si el transistor conduce.</li>
+<li><b>Emisor (E):</b> conectado a tierra — es la referencia común de todo el circuito, de ahí el nombre "emisor común".</li>
+<li><b>¿Funciona como interruptor?</b> Sí. Solo opera en corte (abierto) o en saturación (cerrado), nunca en zona activa — por eso es un interruptor digital y no un amplificador.</li>
+</ul></div>
+<ol class="steps">
 <li><b>Normal:</b> Vin fluye por el fusible intacto hacia la CPU. El Zener no conduce, la base del BJT está en 0 V y el transistor permanece en corte. Vout = Vin (hasta un máximo seguro de 5.5 V).</li>
-<li><b>Sobrevoltaje:</b> Vin supera VZ (5.1 V + margen). El Zener entra en ruptura instantáneamente y manda corriente a la base del BJT.</li>
-<li><b>Disparo:</b> con corriente de base suficiente, el BJT entra en saturación (colector-emisor casi en corto) y crea el cortocircuito intencional entre Vin y tierra — el "crowbar". Mientras el Zener siga conduciendo, el BJT se mantiene saturado y el corto persiste. La corriente se dispara hacia el fusible.</li>
+<li><b>Sobrevoltaje:</b> Vin supera VZ (5.1 V + margen). El Zener entra en ruptura instantáneamente y manda corriente a la base del BJT a través de RB.</li>
+<li><b>Disparo:</b> con corriente de base suficiente, el BJT entra en saturación (colector-emisor casi en corto) y crea el cortocircuito intencional entre el nodo protegido y tierra — el "crowbar".</li>
 <li><b>Sacrificio:</b> esa sobrecorriente funde el fusible en milisegundos. El enlace con la CPU queda roto permanentemente: Vout cae a 0 V y se queda así.</li>
 </ol>
 <p class="hint" style="font-size:12px;color:var(--mut)">El fusible no se repara solo: una vez quemado, el circuito permanece abierto hasta que alguien lo reemplaza físicamente — por eso en el simulador necesitas presionar "Reset".</p></div>
 </div></div></section>
 
-<section class="sec" id="sim"><div class="wrap rev"><h2 class="sh"><em class="n">03</em>Simulador interactivo</h2>
+<section class="sec" id="bjt"><div class="wrap rev"><h2 class="sh"><em class="n">03</em>Hoja de datos del BJT</h2>
+<p class="lead">El transistor que dispara el crowbar no es un componente cualquiera: su hoja de datos es la que justifica por qué sirve para esta tarea. Usamos como referencia un <b>2N2222 (NPN)</b>, uno de los BJT de propósito general más comunes.</p>
+<div class="two">
+<div class="card"><span class="badge">DATASHEET</span><table class="spec">
+<tr><td>VCEO (máx. colector-emisor)</td><td>40 V</td></tr>
+<tr><td>VCBO (máx. colector-base)</td><td>75 V</td></tr>
+<tr><td>VEBO (máx. emisor-base)</td><td>6 V</td></tr>
+<tr><td>IC máx. (corriente de colector)</td><td>600 mA</td></tr>
+<tr><td>hFE (β, ganancia de corriente)</td><td>100 – 300</td></tr>
+<tr><td>PD máx. (potencia disipada)</td><td>625 mW</td></tr>
+<tr><td>VCE(sat) típico</td><td>≈ 0.3 V</td></tr>
+<tr><td>VBE(sat) típico</td><td>≈ 0.7–1.0 V</td></tr>
+<tr><td>fT (frecuencia de transición)</td><td>250 MHz</td></tr>
+</table></div>
+<div>
+<div class="card"><h3 style="font-size:16px">🎯 Propósito</h3><p>Necesitamos un transistor que pase de corte a saturación en microsegundos, que aguante al menos la corriente que va a circular por el fusible, y que no se dañe mientras dura el disparo. El 2N2222 cumple: hFE alto (dispara con poca corriente de base) y una fT de 250 MHz, mucho más rápida de lo que este circuito necesita.</p></div>
+<div class="card"><h3 style="font-size:16px">🛠 Desarrollo</h3><p>Con VCC ≈ 9 V y una resistencia de colector RC = 220 Ω (la misma del Zener), la corriente de saturación es IC(sat) = VCC / RC ≈ 41 mA. Con hFE = 100, basta una corriente de base IB ≈ 0.41 mA para saturar — y el Zener, en ruptura, entrega fácilmente eso. Por eso el disparo ocurre casi al instante.</p></div></div>
+</div>
+
+<div class="card"><h3 style="font-size:16px">🏠 Ejemplo de la vida real</h3><p>El mismo principio —un BJT que pasa de corte a saturación para manejar más corriente de la que puede dar un circuito de control— es el que usa un <b>relé de arranque de motor</b> o el <b>driver de un ventilador de PC</b>: un microcontrolador de 3.3 V no puede mover 500 mA directamente, así que una señal pequeña en la base satura un BJT que sí los maneja. Aquí, en vez de mover un motor, el BJT saturado mueve la corriente que funde el fusible.</p></div>
+
+<div class="card"><h3 style="font-size:16px">📈 Punto de funcionamiento (recta de carga)</h3>
+<svg id="llv" viewBox="0 0 380 240" width="100%"><g id="llg"></g><circle id="qdot" r="7" fill="var(--acc2)" stroke="var(--bg)" stroke-width="2"/></svg>
+<div class="row"><label>Corriente de base IB <b id="ibL">0 µA</b></label><input type="range" id="ibS" min="0" max="800" step="10" value="0"></div>
+<div class="msg" id="llM"></div></div>
+</div></section>
+
+<section class="sec" id="sim"><div class="wrap rev"><h2 class="sh"><em class="n">04</em>Simulador interactivo</h2>
 <div class="card">
 <div class="row"><label>Voltaje de entrada Vin <b id="vL">0.0 V</b></label><input type="range" id="vin" min="0" max="16" step="0.1" value="0"></div>
 <div class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="chip danger" id="bSpike">⚡ Enviar pico de 15 V</button><button class="chip" id="bReset">🔧 Reemplazar fusible (Reset)</button></div>
@@ -120,7 +175,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <canvas id="scope"></canvas></div>
 </div></section>
 
-<section class="sec" id="conclusion"><div class="wrap rev"><h2 class="sh"><em class="n">04</em>Conclusión</h2>
+<section class="sec" id="conclusion"><div class="wrap rev"><h2 class="sh"><em class="n">05</em>Conclusión</h2>
 <p class="thesis">La tesis de este trabajo: en un sistema digital, la primera línea de defensa nunca es el software. Un ADC y un microcontrolador necesitan ciclos de reloj que un transitorio de voltaje no les da. El circuito Crowbar demuestra que la electrónica analógica —un diodo Zener y un transistor BJT en conmutación— puede sentir, decidir y actuar en el mismo instante físico en que ocurre el peligro, sacrificando un componente de bajo costo (el fusible) para salvar uno de alto costo (la CPU).</p>
 <details><summary>Referencia</summary><p>Malvino, A. P. &amp; Bates, D. J. — <i>Principios de Electrónica</i>, 7.ª ed., cap. 5: diodos de propósito especial y el uso del Zener como sensor de referencia en circuitos de protección.</p></details>
 </div></section>
@@ -150,10 +205,10 @@ function ui(r){
   $('msg').textContent=isFuseBlown?`El pico superó ${TRIG} V, el BJT saturó y el fusible se fundió. Vout quedó en 0 V de forma permanente: así es como el hardware se sacrifica sin esperar al software. Presiona Reset para reemplazar el fusible.`
     :r.zenerOn?`Vin = ${r.vin.toFixed(1)} V ya supera VZ (${VZ} V): el Zener está conduciendo y arma el disparo. Si Vin llega a ${TRIG} V, el BJT satura y el fusible se funde.`
     :`Vin = ${r.vin.toFixed(1)} V está en rango seguro. El Zener no conduce y Vout sigue a Vin sin ninguna intervención.`;
-  speed('f1',r.vin>0.1);speed('f2',!isFuseBlown&&r.vin>0.1);speed('f3',r.zenerOn);speed('f4',r.scrOn);
+  speed('f1',r.vin>0.1);speed('f2',!isFuseBlown&&r.vin>0.1);speed('f3',r.zenerOn);speed('f4',r.scrOn);speed('fC',isFuseBlown||r.scrOn);speed('fE',isFuseBlown||r.scrOn);
   $('fuseL').setAttribute('stroke-dasharray',isFuseBlown?'4 4':'none');$('fuseL').setAttribute('stroke',isFuseBlown?'var(--bad)':'var(--mut)');
   $('cpuBox').setAttribute('stroke',isFuseBlown?'var(--mut)':'var(--ok)');
-  $('trg').setAttribute('stroke',(isFuseBlown||r.scrOn)?'var(--acc2)':'var(--mut)')
+  $('trC').setAttribute('stroke',(isFuseBlown||r.scrOn)?'var(--acc2)':'var(--mut)');$('trE').setAttribute('stroke',(isFuseBlown||r.scrOn)?'var(--acc2)':'var(--mut)')
 }
 const cv=$('scope'),cx=cv.getContext('2d');let W=0,Hh=0;
 function fit(){const d=devicePixelRatio||1;W=cv.clientWidth;Hh=cv.clientHeight;cv.width=W*d;cv.height=Hh*d;cx.setTransform(d,0,0,d,0,0)}
@@ -175,5 +230,24 @@ $('bTh').onclick=()=>{const d=document.documentElement;d.dataset.theme=d.dataset
 addEventListener('scroll',()=>{$('prog').style.width=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)*100+'%'});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.1});
 document.querySelectorAll('.rev').forEach(x=>io.observe(x));
+
+(function(){
+  const VCC=9,RC=220,HFE=100,ICSAT=VCC/RC*1000;
+  $('llg').innerHTML=`<path d="M30 10V210H360" stroke="var(--mut)" stroke-width="2" fill="none"/>
+<text class="tm" x="4" y="14">IC (mA)</text><text class="tm" x="330" y="228">VCE (V)</text>
+<text class="t" x="6" y="${210-180-6}">${ICSAT.toFixed(0)}</text>
+<path d="M30 ${210-180} L360 210" stroke="var(--acc)" stroke-width="2.5" fill="none"/>
+<text class="tm" x="210" y="${210-100}">recta de carga</text>`;
+  function llu(){
+    const ib=+$('ibS').value;$('ibL').textContent=ib+' µA';
+    const icLin=ib/1000*HFE,ic=Math.min(ICSAT,icLin),vce=ic>=ICSAT-.01?.3:VCC-ic/1000*RC;
+    const x=30+ (vce/VCC)*330,y=210-(ic/ICSAT)*180;
+    $('qdot').setAttribute('cx',x);$('qdot').setAttribute('cy',y);
+    const zone=ib===0?'corte':ic>=ICSAT-.5?'saturación':'activa';
+    $('llM').textContent=zone==='corte'?'IB = 0: el transistor está en corte. IC ≈ 0, VCE ≈ VCC — el punto Q está en la esquina inferior derecha.'
+      :zone==='saturación'?`IB = ${ib} µA ya satura el transistor: IC llegó a su máximo (${ICSAT.toFixed(0)} mA) y VCE cayó a ≈0.3 V. El punto Q está en la esquina superior izquierda — aquí es donde opera durante el disparo del crowbar.`
+      :`IB = ${ib} µA pone al transistor en zona activa: IC = β·IB ≈ ${ic.toFixed(1)} mA, VCE ≈ ${vce.toFixed(1)} V. El punto Q se mueve sobre la recta de carga.`}
+  $('ibS').oninput=llu;llu();
+})();
 requestAnimationFrame(frame);
 </script></body></html>
