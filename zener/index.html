@@ -64,7 +64,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 .lbl{fill:var(--acc2);font:700 12px "JetBrains Mono",monospace}
 </style></head>
 <body>
-<nav id="nav"><b>🛡 LATENCIA CERO</b><div id="links"><a href="#problema">Problema</a><a href="#circuito">Circuito</a><a href="#bjt">Hoja de datos</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
+<nav id="nav"><b>🛡 LATENCIA CERO</b><div id="links"><a href="#problema">Problema</a><a href="#circuito">Circuito</a><a href="#bjt">Hoja de datos</a><a href="#calculo">Cálculo</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
 
 <header class="sec hero"><div class="wrap rev"><span class="tag">ELECTRÓNICA ANALÓGICA · CASO REAL: INTEL CORE i5-12400</span>
 <h1>Latencia <span class="gl">Cero</span></h1>
@@ -97,7 +97,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <path d="M174 72L180 78H200L206 84" stroke="var(--acc)" stroke-width="3" fill="none" stroke-linejoin="round"/>
 <text class="tm" x="203" y="90">Zener 13.2 V</text>
 <path d="M190 100V112" stroke="var(--mut)" stroke-width="2" fill="none"/>
-<rect x="170" y="112" width="40" height="16" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="tm" x="190" y="124" text-anchor="middle">RB</text>
+<rect x="162" y="110" width="56" height="20" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="tm" x="190" y="123" text-anchor="middle" style="font-size:9px">RB = 100 Ω</text>
 <path d="M190 128V145H224" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <path class="flow" id="f4" d="M190 100V145H224" stroke="var(--acc2)"/>
 <text class="lbl" x="178" y="140">B</text>
@@ -126,7 +126,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 </ul></div>
 <ol class="steps">
 <li><b>Normal:</b> el riel de +12 V se mantiene dentro de la tolerancia ATX (11.4 – 12.6 V). El Zener no conduce, la base del BJT está en 0 V y el transistor permanece en corte. Vout = Vin: la señal pasa intacta hacia el VRM.</li>
-<li><b>Sobrevoltaje:</b> Vin supera 13.2 V — el mínimo de disparo de OVP que permite la norma ATX. El Zener entra en ruptura instantáneamente y manda corriente a la base del BJT a través de RB.</li>
+<li><b>Sobrevoltaje:</b> Vin supera 13.2 V — el mínimo de disparo de OVP que permite la norma ATX. El Zener entra en ruptura y empieza a mandar corriente a la base del BJT a través de RB = 100 Ω.</li>
 <li><b>Disparo:</b> con corriente de base suficiente, el BJT entra en saturación (colector-emisor casi en corto) y crea el cortocircuito intencional entre el riel de +12 V y tierra — el "crowbar".</li>
 <li><b>Sacrificio:</b> esa sobrecorriente funde el fusible en milisegundos. El enlace con el VRM del i5-12400 queda roto permanentemente: Vout cae a 0 V y se queda así.</li>
 </ol>
@@ -149,7 +149,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 </table></div>
 <div>
 <div class="card"><h3 style="font-size:16px">🎯 Propósito</h3><p>Necesitamos un transistor que pase de corte a saturación en microsegundos, que aguante al menos la corriente de la rama de disparo, y que no se dañe mientras dura el pulso. El 2N2222 cumple: hFE alto (dispara con poca corriente de base) y una fT de 250 MHz, mucho más rápida de lo que este circuito necesita. Nota: en una placa real, este transistor no conduce los más de 100 A del riel completo — dispara un fusible de sensado en la rama de protección, que es el que corta el riel principal.</p></div>
-<div class="card"><h3 style="font-size:16px">🛠 Desarrollo</h3><p>Con VCC = 12 V (el riel protegido) y una resistencia de colector RC = 220 Ω, la corriente de saturación es IC(sat) = VCC / RC ≈ 55 mA — muy por debajo de los 600 mA máximos del 2N2222. Con hFE = 100, basta una corriente de base IB ≈ 0.55 mA para saturar, y el Zener, ya en ruptura a 13.2 V, la entrega sin esfuerzo. Por eso el disparo ocurre casi al instante.</p></div></div>
+<div class="card"><h3 style="font-size:16px">🛠 Desarrollo</h3><p>RB = 100 Ω es la resistencia real del circuito, en serie con el Zener y la base. Ella sola fija cuánta corriente de base recibe el BJT una vez que el Zener entra en ruptura — y por lo tanto decide a qué voltaje exacto se dispara el crowbar. Ver la <a href="#calculo" style="color:var(--acc)">memoria de cálculo completa</a> para el desarrollo paso a paso.</p></div></div>
 </div>
 
 <div class="card"><h3 style="font-size:16px">🏠 Ejemplo de la vida real: protegiendo un Intel Core i5-12400</h3>
@@ -174,14 +174,48 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <p>Por eso este circuito dispara a <b>13.2 V</b>: es exactamente el mínimo de disparo de OVP que la norma ATX permite en el riel de +12 V que alimenta al VRM de este procesador. El simulador de la siguiente sección usa este valor real, no uno inventado — puedes verlo y medirlo con el mismo riel de hasta 16 V que cubre todo el rango permitido por la especificación (hasta 15.6 V).</p>
 <p class="hint" style="font-size:12px;color:var(--mut)">Specs del i5-12400 y parámetros de referencia según la especificación ATX12V y documentación pública de Intel (VID, regulación y loadline de VRM para procesadores de escritorio).</p></div>
 
-<div class="card"><h3 style="font-size:16px">📈 Punto de funcionamiento (recta de carga)</h3>
+<div class="card"><h3 style="font-size:16px">📈 Punto de funcionamiento (recta de carga)</h3><p style="font-size:13px">Ejemplo genérico de interruptor BJT con carga RC = 220 Ω (para visualizar corte / zona activa / saturación). En el crowbar real, el colector va directo al riel protegido — no lleva RC — por eso el disparo exacto se calcula con RB en la memoria de cálculo.</p>
 <svg id="llv" viewBox="0 0 380 240" width="100%"><g id="llg"></g><circle id="qdot" r="7" fill="var(--acc2)" stroke="var(--bg)" stroke-width="2"/></svg>
 <div class="row"><label>Corriente de base IB <b id="ibL">0 µA</b></label><input type="range" id="ibS" min="0" max="800" step="10" value="0"></div>
 <div class="msg" id="llM"></div></div>
 </div></section>
 
-<section class="sec" id="sim"><div class="wrap rev"><h2 class="sh"><em class="n">04</em>Simulador interactivo</h2>
-<p class="lead">Vin representa el riel real de +12 V. Zona segura ATX: 11.4 – 12.6 V. Disparo del crowbar: 13.2 V (mínimo de OVP según la norma).</p>
+<section class="sec" id="calculo"><div class="wrap rev"><h2 class="sh"><em class="n">04</em>Memoria de cálculo</h2>
+<p class="lead">De dónde sale cada número del circuito, paso a paso — con las fórmulas desarrolladas.</p>
+
+<div class="card"><h3 style="font-size:15px">1️⃣ Elección de VZ</h3>
+<p>La norma ATX12V exige que el disparo de sobrevoltaje (OVP) del riel +12 V ocurra dentro de la ventana 13.2 – 15.6 V. Elegimos el Zener en el extremo más conservador de esa ventana:</p>
+<div class="fm">VZ = 13.2 V</div></div>
+
+<div class="card"><h3 style="font-size:15px">2️⃣ Corriente de falla objetivo</h3>
+<p>El BJT no conduce los 100+ A del riel completo: dispara un fusible de sensado, pequeño y rápido (fast-blow, 200 mA nominal). Un fusible fast-blow típicamente necesita ~2× su corriente nominal para abrir en milisegundos:</p>
+<div class="fm">IC(falla) = 2 × 200 mA = 400 mA</div>
+<p>400 mA queda cómodamente por debajo del IC máx. del 2N2222 (600 mA, según su hoja de datos).</p></div>
+
+<div class="card"><h3 style="font-size:15px">3️⃣ Corriente de base necesaria (factor de sobre-excitación)</h3>
+<p>Para garantizar <b>saturación dura</b> (no solo zona activa) incluso en el peor caso, se usa el hFE mínimo garantizado por el fabricante (100, no el típico de 100–300) y un factor de sobre-excitación de 2:</p>
+<div class="fm">IB(mín) = (IC(falla) / hFE(mín)) × 2<br>IB(mín) = (400 mA / 100) × 2 = <b>8 mA</b></div></div>
+
+<div class="card"><h3 style="font-size:15px">4️⃣ Cálculo de RB</h3>
+<p>La malla base-emisor, cuando el Zener está en ruptura, es:</p>
+<div class="fm">Vin = VZ + VBE(sat) + IB·RB</div>
+<p>Despejando RB para un voltaje de diseño Vin = 14.7 V (dentro de la ventana de disparo ATX) y usando VBE(sat) ≈ 0.7 V:</p>
+<div class="fm">RB = (Vin − VZ − VBE) / IB<br>RB = (14.7 − 13.2 − 0.7) / 0.008 A<br>RB = 0.8 / 0.008 = <b>100 Ω</b> (valor estándar)</div></div>
+
+<div class="card"><h3 style="font-size:15px">5️⃣ Voltaje de disparo resultante</h3>
+<p>Con RB = 100 Ω ya fijo, despejamos a la inversa el Vin real al que se alcanza IB = 8 mA:</p>
+<div class="fm">Vin(disparo) = VZ + VBE + IB·RB<br>Vin(disparo) = 13.2 + 0.7 + (0.008 × 100)<br>Vin(disparo) = 13.2 + 0.7 + 0.8 = <b>14.7 V</b></div>
+<p>14.7 V cae dentro de la ventana de disparo de 13.2–15.6 V que exige la norma ATX — el diseño es válido. Este es el número que usa el simulador de la siguiente sección.</p></div>
+
+<div class="card"><h3 style="font-size:15px">6️⃣ Verificación: potencias</h3>
+<p>Como el Zener y la base comparten la misma rama (RB en serie con ambos), IZ = IB = 8 mA en el momento del disparo:</p>
+<div class="fm">P(Zener) = VZ × IZ = 13.2 V × 0.008 A ≈ 106 mW</div>
+<div class="fm">P(BJT, instantánea) = VCE(sat) × IC(falla) = 0.3 V × 0.4 A = 120 mW</div>
+<p>Ambas potencias quedan muy por debajo de los límites de sus respectivas hojas de datos, y además el pulso dura solo milisegundos — no hay riesgo térmico.</p></div>
+</div></section>
+
+<section class="sec" id="sim"><div class="wrap rev"><h2 class="sh"><em class="n">05</em>Simulador interactivo</h2>
+<p class="lead">Vin representa el riel real de +12 V. Zona segura ATX: 11.4 – 12.6 V. El Zener arma el disparo desde 13.2 V; con RB = 100 Ω, el BJT satura y el fusible se funde en 14.7 V (ver memoria de cálculo).</p>
 <div class="card">
 <div class="row"><label>Voltaje de entrada Vin (riel +12 V) <b id="vL">12.0 V</b></label><input type="range" id="vin" min="0" max="16" step="0.1" value="12"></div>
 <div class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="chip danger" id="bSpike">⚡ Enviar pico de 15 V</button><button class="chip" id="bReset">🔧 Reemplazar fusible (Reset)</button></div>
@@ -191,11 +225,11 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <div class="alert" id="alLink">🔌 ENLACE ROTO · VRM DESCONECTADO</div>
 <div class="msg" id="msg">Mueve Vin o lanza el pico para ver la protección en acción.</div></div>
 <div class="card"><h2 style="font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em">Osciloscopio</h2>
-<small style="color:var(--mut)"><span style="color:var(--warn)">━</span> Vin &nbsp; <span style="color:var(--acc)">━</span> Vout &nbsp; <span style="color:var(--bad)">┅</span> disparo 13.2 V</small>
+<small style="color:var(--mut)"><span style="color:var(--warn)">━</span> Vin &nbsp; <span style="color:var(--acc)">━</span> Vout &nbsp; <span style="color:var(--bad)">┅</span> disparo 14.7 V</small>
 <canvas id="scope"></canvas></div>
 </div></section>
 
-<section class="sec" id="conclusion"><div class="wrap rev"><h2 class="sh"><em class="n">05</em>Conclusión</h2>
+<section class="sec" id="conclusion"><div class="wrap rev"><h2 class="sh"><em class="n">06</em>Conclusión</h2>
 <p class="thesis">La tesis de este trabajo: en un sistema digital, la primera línea de defensa nunca es el software. Un ADC y un microcontrolador necesitan ciclos de reloj que un transitorio de voltaje no les da. El circuito Crowbar demuestra que la electrónica analógica —un diodo Zener y un transistor BJT en conmutación, calibrados al riel real de +12 V que alimenta a un Intel Core i5-12400— puede sentir, decidir y actuar en el mismo instante físico en que ocurre el peligro, sacrificando un componente de bajo costo (el fusible) para salvar uno de alto costo (el VRM y el CPU).</p>
 <details><summary>Referencia</summary><p>Malvino, A. P. &amp; Bates, D. J. — <i>Principios de Electrónica</i>, 7.ª ed., cap. 5: diodos de propósito especial y el uso del Zener como sensor de referencia en circuitos de protección. Parámetros del riel +12 V según especificación ATX12V.</p></details>
 </div></section>
@@ -203,7 +237,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 
 <script>
 const $=id=>document.getElementById(id);
-const VZ=13.2,TRIG=13.5,col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const VZ=13.2,TRIG=14.7,col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 let isFuseBlown=false,spike=0,t=0,last=performance.now();
 const H=[];
 function speed(id,on){const e=$(id);e.style.opacity=on?1:0}
