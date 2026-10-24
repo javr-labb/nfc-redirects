@@ -54,9 +54,6 @@ canvas{width:100%;height:160px;display:block}
 .fm{font:15px "JetBrains Mono",monospace;background:var(--bg);padding:10px;border-radius:10px;margin:8px 0;color:var(--ink)}
 details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}summary{cursor:pointer;font-weight:600}details p{margin:8px 0 0}
 footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
-</head>
-<body>
-
 .spec{width:100%;border-collapse:collapse;font:13px "JetBrains Mono",monospace}
 .spec td{padding:8px 10px;border-top:1px solid var(--line)}.spec tr:first-child td{border-top:none}
 .spec td:first-child{color:var(--mut)}.spec td:last-child{text-align:right;color:var(--ink);font-weight:700}
@@ -65,9 +62,11 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 .cfg h3{font-size:15px;margin-bottom:8px}
 .cfg ul{margin:0;padding-left:18px}.cfg li{margin:5px 0;color:var(--ink)}.cfg b{color:var(--acc)}
 .lbl{fill:var(--acc2);font:700 12px "JetBrains Mono",monospace}
-</style><nav id="nav"><b>🛡 LATENCIA CERO</b><div id="links"><a href="#problema">Problema</a><a href="#circuito">Circuito</a><a href="#bjt">Hoja de datos</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
+</style></head>
+<body>
+<nav id="nav"><b>🛡 LATENCIA CERO</b><div id="links"><a href="#problema">Problema</a><a href="#circuito">Circuito</a><a href="#bjt">Hoja de datos</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
 
-<header class="sec hero"><div class="wrap rev"><span class="tag">ELECTRÓNICA ANALÓGICA · TRABAJO ARGUMENTATIVO</span>
+<header class="sec hero"><div class="wrap rev"><span class="tag">ELECTRÓNICA ANALÓGICA · CASO REAL: INTEL CORE i5-12400</span>
 <h1>Latencia <span class="gl">Cero</span></h1>
 <p class="sub">El software y los ADC necesitan microsegundos para reaccionar. El hardware analógico no espera: el circuito <b>Crowbar</b> detecta, dispara y se sacrifica antes de que el procesador se entere de que algo salió mal.</p>
 <a class="btn" href="#circuito">▶ Ver cómo decide el hardware</a></div></header>
@@ -81,10 +80,10 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 </div></section>
 
 <section class="sec" id="circuito"><div class="wrap rev"><h2 class="sh"><em class="n">02</em>El circuito</h2>
-<p class="lead">Esquemático estilo Proteus, con el transistor dibujado tal cual: terminales de Base, Colector y Emisor por separado, para que se vea exactamente cómo está conectado.</p>
+<p class="lead">Esquemático estilo Proteus, calibrado al caso real: Vin es el riel <b>+12 V (EPS12V)</b> que alimenta al VRM del procesador. Terminales de Base, Colector y Emisor por separado, para que se vea exactamente cómo está conectado.</p>
 <div class="two">
 <div class="card"><svg viewBox="0 0 400 270" width="100%">
-<text class="t" x="8" y="22">Vin</text>
+<text class="t" x="8" y="22">Vin (+12V)</text>
 <circle cx="30" cy="110" r="14" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="tm" x="24" y="114">+ −</text>
 <path d="M30 110V30H90" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <path class="flow" id="f1" d="M30 30H90" stroke="var(--warn)"/>
@@ -96,7 +95,7 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <path class="flow" id="f3" d="M190 30V70" stroke="var(--acc)"/>
 <polygon points="180,100 200,100 190,78" fill="var(--card)" stroke="var(--acc)" stroke-width="2"/>
 <path d="M174 72L180 78H200L206 84" stroke="var(--acc)" stroke-width="3" fill="none" stroke-linejoin="round"/>
-<text class="tm" x="203" y="90">Zener 5.1 V</text>
+<text class="tm" x="203" y="90">Zener 13.2 V</text>
 <path d="M190 100V112" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <rect x="170" y="112" width="40" height="16" rx="3" fill="var(--card)" stroke="var(--mut)" stroke-width="2"/><text class="tm" x="190" y="124" text-anchor="middle">RB</text>
 <path d="M190 128V145H224" stroke="var(--mut)" stroke-width="2" fill="none"/>
@@ -116,20 +115,20 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <path class="flow" id="fE" d="M265 196V215" stroke="var(--acc2)"/>
 <path d="M250 215H280M256 221H274M262 227H268" stroke="var(--mut)" stroke-width="2"/>
 <text class="tm" x="265" y="238" text-anchor="middle">tierra</text>
-<rect x="320" y="10" width="36" height="60" rx="6" fill="var(--card)" stroke="var(--ok)" stroke-width="3" id="cpuBox"/><text class="t" x="338" y="44" text-anchor="middle" style="font-weight:700">CPU</text>
+<rect x="320" y="10" width="36" height="60" rx="6" fill="var(--card)" stroke="var(--ok)" stroke-width="3" id="cpuBox"/><text class="t" x="338" y="34" text-anchor="middle" style="font-weight:700;font-size:9px">VRM /</text><text class="t" x="338" y="44" text-anchor="middle" style="font-weight:700;font-size:9px">i5-12400</text>
 </svg></div>
 <div>
 <div class="cfg"><h3>📐 Configuración: emisor común — interruptor digital</h3><ul>
-<li><b>Colector (C):</b> conectado al nodo protegido. Por aquí pasa la gran corriente que se desvía a tierra cuando el transistor dispara.</li>
+<li><b>Colector (C):</b> conectado al nodo protegido, el riel de +12 V. Por aquí pasa la corriente que se desvía a tierra cuando el transistor dispara.</li>
 <li><b>Base (B):</b> recibe la señal de control de baja corriente desde el Zener, a través de RB. Esta señal es la que decide si el transistor conduce.</li>
 <li><b>Emisor (E):</b> conectado a tierra — es la referencia común de todo el circuito, de ahí el nombre "emisor común".</li>
 <li><b>¿Funciona como interruptor?</b> Sí. Solo opera en corte (abierto) o en saturación (cerrado), nunca en zona activa — por eso es un interruptor digital y no un amplificador.</li>
 </ul></div>
 <ol class="steps">
-<li><b>Normal:</b> Vin fluye por el fusible intacto hacia la CPU. El Zener no conduce, la base del BJT está en 0 V y el transistor permanece en corte. Vout = Vin (hasta un máximo seguro de 5.5 V).</li>
-<li><b>Sobrevoltaje:</b> Vin supera VZ (5.1 V + margen). El Zener entra en ruptura instantáneamente y manda corriente a la base del BJT a través de RB.</li>
-<li><b>Disparo:</b> con corriente de base suficiente, el BJT entra en saturación (colector-emisor casi en corto) y crea el cortocircuito intencional entre el nodo protegido y tierra — el "crowbar".</li>
-<li><b>Sacrificio:</b> esa sobrecorriente funde el fusible en milisegundos. El enlace con la CPU queda roto permanentemente: Vout cae a 0 V y se queda así.</li>
+<li><b>Normal:</b> el riel de +12 V se mantiene dentro de la tolerancia ATX (11.4 – 12.6 V). El Zener no conduce, la base del BJT está en 0 V y el transistor permanece en corte. Vout = Vin: la señal pasa intacta hacia el VRM.</li>
+<li><b>Sobrevoltaje:</b> Vin supera 13.2 V — el mínimo de disparo de OVP que permite la norma ATX. El Zener entra en ruptura instantáneamente y manda corriente a la base del BJT a través de RB.</li>
+<li><b>Disparo:</b> con corriente de base suficiente, el BJT entra en saturación (colector-emisor casi en corto) y crea el cortocircuito intencional entre el riel de +12 V y tierra — el "crowbar".</li>
+<li><b>Sacrificio:</b> esa sobrecorriente funde el fusible en milisegundos. El enlace con el VRM del i5-12400 queda roto permanentemente: Vout cae a 0 V y se queda así.</li>
 </ol>
 <p class="hint" style="font-size:12px;color:var(--mut)">El fusible no se repara solo: una vez quemado, el circuito permanece abierto hasta que alguien lo reemplaza físicamente — por eso en el simulador necesitas presionar "Reset".</p></div>
 </div></div></section>
@@ -149,11 +148,31 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <tr><td>fT (frecuencia de transición)</td><td>250 MHz</td></tr>
 </table></div>
 <div>
-<div class="card"><h3 style="font-size:16px">🎯 Propósito</h3><p>Necesitamos un transistor que pase de corte a saturación en microsegundos, que aguante al menos la corriente que va a circular por el fusible, y que no se dañe mientras dura el disparo. El 2N2222 cumple: hFE alto (dispara con poca corriente de base) y una fT de 250 MHz, mucho más rápida de lo que este circuito necesita.</p></div>
-<div class="card"><h3 style="font-size:16px">🛠 Desarrollo</h3><p>Con VCC ≈ 9 V y una resistencia de colector RC = 220 Ω (la misma del Zener), la corriente de saturación es IC(sat) = VCC / RC ≈ 41 mA. Con hFE = 100, basta una corriente de base IB ≈ 0.41 mA para saturar — y el Zener, en ruptura, entrega fácilmente eso. Por eso el disparo ocurre casi al instante.</p></div></div>
+<div class="card"><h3 style="font-size:16px">🎯 Propósito</h3><p>Necesitamos un transistor que pase de corte a saturación en microsegundos, que aguante al menos la corriente de la rama de disparo, y que no se dañe mientras dura el pulso. El 2N2222 cumple: hFE alto (dispara con poca corriente de base) y una fT de 250 MHz, mucho más rápida de lo que este circuito necesita. Nota: en una placa real, este transistor no conduce los más de 100 A del riel completo — dispara un fusible de sensado en la rama de protección, que es el que corta el riel principal.</p></div>
+<div class="card"><h3 style="font-size:16px">🛠 Desarrollo</h3><p>Con VCC = 12 V (el riel protegido) y una resistencia de colector RC = 220 Ω, la corriente de saturación es IC(sat) = VCC / RC ≈ 55 mA — muy por debajo de los 600 mA máximos del 2N2222. Con hFE = 100, basta una corriente de base IB ≈ 0.55 mA para saturar, y el Zener, ya en ruptura a 13.2 V, la entrega sin esfuerzo. Por eso el disparo ocurre casi al instante.</p></div></div>
 </div>
 
-<div class="card"><h3 style="font-size:16px">🏠 Ejemplo de la vida real</h3><p>El mismo principio —un BJT que pasa de corte a saturación para manejar más corriente de la que puede dar un circuito de control— es el que usa un <b>relé de arranque de motor</b> o el <b>driver de un ventilador de PC</b>: un microcontrolador de 3.3 V no puede mover 500 mA directamente, así que una señal pequeña en la base satura un BJT que sí los maneja. Aquí, en vez de mover un motor, el BJT saturado mueve la corriente que funde el fusible.</p></div>
+<div class="card"><h3 style="font-size:16px">🏠 Ejemplo de la vida real: protegiendo un Intel Core i5-12400</h3>
+<p>Procesador elegido para este trabajo: <b>Intel Core i5-12400</b> (12.ª generación, arquitectura Alder Lake-S, lanzado en enero de 2022). Un CPU real, de escritorio, común en cualquier salón de clases.</p>
+<table class="spec">
+<tr><td>Modelo</td><td>Intel Core i5-12400</td></tr>
+<tr><td>Núcleos / hilos</td><td>6 / 12</td></tr>
+<tr><td>Socket</td><td>LGA1700</td></tr>
+<tr><td>Frecuencia base / turbo</td><td>2.5 GHz / 4.4 GHz</td></tr>
+<tr><td>Potencia base / turbo máxima</td><td>65 W / 117 W</td></tr>
+</table>
+<p style="margin-top:12px">Este CPU <b>no</b> recibe el voltaje de la fuente de poder (+12 V) de forma directa. Un VRM (regulador de voltaje) en la tarjeta madre reduce ese 12 V hasta el voltaje de núcleo (Vcore) que el propio procesador pide por sus pines VID — y ese Vcore es brutalmente sensible.</p>
+<table class="spec">
+<tr><td>Regulación normal del riel +12 V (ATX, ±5%)</td><td>11.4 – 12.6 V</td></tr>
+<tr><td>Disparo de OVP del riel +12 V (norma ATX)</td><td>13.2 – 15.6 V</td></tr>
+<tr><td>Vcore típico bajo carga</td><td>1.0 – 1.35 V</td></tr>
+<tr><td>VID máximo absoluto (límite de diseño Intel)</td><td>≈ 1.52 V</td></tr>
+<tr><td>Resistencia de loadline del VRM</td><td>≈ 1.1 – 1.6 mΩ</td></tr>
+<tr><td>Corriente bajo carga completa</td><td>decenas de A, con picos &gt;150–190 A</td></tr>
+</table>
+<p>El Vcore es tan sensible que 0.2 V de más ya es daño permanente — mucho antes de que el software o el sensor térmico se enteren. Por eso, en una placa real para este i5-12400, el crowbar <b>no se coloca sobre el pin VID</b> (demasiado rápido y sensible para intervenir ahí): se coloca en la <b>entrada de +12 V que alimenta al VRM</b>, cortando el problema de raíz antes de que se convierta en un Vcore fuera de rango.</p>
+<p>Por eso este circuito dispara a <b>13.2 V</b>: es exactamente el mínimo de disparo de OVP que la norma ATX permite en el riel de +12 V que alimenta al VRM de este procesador. El simulador de la siguiente sección usa este valor real, no uno inventado — puedes verlo y medirlo con el mismo riel de hasta 16 V que cubre todo el rango permitido por la especificación (hasta 15.6 V).</p>
+<p class="hint" style="font-size:12px;color:var(--mut)">Specs del i5-12400 y parámetros de referencia según la especificación ATX12V y documentación pública de Intel (VID, regulación y loadline de VRM para procesadores de escritorio).</p></div>
 
 <div class="card"><h3 style="font-size:16px">📈 Punto de funcionamiento (recta de carga)</h3>
 <svg id="llv" viewBox="0 0 380 240" width="100%"><g id="llg"></g><circle id="qdot" r="7" fill="var(--acc2)" stroke="var(--bg)" stroke-width="2"/></svg>
@@ -162,28 +181,29 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 </div></section>
 
 <section class="sec" id="sim"><div class="wrap rev"><h2 class="sh"><em class="n">04</em>Simulador interactivo</h2>
+<p class="lead">Vin representa el riel real de +12 V. Zona segura ATX: 11.4 – 12.6 V. Disparo del crowbar: 13.2 V (mínimo de OVP según la norma).</p>
 <div class="card">
-<div class="row"><label>Voltaje de entrada Vin <b id="vL">0.0 V</b></label><input type="range" id="vin" min="0" max="16" step="0.1" value="0"></div>
+<div class="row"><label>Voltaje de entrada Vin (riel +12 V) <b id="vL">12.0 V</b></label><input type="range" id="vin" min="0" max="16" step="0.1" value="12"></div>
 <div class="chips" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="chip danger" id="bSpike">⚡ Enviar pico de 15 V</button><button class="chip" id="bReset">🔧 Reemplazar fusible (Reset)</button></div>
-<div class="tiles"><div class="tile"><span>Vin</span><b id="tVin">0.0 V</b></div><div class="tile"><span>Vout (CPU)</span><b id="tVout">0.0 V</b></div><div class="tile"><span>Fusible</span><b id="tFuse">intacto</b></div><div class="tile"><span>BJT</span><b id="tScr">corte</b></div></div>
+<div class="tiles"><div class="tile"><span>Vin</span><b id="tVin">12.0 V</b></div><div class="tile"><span>Vout → VRM</span><b id="tVout">12.0 V</b></div><div class="tile"><span>Fusible</span><b id="tFuse">intacto</b></div><div class="tile"><span>BJT</span><b id="tScr">corte</b></div></div>
 <p style="margin-top:10px"><span class="pill" id="st">✅ Sistema normal</span></p>
 <div class="alert" id="alFuse">🔥 FUSIBLE QUEMADO</div>
-<div class="alert" id="alLink">🔌 ENLACE ROTO · CPU DESCONECTADA</div>
+<div class="alert" id="alLink">🔌 ENLACE ROTO · VRM DESCONECTADO</div>
 <div class="msg" id="msg">Mueve Vin o lanza el pico para ver la protección en acción.</div></div>
 <div class="card"><h2 style="font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em">Osciloscopio</h2>
-<small style="color:var(--mut)"><span style="color:var(--warn)">━</span> Vin &nbsp; <span style="color:var(--acc)">━</span> Vout &nbsp; <span style="color:var(--bad)">┅</span> límite 5.5 V</small>
+<small style="color:var(--mut)"><span style="color:var(--warn)">━</span> Vin &nbsp; <span style="color:var(--acc)">━</span> Vout &nbsp; <span style="color:var(--bad)">┅</span> disparo 13.2 V</small>
 <canvas id="scope"></canvas></div>
 </div></section>
 
 <section class="sec" id="conclusion"><div class="wrap rev"><h2 class="sh"><em class="n">05</em>Conclusión</h2>
-<p class="thesis">La tesis de este trabajo: en un sistema digital, la primera línea de defensa nunca es el software. Un ADC y un microcontrolador necesitan ciclos de reloj que un transitorio de voltaje no les da. El circuito Crowbar demuestra que la electrónica analógica —un diodo Zener y un transistor BJT en conmutación— puede sentir, decidir y actuar en el mismo instante físico en que ocurre el peligro, sacrificando un componente de bajo costo (el fusible) para salvar uno de alto costo (la CPU).</p>
-<details><summary>Referencia</summary><p>Malvino, A. P. &amp; Bates, D. J. — <i>Principios de Electrónica</i>, 7.ª ed., cap. 5: diodos de propósito especial y el uso del Zener como sensor de referencia en circuitos de protección.</p></details>
+<p class="thesis">La tesis de este trabajo: en un sistema digital, la primera línea de defensa nunca es el software. Un ADC y un microcontrolador necesitan ciclos de reloj que un transitorio de voltaje no les da. El circuito Crowbar demuestra que la electrónica analógica —un diodo Zener y un transistor BJT en conmutación, calibrados al riel real de +12 V que alimenta a un Intel Core i5-12400— puede sentir, decidir y actuar en el mismo instante físico en que ocurre el peligro, sacrificando un componente de bajo costo (el fusible) para salvar uno de alto costo (el VRM y el CPU).</p>
+<details><summary>Referencia</summary><p>Malvino, A. P. &amp; Bates, D. J. — <i>Principios de Electrónica</i>, 7.ª ed., cap. 5: diodos de propósito especial y el uso del Zener como sensor de referencia en circuitos de protección. Parámetros del riel +12 V según especificación ATX12V.</p></details>
 </div></section>
-<footer>Trabajo argumentativo de Electrónica Analógica · circuito Crowbar (Zener + Transistor BJT + Fusible)</footer>
+<footer>Trabajo argumentativo de Electrónica Analógica · circuito Crowbar (Zener + Transistor BJT + Fusible) · caso real: riel +12 V / VRM del Intel Core i5-12400</footer>
 
 <script>
 const $=id=>document.getElementById(id);
-const VZ=5.1,TRIG=5.6,col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const VZ=13.2,TRIG=13.5,col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 let isFuseBlown=false,spike=0,t=0,last=performance.now();
 const H=[];
 function speed(id,on){const e=$(id);e.style.opacity=on?1:0}
@@ -191,7 +211,7 @@ function compute(vin){
   if(!isFuseBlown && vin>=TRIG){isFuseBlown=true}
   const zenerOn=!isFuseBlown && vin>=VZ;
   const scrOn=!isFuseBlown && vin>=TRIG;
-  const vout=isFuseBlown?0:Math.min(vin,5.5);
+  const vout=isFuseBlown?0:vin;
   return{vin,vout,zenerOn,scrOn}
 }
 function ui(r){
@@ -199,12 +219,12 @@ function ui(r){
   $('tFuse').textContent=isFuseBlown?'quemado':'intacto';$('tFuse').style.color=isFuseBlown?'var(--bad)':'var(--ok)';
   $('tScr').textContent=isFuseBlown?'disparado':r.scrOn?'disparado':'corte';$('tScr').style.color=(isFuseBlown||r.scrOn)?'var(--acc2)':'var(--mut)';
   const st=$('st');
-  st.textContent=isFuseBlown?'🔥 Protección activada · fusible abierto':r.zenerOn?'⚠️ Zener conduce, armando el disparo':'✅ Sistema normal';
-  st.style.color=isFuseBlown?'var(--bad)':r.zenerOn?'var(--warn)':'var(--ok)';
+  st.textContent=isFuseBlown?'🔥 Protección activada · fusible abierto':r.zenerOn?'⚠️ Zener conduce, armando el disparo':(r.vin<11.4||r.vin>12.6)?'🟡 Fuera de tolerancia ATX (±5%)':'✅ Sistema normal';
+  st.style.color=isFuseBlown?'var(--bad)':r.zenerOn?'var(--warn)':(r.vin<11.4||r.vin>12.6)?'var(--warn)':'var(--ok)';
   $('alFuse').classList.toggle('show',isFuseBlown);$('alLink').classList.toggle('show',isFuseBlown);
-  $('msg').textContent=isFuseBlown?`El pico superó ${TRIG} V, el BJT saturó y el fusible se fundió. Vout quedó en 0 V de forma permanente: así es como el hardware se sacrifica sin esperar al software. Presiona Reset para reemplazar el fusible.`
-    :r.zenerOn?`Vin = ${r.vin.toFixed(1)} V ya supera VZ (${VZ} V): el Zener está conduciendo y arma el disparo. Si Vin llega a ${TRIG} V, el BJT satura y el fusible se funde.`
-    :`Vin = ${r.vin.toFixed(1)} V está en rango seguro. El Zener no conduce y Vout sigue a Vin sin ninguna intervención.`;
+  $('msg').textContent=isFuseBlown?`El riel superó ${TRIG} V, el BJT saturó y el fusible se fundió. Vout quedó en 0 V de forma permanente: así es como el hardware se sacrifica sin esperar al software. Presiona Reset para reemplazar el fusible.`
+    :r.zenerOn?`Vin = ${r.vin.toFixed(1)} V ya supera VZ (${VZ} V, el mínimo de OVP permitido por ATX): el Zener está conduciendo y arma el disparo. Si Vin llega a ${TRIG} V, el BJT satura y el fusible se funde.`
+    :`Vin = ${r.vin.toFixed(1)} V. La tolerancia normal del riel ATX es 11.4–12.6 V; el disparo del crowbar ocurre en ${VZ} V. El Zener no conduce y Vout sigue a Vin sin ninguna intervención.`;
   speed('f1',r.vin>0.1);speed('f2',!isFuseBlown&&r.vin>0.1);speed('f3',r.zenerOn);speed('f4',r.scrOn);speed('fC',isFuseBlown||r.scrOn);speed('fE',isFuseBlown||r.scrOn);
   $('fuseL').setAttribute('stroke-dasharray',isFuseBlown?'4 4':'none');$('fuseL').setAttribute('stroke',isFuseBlown?'var(--bad)':'var(--mut)');
   $('cpuBox').setAttribute('stroke',isFuseBlown?'var(--mut)':'var(--ok)');
@@ -215,7 +235,7 @@ function fit(){const d=devicePixelRatio||1;W=cv.clientWidth;Hh=cv.clientHeight;c
 addEventListener('resize',fit);fit();
 function draw(){const YM=16,y=v=>Hh-4-v/YM*(Hh-8);cx.clearRect(0,0,W,Hh);cx.lineWidth=1;cx.strokeStyle=col('--line');
   for(let v=0;v<=YM;v+=4){cx.beginPath();cx.moveTo(0,y(v));cx.lineTo(W,y(v));cx.stroke()}
-  cx.setLineDash([5,4]);cx.strokeStyle=col('--bad');cx.beginPath();cx.moveTo(0,y(5.5));cx.lineTo(W,y(5.5));cx.stroke();cx.setLineDash([]);
+  cx.setLineDash([5,4]);cx.strokeStyle=col('--bad');cx.beginPath();cx.moveTo(0,y(TRIG));cx.lineTo(W,y(TRIG));cx.stroke();cx.setLineDash([]);
   [['--warn',0,1.5],['--acc',1,2.5]].forEach(([c,k,w])=>{cx.strokeStyle=col(c);cx.lineWidth=w;cx.beginPath();
     H.forEach((p,i)=>{const x=i*W/299;i?cx.lineTo(x,y(p[k])):cx.moveTo(x,y(p[k]))});cx.stroke()})}
 function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
@@ -225,14 +245,14 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;t+=dt;
   requestAnimationFrame(frame)}
 $('vin').oninput=()=>{};
 $('bSpike').onclick=()=>{spike=.6};
-$('bReset').onclick=()=>{isFuseBlown=false;$('vin').value=0;spike=0};
+$('bReset').onclick=()=>{isFuseBlown=false;$('vin').value=12;spike=0};
 $('bTh').onclick=()=>{const d=document.documentElement;d.dataset.theme=d.dataset.theme==='dark'?'light':'dark'};
 addEventListener('scroll',()=>{$('prog').style.width=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)*100+'%'});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.1});
 document.querySelectorAll('.rev').forEach(x=>io.observe(x));
 
 (function(){
-  const VCC=9,RC=220,HFE=100,ICSAT=VCC/RC*1000;
+  const VCC=12,RC=220,HFE=100,ICSAT=VCC/RC*1000;
   $('llg').innerHTML=`<path d="M30 10V210H360" stroke="var(--mut)" stroke-width="2" fill="none"/>
 <text class="tm" x="4" y="14">IC (mA)</text><text class="tm" x="330" y="228">VCE (V)</text>
 <text class="t" x="6" y="${210-180-6}">${ICSAT.toFixed(0)}</text>
