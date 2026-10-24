@@ -66,7 +66,18 @@ footer{text-align:center;padding:30px 16px;color:var(--mut);font-size:13px}
 <body>
 <nav id="nav"><b>🛡 LATENCIA CERO</b><div id="links"><a href="#problema">Problema</a><a href="#circuito">Circuito</a><a href="#bjt">Hoja de datos</a><a href="#calculo">Cálculo</a><a href="#sim">Simulador</a><a href="#conclusion">Conclusión</a></div><button class="chip" id="bTh">🌙</button><div id="prog"></div></nav>
 
-<header class="sec hero"><div class="wrap rev"><span class="tag">ELECTRÓNICA ANALÓGICA · CASO REAL: INTEL CORE i5-12400</span>
+<header class="sec hero"><div class="wrap rev">
+
+<!-- DATOS DE EXPOSICIÓN -->
+<div style="margin-bottom: 26px; font-size: 14.5px; color: var(--mut); border-left: 3px solid var(--acc2); padding-left: 14px; background: color-mix(in srgb, var(--acc2) 6%, transparent); padding-top: 12px; padding-bottom: 12px; padding-right: 18px; border-radius: 0 8px 8px 0; display: inline-block; line-height: 1.6; border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+  <b style="color:var(--ink);">Escuela:</b> ESIME Culhuacán<br>
+  <b style="color:var(--ink);">Materia:</b> Electrónica Analógica<br>
+  <b style="color:var(--ink);">Profesor:</b> Vargas Reyes Orlando<br>
+  <b style="color:var(--ink);">Alumnos:</b> Campos Ruiz Karol y Vertiz Resendiz José Antonio
+</div><br>
+<!-- FIN DATOS -->
+
+<span class="tag">CASO REAL: INTEL CORE i5-12400</span>
 <h1>Latencia <span class="gl">Cero</span></h1>
 <p class="sub">El software y los ADC necesitan microsegundos para reaccionar. El hardware analógico no espera: el circuito <b>Crowbar</b> detecta, dispara y se sacrifica antes de que el procesador se entere de que algo salió mal.</p>
 <a class="btn" href="#circuito">▶ Ver cómo decide el hardware</a></div></header>
@@ -305,3 +316,4 @@ document.querySelectorAll('.rev').forEach(x=>io.observe(x));
 })();
 requestAnimationFrame(frame);
 </script></body></html>
+
