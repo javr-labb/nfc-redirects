@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Autómata de Pila · Simulador PDA</title>
+<style>
+:root{--bg:#0b1020;--c:#131a2e;--b:#26304f;--t:#e6ebff;--m:#93a0c8;--a:#38bdf8;--g:#34d399;--r:#f87171;--y:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(900px 500px at 80% -10%,#1e2a5a66,transparent),var(--bg);color:var(--t);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:56px 20px 24px;text-align:center}
+h1{font-size:clamp(2rem,6vw,3.4rem);margin:0;letter-spacing:-.02em}h1 span{color:var(--a)}
+.sub{color:var(--m);margin:6px 0 0}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+nav a{color:var(--m);text-decoration:none;border:1px solid var(--b);padding:6px 14px;border-radius:99px;font-size:.9rem}nav a:hover{color:var(--t);border-color:var(--a)}
+main{max-width:1120px;margin:auto;padding:0 16px 60px}
+section{margin:44px 0}
+h2{font-size:1.6rem;margin:0 0 14px}h2::before{content:"";display:inline-block;width:8px;height:1.1em;background:var(--a);border-radius:3px;margin-right:10px;vertical-align:-.15em}
+h3{margin:0 0 6px;font-size:1.05rem;color:var(--a)}
+p{margin:0 0 10px}.m{color:var(--m)}
+.card{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:18px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+code,textarea,input,select{font-family:ui-monospace,Consolas,monospace}
+code{background:#0e1426;padding:1px 6px;border-radius:5px;color:var(--y);font-size:.9em}
+ol,ul{margin:0;padding-left:20px}
+label{display:block;font-size:.8rem;color:var(--m);margin-bottom:10px}
+input,select,textarea{width:100%;margin-top:4px;background:#0e1426;color:var(--t);border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:.9rem}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--a)}
+.r3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+button{background:#1a2547;color:var(--t);border:1px solid var(--b);border-radius:8px;padding:8px 14px;cursor:pointer;font:inherit;font-size:.9rem}
+button:hover{border-color:var(--a)}button.p{background:var(--a);color:#04121f;border-color:var(--a);font-weight:700}button.s{border-color:var(--a);background:#0c2a3d}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.sim{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:14px;align-items:start;margin-top:14px}
+.lbl{font-size:.75rem;color:var(--m);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+#tape{display:flex;gap:4px;overflow-x:auto;padding:24px 4px 8px}
+.cell{position:relative;flex:none;width:44px;height:44px;display:grid;place-items:center;border:2px solid var(--b);border-radius:6px;font:700 1.2rem ui-monospace,monospace;background:#0e1426;transition:.3s}
+.cell.done{opacity:.35}.cell.cur{border-color:var(--g);background:#0d3a2e;transform:translateY(-4px);box-shadow:0 6px 18px #34d39944}
+.cell.cur::before{content:"▼";position:absolute;top:-22px;color:var(--g);font-size:.8rem}
+.mid{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:end;margin:14px 0}
+.unit{border:2px solid var(--b);border-radius:10px;padding:6px;background:#0e1426;width:200px}
+.face{fill:none;stroke:var(--b);stroke-width:2}.tk{stroke:var(--m);stroke-width:2}.hand{stroke:var(--y);stroke-width:3;stroke-linecap:round}.hub{fill:var(--y)}
+#hand{transition:transform .7s cubic-bezier(.5,-.3,.3,1.3)}
+#dial text{fill:var(--m);font:600 11px ui-monospace,monospace;transition:.3s}#dial text.on{fill:var(--a);font-size:14px}
+.op{text-align:center;align-self:center}.arr{font-size:2.4rem;color:var(--a);line-height:1}
+#op{font:600 .85rem ui-monospace,monospace;padding:8px;border:1px dashed var(--b);border-radius:8px;color:var(--y);min-height:3.4em}
+#stack{display:flex;flex-direction:column-reverse;gap:3px;min-height:230px;width:120px;border:2px solid var(--b);border-top:none;padding:4px;background:#0e1426;border-radius:0 0 10px 10px}
+.blk{height:34px;flex:none;display:grid;place-items:center;background:#1c2b57;border:1px solid var(--a);border-radius:6px;font-weight:700}
+.blk.z{background:#4a1d2b;border-color:var(--r)}.blk.push{animation:pu .5s}.blk.pop{animation:po .5s forwards}
+@keyframes pu{from{transform:translateY(-70px);opacity:0}}@keyframes po{to{transform:translateY(-70px);opacity:0}}
+.nul{margin:auto;color:var(--m);font-size:.8rem;letter-spacing:.3em}
+#gr svg{width:100%;height:auto}
+#gr path.ed{fill:none;stroke:#7c89b0;stroke-width:2;marker-end:url(#ar);transition:.3s}#gr path.on{stroke:var(--y);stroke-width:3;marker-end:url(#arOn)}
+#gr circle{fill:#0e1426;stroke:#7c89b0;stroke-width:2;transition:.3s}#gr g.on circle{stroke:var(--a);fill:#0c2a3d}
+#gr text{fill:var(--t);font:600 13px ui-monospace,monospace}#gr text.on{fill:var(--y)}
+#res{margin-top:12px;padding:12px 14px;border-radius:10px;font-weight:600}#res.ok{background:#0d3a2e;border:1px solid var(--g)}#res.bad{background:#3a1420;border:1px solid var(--r)}#res[hidden]{display:none}
+#tw{max-height:240px;overflow:auto;position:relative;margin-top:14px}
+table{width:100%;border-collapse:collapse;font:.8rem ui-monospace,monospace}td,th{padding:5px 8px;border-bottom:1px solid var(--b);text-align:left}th{color:var(--m);position:sticky;top:0;background:var(--c)}tr.cur{background:#fbbf2422}
+footer{text-align:center;color:var(--m);font-size:.85rem;padding:20px}
+@media(max-width:760px){.sim{grid-template-columns:1fr}.mid{grid-template-columns:1fr;justify-items:center}}
+
+/* ===== v2: diseño gráfico ===== */
+section{scroll-margin-top:70px}main{counter-reset:s}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(#ffffff08 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/44px 44px;-webkit-mask:radial-gradient(ellipse at 50% 0,#000,transparent 75%);mask:radial-gradient(ellipse at 50% 0,#000,transparent 75%)}
+.blob{position:fixed;z-index:-1;border-radius:50%;filter:blur(90px);opacity:.33;animation:fl 18s ease-in-out infinite alternate}
+.b1{width:420px;height:420px;background:#38bdf8;top:-120px;left:-100px}.b2{width:380px;height:380px;background:#a78bfa;top:35%;right:-120px;animation-delay:-6s}.b3{width:320px;height:320px;background:#34d399;bottom:-100px;left:30%;animation-delay:-11s;opacity:.18}
+@keyframes fl{to{transform:translate(70px,50px) scale(1.15)}}
+#bar{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--a),#a78bfa,var(--g));z-index:40}
+header{padding:64px 20px 14px}
+h1{background:linear-gradient(100deg,#fff,var(--a) 50%,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px #38bdf833}h1 span{color:transparent}
+.chip{display:inline-block;padding:4px 14px;border:1px solid #38bdf855;border-radius:99px;background:#38bdf814;color:var(--a);font-size:.8rem;margin-bottom:14px}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}.chips .chip{margin:0;color:var(--t);border-color:var(--b);background:#ffffff08}
+.hs{display:flex;gap:6px;justify-content:center;margin:20px 0 8px;flex-wrap:wrap}
+.hs i{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;font:700 1rem ui-monospace,monospace;font-style:normal;background:linear-gradient(135deg,#1e3a8a,#0e7490);border:1px solid var(--a);animation:bob 2.4s ease-in-out infinite;animation-delay:calc(var(--i)*.2s)}
+.hs i:last-child{background:#131a2e;border-color:var(--b);color:var(--m)}
+@keyframes bob{50%{transform:translateY(-8px)}}
+nav{position:sticky;top:0;z-index:30;margin:0;padding:10px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:#0b1020b3;border-bottom:1px solid #ffffff12}
+nav a{transition:.2s}nav a:hover{background:#38bdf822;transform:translateY(-1px)}
+h2::before{counter-increment:s;content:"0" counter(s);width:auto;height:auto;background:linear-gradient(135deg,var(--a),#a78bfa);color:#04121f;padding:2px 10px;border-radius:8px;font:800 .9rem ui-monospace,monospace;vertical-align:.15em;margin-right:12px}
+.card{background:linear-gradient(160deg,#19223fd9,#111830d9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 10px 30px #0006,inset 0 1px #ffffff14;transition:border-color .3s,box-shadow .3s}
+.g3 .card:hover{border-color:var(--a);box-shadow:0 14px 34px #38bdf822,inset 0 1px #ffffff14}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s,border-color .3s,box-shadow .3s}.rv.in{opacity:1;transform:none}
+.flow{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px}
+.flow .nd{display:grid;place-items:center;font-size:1.9rem;padding:14px 22px;border-radius:14px;background:#0e1426;border:1px solid var(--b);animation:bob 3s ease-in-out infinite}
+.flow .nd b{font-size:.8rem;color:var(--m)}.flow .nd:nth-child(3){animation-delay:-1s}.flow .nd:nth-child(5){animation-delay:-2s}
+.ln{flex:1;max-width:130px;height:3px;background:repeating-linear-gradient(90deg,var(--a) 0 10px,transparent 10px 18px);background-size:36px 3px;animation:mv 1s linear infinite}@keyframes mv{to{background-position:36px 0}}
+button{transition:.2s}button:hover{transform:translateY(-1px)}
+button.p{background:linear-gradient(135deg,var(--a),#818cf8);box-shadow:0 6px 18px #38bdf855}
+#ex button{border-radius:99px}#ex button.s{box-shadow:0 0 14px #38bdf855}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px #38bdf833}
+#prog{position:relative;height:22px;border-radius:99px;background:#0e1426;border:1px solid var(--b);overflow:hidden;margin-bottom:14px}
+#prog i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,#0ea5e9aa,#a78bfaaa,#34d399aa);transition:width .6s}
+#prog span{position:relative;display:block;text-align:center;font:600 .7rem/20px ui-monospace,monospace}
+.cell{background:linear-gradient(#131c36,#0e1426)}.cell.cur{animation:pc 1.4s ease-in-out infinite}@keyframes pc{50%{box-shadow:0 8px 26px #34d39977}}
+.unit{background:radial-gradient(circle at 50% 40%,#16244a,#0b1124);box-shadow:0 0 30px #38bdf822,inset 0 0 20px #0006}
+.face{fill:#0c1430;stroke:#38bdf866}.hand{filter:drop-shadow(0 0 4px var(--y))}.ring{fill:none;stroke:#38bdf866;stroke-dasharray:3 7;transform-origin:80px 80px;animation:sp 22s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.arr{animation:nu 1.1s ease-in-out infinite}@keyframes nu{50%{transform:translateX(10px);text-shadow:0 0 14px var(--a)}}
+#op{background:#0e142688}#op b{animation:fi .5s}@keyframes fi{from{opacity:0;transform:scale(1.6)}}
+#stack{box-shadow:inset 0 -24px 34px #38bdf812,0 0 24px #0005}
+.blk{background:linear-gradient(135deg,#1e3a8a,#0e7490);border-color:#38bdf8;box-shadow:0 4px 12px #38bdf833,inset 0 1px #ffffff30}
+.blk.s1{background:linear-gradient(135deg,#5b21b6,#a21caf);border-color:#c084fc;box-shadow:0 4px 12px #c084fc33,inset 0 1px #ffffff30}
+.blk.s2{background:linear-gradient(135deg,#047857,#15803d);border-color:#34d399;box-shadow:0 4px 12px #34d39933,inset 0 1px #ffffff30}
+.blk.s3{background:linear-gradient(135deg,#b45309,#c2410c);border-color:#fbbf24;box-shadow:0 4px 12px #fbbf2433,inset 0 1px #ffffff30}
+.blk.z{background:linear-gradient(135deg,#7f1d1d,#be123c);border-color:#fb7185;box-shadow:0 4px 12px #fb718533,inset 0 1px #ffffff30}
+#gr{background:radial-gradient(#ffffff0a 1px,transparent 1px) 0 0/18px 18px;border-radius:10px}
+#gr path.on{stroke-dasharray:8 6;animation:da .6s linear infinite}@keyframes da{to{stroke-dashoffset:-14}}
+#gr g.on circle{animation:pn 1.2s ease-in-out infinite}@keyframes pn{50%{filter:drop-shadow(0 0 10px var(--a))}}
+#res.ok{animation:pp .6s;background:linear-gradient(135deg,#064e3b,#0d3a2e);box-shadow:0 0 30px #34d39944}#res.bad{animation:sh .5s;background:linear-gradient(135deg,#4c1020,#3a1420)}
+@keyframes pp{from{transform:scale(.85);opacity:0}}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.cf{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}.cf i{position:absolute;top:-14px;width:9px;height:14px;border-radius:2px;animation:cf 2s ease-in forwards}@keyframes cf{to{transform:translate(var(--x),105vh) rotate(720deg)}}
+tr.cur{background:linear-gradient(90deg,#fbbf2433,transparent)}
+footer{border-top:1px solid #ffffff12}
+@media(max-width:760px){.flow .nd{padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><div id="bar"></div>
+<header>
+<span class="chip">Teoría de Autómatas · Equipo 1</span>
+<h1>Autómata de <span>Pila</span></h1>
+<div class="hs"><i style="--i:0">a</i><i style="--i:1">a</i><i style="--i:2">a</i><i style="--i:3">b</i><i style="--i:4">b</i><i style="--i:5">b</i><i style="--i:6">λ</i></div>
+<p class="sub">Reporte y simulador animado de PDA (Push-Down Automaton)</p>
+<p class="sub">[Integrantes del equipo] · Entrega: 7 de diciembre</p>
+<div class="chips"><span class="chip">🥞 Memoria LIFO</span><span class="chip">⚙️ Lenguajes libres de contexto</span><span class="chip">🎞️ Simulación animada</span></div>
+</header>
+<nav><a href="#def">Definición</a><a href="#intro">Introducción</a><a href="#des">Desarrollo</a><a href="#sim">Simulador</a><a href="#bib">Bibliografía</a></nav>
+<main>
+
+<section id="def"><h2>Definición</h2>
+<div class="card"><p>Un <b>autómata de pila</b> (AP o PDA) es un autómata al que se le integra una <b>memoria de tipo pila</b> (LIFO: el primer símbolo en entrar es el último en salir). Esa memoria le permite “recordar” total o parcialmente la cadena leída mediante las operaciones <code>PUSH</code> (inserción) y <code>DOWN</code> (extracción), y por eso reconoce <b>lenguajes libres de contexto</b>.</p>
+<p class="m">Ejemplo: {aⁿbⁿ} no lo puede reconocer un AF, porque necesitaría un estado distinto para cada valor de n (10, 1000, 1M…). Con la pila basta contar con los símbolos apilados.</p></div></section>
+
+<section id="intro"><h2>Introducción</h2>
+<div class="card"><p>Los autómatas finitos no tienen memoria auxiliar, así que se quedan cortos con lenguajes como aⁿbⁿ o wcwᴿ. El AP resuelve esos problemas y se aplica a gramáticas libres de contexto que ya se han llevado a <b>FNC</b> y/o <b>FNG</b>.</p>
+<p>Este proyecto es un programa funcional en el que el usuario <b>propone su propio lenguaje</b> escribiendo la función de transición δ; el programa la convierte a <i>arreglos paralelos</i>, <b>valida cadenas</b> y anima la cinta, la unidad de control, la pila y el grafo del autómata. Viene precargado con dos ejemplos.</p></div></section>
+
+<section id="des"><h2>Desarrollo</h2>
+<div class="card flow"><div class="nd">📼<b>Cinta</b></div><span class="ln"></span><div class="nd">⏱️<b>Control</b></div><span class="ln"></span><div class="nd">🥞<b>Pila</b></div></div>
+<div class="g3">
+<div class="card"><h3>a) Cinta de entrada</h3><p>Contiene la cadena a leer, símbolo por símbolo, terminada en λ (fin de cadena).</p></div>
+<div class="card"><h3>b) Unidad de control</h3><p>El “reloj” de estados: una manecilla señala el estado actual q₀, q₁, q₂… y decide la operación a realizar.</p></div>
+<div class="card"><h3>c) Memoria tipo pila</h3><p>Se inserta (PUSH) y se extrae (DOWN) por la cima. Su base es el símbolo inicial <code>Z₀</code>.</p></div>
+</div>
+<div class="card" style="margin-top:14px"><h3>Funcionamiento</h3><ol>
+<li>Solo se pueden hacer movimientos en la pila cuando no está vacía; inicialmente contiene el símbolo base Z₀.</li>
+<li>La primera inserción (Z₀) es implícita y no determina transición.</li>
+<li>Cada transición identifica una operación sobre la pila.</li>
+<li>La pila puede tener su propio alfabeto Γ, que a veces coincide con el de la cinta.</li></ol></div>
+<div class="g3" style="margin-top:14px">
+<div class="card"><h3>Tupla del AP</h3><p><code>AP = (Q, Σ, Γ, δ, q₀, Z₀, F)</code></p><ul><li><b>Q</b>: estados</li><li><b>Σ</b>: símbolos de entrada</li><li><b>Γ</b>: alfabeto de la pila</li><li><b>δ</b>: función de transición</li><li><b>q₀</b>: estado inicial · <b>Z₀</b>: base de la pila</li><li><b>F</b>: estados finales</li></ul></div>
+<div class="card"><h3>Función de transición</h3><p><code>δ(q₀, ω, α) ; (q₁, β)</code></p><ul><li><b>q₀</b>: estado actual · <b>q₁</b>: siguiente</li><li><b>ω</b>: símbolo leído de la cinta</li><li><b>α</b>: DOWN (debe estar en la cima)</li><li><b>β</b>: PUSH</li><li><b>λ</b>: no se realiza operación</li></ul><p class="m">En el grafo cada arco se etiqueta <code>ω|α|β</code>.</p></div>
+<div class="card"><h3>Algoritmo de solución</h3><ol><li>Identificar los símbolos de Σ.</li><li>Estrategia de inserción (PUSH): qué símbolo leído se apila.</li><li>Estrategia de extracción (DOWN): qué símbolo se lee y cuál se saca.</li><li>Condición final: i) extraer Z₀ y llegar a estado final, o ii) llegar a estado final al leer un símbolo.</li></ol></div>
+</div>
+<div class="card" style="margin-top:14px"><h3>Cómo está construido el programa</h3>
+<p>La función δ se guarda en <b>arreglos paralelos</b>: la transición <i>j</i> es <code>qa[j], sa[j], xa[j] → pa[j], ya[j]</code> (estado, leer, extraer → siguiente, insertar). Funciones principales:</p>
+<ul><li><code>parse()</code>: recibe la función de transición escrita por el usuario, la convierte a los arreglos y revisa que todo pertenezca a Q, Σ y Γ.</li>
+<li><code>run(cadena)</code>: valida la cadena explorando las configuraciones (estado, posición, pila) en anchura, por si el AP es no determinista.</li>
+<li><code>render()</code>: dibuja y anima cinta, reloj de estados, operación, pila y grafo.</li></ul>
+<p class="m">Una cadena se acepta si se consume completa y se cumple el criterio elegido (por defecto i: la pila queda vacía tras extraer Z₀ y se está en un estado final).</p></div>
+</section>
+
+<section id="sim"><h2>Simulador</h2>
+<div class="card"><div class="lbl">Ejemplos precargados</div><div class="btns" id="ex" style="margin:0"><button data-e="0">aⁿbⁿ, n ≥ 1</button><button data-e="1">w c wᴿ</button><button data-e="2">Lenguaje propio</button></div></div>
+<div class="sim">
+<form class="card" id="f" onsubmit="return false">
+<label>Q (estados)<input id="Q"></label>
+<div class="r3"><label>Σ<input id="S"></label><label>Γ<input id="G"></label><label>F<input id="F"></label></div>
+<div class="r3"><label>q₀<input id="q0"></label><label>Z₀<input id="Z0"></label><label>Criterio<select id="mode"><option value="1">i) Z₀ + final</option><option value="2">ii) Solo final</option></select></label></div>
+<label>Función de transición δ — una por línea: <code>estado, leer, extraer → estado, insertar</code>. λ (o “-”, “_”) = nada. También acepta <code>δ(q0,a,λ);(q0,A)</code>
+<textarea id="T" rows="7" spellcheck="false"></textarea></label>
+<label>Cadena a validar (vacía = λ)<input id="w" autocomplete="off"></label>
+<label>Velocidad<input type="range" id="sp" min="300" max="1800" value="1100"></label>
+<div class="btns"><button type="button" class="p" id="bV">Validar</button><button type="button" id="bP">▶ Animar</button></div>
+<div class="btns"><button type="button" id="b0">⏮</button><button type="button" id="bB">◀ Paso</button><button type="button" id="bN">Paso ▶</button><button type="button" id="b1">⏭</button></div>
+</form>
+<div class="card">
+<div id="prog"><i></i><span></span></div><div class="lbl">a) Cinta de entrada</div><div id="tape"></div>
+<div class="mid">
+<div><div class="lbl">b) Unidad de control</div><div class="unit"><svg id="dial" viewBox="-12 -12 184 184"></svg></div></div>
+<div class="op"><div class="lbl">Operación</div><div id="op">—</div><div class="arr">⟹</div></div>
+<div><div class="lbl">c) Pila</div><div id="stack"></div></div>
+</div>
+<div class="lbl">Grafo del autómata</div><div id="gr"></div>
+<div id="res" hidden></div>
+</div></div>
+<div class="card" style="margin-top:14px"><div class="lbl">Traza de configuraciones</div>
+<div id="tw" style="margin-top:0"><table><thead><tr><th>#</th><th>δ aplicada</th><th>Estado</th><th>Cinta restante</th><th>Pila (cima → base)</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+</section>
+
+<section id="bib"><h2>Bibliografía</h2>
+<div class="card"><ul>
+<li>Hopcroft, J. E., Motwani, R. y Ullman, J. D. (2007). <i>Introducción a la teoría de autómatas, lenguajes y computación</i> (3.ª ed.). Pearson Educación.</li>
+<li>Sipser, M. (2012). <i>Introduction to the Theory of Computation</i> (3rd ed.). Cengage Learning.</li>
+<li>Apuntes de clase de Teoría de Autómatas, Unidad IV: Autómatas de pila en lenguajes libres de contexto.</li></ul></div></section>
+</main>
+<footer>Proyecto de Teoría de Autómatas · Equipo 1</footer>
+
+<script>
+const $=id=>document.getElementById(id),LS=new Set(['λ','ε','_','-','lambda','']);
+const lam=s=>LS.has(s.trim().toLowerCase())?'λ':s.trim(),list=s=>s.split(/[,\s]+/).filter(Boolean);
+const EX=[
+{Q:'q0,q1,q2',S:'a,b',G:'Z0,A',q0:'q0',Z0:'Z0',F:'q2',w:'aaabbb',T:'q0,a,λ -> q0,A\nq0,b,A -> q1,λ\nq1,b,A -> q1,λ\nq1,λ,Z0 -> q2,λ'},
+{Q:'q0,q1,q2',S:'a,b,c',G:'Z0,A,B',q0:'q0',Z0:'Z0',F:'q2',w:'bbacabb',T:'q0,a,λ -> q0,A\nq0,b,λ -> q0,B\nq0,c,λ -> q1,λ\nq1,a,A -> q1,λ\nq1,b,B -> q1,λ\nq1,λ,Z0 -> q2,λ'},
+{Q:'q0,q1,q2',S:'',G:'Z0',q0:'q0',Z0:'Z0',F:'q2',w:'',T:''}];
+let P,W='',R,path=[],grp=[],k=0,tm=[],pl=0,cur=0;
+
+function parse(){
+ const e=[],c={Q:list($('Q').value),S:list($('S').value),G:list($('G').value),q0:$('q0').value.trim(),Z0:$('Z0').value.trim(),F:list($('F').value),qa:[],sa:[],xa:[],pa:[],ya:[]};
+ if(!c.Q.includes(c.q0))e.push('q₀ debe estar en Q');
+ if(!c.G.includes(c.Z0))e.push('Z₀ debe estar en Γ');
+ c.F.forEach(f=>c.Q.includes(f)||e.push('«'+f+'» (final) no está en Q'));
+ $('T').value.split('\n').forEach((ln,i)=>{
+  if(!ln.trim())return;
+  const m=ln.replace(/[δ()]/g,' ').split(/->|→|;|=/),l=m[0].split(','),r=(m[1]||'').split(',');
+  if(m.length!=2||l.length!=3||r.length!=2)return e.push('Línea '+(i+1)+': formato inválido');
+  const [q,a,x]=l.map(lam),[p,y]=r.map(lam),n='Línea '+(i+1)+': ';
+  if(!c.Q.includes(q)||!c.Q.includes(p))return e.push(n+'estado fuera de Q');
+  if(a!='λ'&&!c.S.includes(a))return e.push(n+'«'+a+'» no está en Σ');
+  if((x!='λ'&&!c.G.includes(x))||(y!='λ'&&!c.G.includes(y)))return e.push(n+'símbolo de pila fuera de Γ');
+  c.qa.push(q);c.sa.push(a);c.xa.push(x);c.pa.push(p);c.ya.push(y);
+ });
+ return{c,e};
+}
+
+function run(w){
+ const c=P,n=w.length,mode=+$('mode').value,N=[{q:c.q0,i:0,s:[c.Z0],t:-1,p:-1}],seen=new Set([c.q0+'|0|'+c.Z0]);
+ let h=0,hit=-1,far=0;
+ while(h<N.length&&N.length<40000){
+  const o=N[h];
+  if(o.i==n&&c.F.includes(o.q)&&(mode==2||!o.s.length)){hit=h;break}
+  if(o.i>N[far].i)far=h;
+  if(o.s.length)for(let j=0;j<c.qa.length;j++){
+   if(c.qa[j]!=o.q)continue;
+   const a=c.sa[j],x=c.xa[j],y=c.ya[j];
+   if(a!='λ'&&w[o.i]!=a)continue;
+   if(x!='λ'&&o.s[o.s.length-1]!=x)continue;
+   const s=o.s.slice();if(x!='λ')s.pop();
+   if(y!='λ'){if(s.length>150)continue;s.push(y)}
+   const i=o.i+(a!='λ'?1:0),key=c.pa[j]+'|'+i+'|'+s;
+   if(seen.has(key))continue;seen.add(key);N.push({q:c.pa[j],i,s,t:j,p:h});
+  }
+  h++;
+ }
+ const out=[];for(let z=hit<0?far:hit;z>=0;z=N[z].p)out.unshift(N[z]);
+ return{ok:hit>=0,out,cnt:N.length};
+}
+
+function why(o){
+ const c=P;
+ if(o.i<W.length)return 'se bloqueó en '+o.q+' al leer «'+W[o.i]+'»: no hay transición aplicable.';
+ if(!c.F.includes(o.q))return 'la cadena se consumió pero '+o.q+' no es un estado final.';
+ return 'se llegó a un estado final, pero la pila no quedó vacía (falta extraer Z₀).';
+}
+
+function graph(){
+ const c=P,n=c.Q.length,Wd=Math.max(560,n*140),Y=135,Rd=24,X=i=>70+i*(Wd-140)/Math.max(1,n-1),G=[],ix={};grp=[];
+ c.qa.forEach((q,j)=>{const a=c.Q.indexOf(q),b=c.Q.indexOf(c.pa[j]),key=a+'>'+b;if(!(key in ix)){ix[key]=G.length;G.push({a,b,t:[]})}G[ix[key]].t.push(j);grp[j]=ix[key]});
+ let s=`<svg viewBox="0 0 ${Wd} 270"><defs>${['ar','arOn'].map(i=>`<marker id="${i}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="${i=='ar'?'#7c89b0':'#fbbf24'}"/></marker>`).join('')}</defs>`;
+ G.forEach((g,gi)=>{
+  const xa=X(g.a),xb=X(g.b),d=g.b>g.a?1:-1,m=(xa+xb)/2;let p,ly,st;
+  if(g.a==g.b){p=`M${xa-12} ${Y-21}C${xa-50} ${Y-90} ${xa+50} ${Y-90} ${xa+12} ${Y-21}`;ly=Y-84;st=-14}
+  else if(Math.abs(g.b-g.a)==1&&!((g.b+'>'+g.a) in ix)){p=`M${xa+d*Rd} ${Y}L${xb-d*Rd} ${Y}`;ly=Y-10;st=-14}
+  else{const hh=(40+28*Math.abs(g.b-g.a))*(d>0?-1:1),sy=Y+(hh<0?-17:17);p=`M${xa+d*Rd*.7} ${sy}Q${m} ${Y+hh*2} ${xb-d*Rd*.7} ${sy}`;ly=Y+hh+(hh<0?-8:16);st=hh<0?-14:14}
+  s+=`<path class="ed" id="e${gi}" d="${p}"/>`;
+  g.t.forEach((j,li)=>s+=`<text id="lb${j}" x="${g.a==g.b?xa:m}" y="${ly+st*li}" text-anchor="middle">${c.sa[j]}|${c.xa[j]}|${c.ya[j]}</text>`);
+ });
+ c.Q.forEach((q,i)=>s+=`<g id="nd${i}"><circle cx="${X(i)}" cy="${Y}" r="${Rd}"/>${c.F.includes(q)?`<circle cx="${X(i)}" cy="${Y}" r="${Rd-5}"/>`:''}<text x="${X(i)}" y="${Y+5}" text-anchor="middle">${q}</text></g>`);
+ const x0=X(c.Q.indexOf(c.q0));
+ $('gr').innerHTML=s+`<path class="ed" d="M${x0-Rd-34} ${Y}L${x0-Rd-2} ${Y}"/></svg>`;
+}
+
+function dial(){
+ const n=P.Q.length;let s='<circle class="ring" cx="80" cy="80" r="60"/><circle class="face" cx="80" cy="80" r="48"/>';
+ P.Q.forEach((q,i)=>{const a=2*Math.PI*i/n,sn=Math.sin(a),cs=Math.cos(a);
+  s+=`<line class="tk" x1="${80+48*sn}" y1="${80-48*cs}" x2="${80+55*sn}" y2="${80-55*cs}"/><text id="dl${i}" x="${80+68*sn}" y="${84-68*cs}" text-anchor="middle">${q}</text>`});
+ $('dial').innerHTML=s+'<g id="hand" style="transform-origin:80px 80px"><path class="hand" d="M80 80V38"/><circle class="hub" cx="80" cy="80" r="5"/></g>';
+ cur=0;
+}
+function needle(i){const t=360*i/P.Q.length,d=((t-cur%360)+540)%360-180;cur+=d;$('hand').style.transform=`rotate(${cur}deg)`}
+
+function render(kk,tj,ph){
+ const o=path[kk],c=P,qi=c.Q.indexOf(o.q),a=tj>=0?c.sa[tj]:'',x=tj>=0?c.xa[tj]:'',y=tj>=0?c.ya[tj]:'';
+ $('tape').innerHTML=[...W,'λ'].map((ch,i)=>`<div class="cell ${i<o.i?'done':''} ${i==o.i?'cur':''}">${ch}</div>`).join('');
+ $('stack').innerHTML=o.s.map((s,i)=>{const top=i==o.s.length-1,f=top&&tj>=0?(ph==1&&x!='λ'?'pop':ph==2&&y!='λ'?'push':''):'';return `<div class="blk ${s==c.Z0?'z':'s'+c.G.indexOf(s)%4} ${f}">${s}</div>`}).join('')||'<div class="nul">NULL</div>';
+ $('op').innerHTML=tj>=0?`leer <b>${a}</b><br>DOWN <b>${x}</b> · PUSH <b>${y}</b>`:'Z₀ insertado<br>de forma implícita';
+ document.querySelectorAll('.on').forEach(e=>e.classList.remove('on'));
+ [$('nd'+qi),$('dl'+qi)].forEach(e=>e&&e.classList.add('on'));
+ if(tj>=0)[$('e'+grp[tj]),$('lb'+tj)].forEach(e=>e&&e.classList.add('on'));
+ needle(qi);
+ document.querySelectorAll('#tb tr.cur').forEach(e=>e.classList.remove('cur'));
+ const r=$('r'+kk);if(r){r.classList.add('cur');$('tw').scrollTop=r.offsetTop-90}
+ const last=kk==path.length-1&&ph!=1;$('res').hidden=!last;
+ $('prog').firstChild.style.width=(path.length>1?kk/(path.length-1)*100:100)+'%';$('prog').children[1].textContent='Paso '+kk+' de '+(path.length-1);
+ if(last){$('res').className=R.ok?'ok':'bad';$('res').textContent=R.msg;if(R.ok&&kk>0)boom()}
+}
+
+function prep(){
+ stop();const{c,e}=parse();P=c;W=$('w').value.trim();if(W=='λ')W='';
+ [...W].forEach(ch=>c.S.includes(ch)||e.push('«'+ch+'» de la cadena no está en Σ'));
+ if(!c.qa.length&&!e.length)e.push('Agrega al menos una transición');
+ if(e.length){path=[];$('res').hidden=false;$('res').className='bad';$('res').textContent='⚠ '+e.join(' · ');return false}
+ R=run(W);path=R.out;const l=path[path.length-1];
+ R.msg=R.ok?`✔ Cadena «${W||'λ'}» ACEPTADA: ${$('mode').value==1?'Z₀ extraído, pila vacía y ':''}estado final ${l.q}. (${R.cnt} configuraciones exploradas)`:`✘ Cadena «${W||'λ'}» RECHAZADA: ${why(l)}`;
+ const tr=j=>`δ(${P.qa[j]}, ${P.sa[j]}, ${P.xa[j]}) ; (${P.pa[j]}, ${P.ya[j]})`;
+ $('tb').innerHTML=path.map((o,i)=>`<tr id="r${i}"><td>${i}</td><td>${i?tr(o.t):'inicio'}</td><td>${o.q}</td><td>${W.slice(o.i)||'λ'}</td><td>${[...o.s].reverse().join(' ')||'NULL'}</td></tr>`).join('');
+ graph();dial();k=0;render(0,-1,0);return true;
+}
+
+const later=(f,ms)=>tm.push(setTimeout(f,ms)),D=()=>2100-$('sp').value;
+function stop(){tm.forEach(clearTimeout);tm=[];pl=0;$('bP').textContent='▶ Animar'}
+function adv(fast){const d=fast?500:D();k++;render(k-1,path[k].t,1);later(()=>render(k,path[k].t,2),d*.5)}
+function tick(){if(k>=path.length-1)return stop();adv();later(tick,D())}
+const ok=()=>path.length||prep();
+
+$('bV').onclick=()=>{if(!prep())return;k=path.length-1;render(k,path[k].t,0)};
+$('bP').onclick=()=>{if(pl)return stop();if(!ok())return;if(k>=path.length-1){k=0;render(0,-1,0)}pl=1;$('bP').textContent='⏸ Pausa';tick()};
+$('bN').onclick=()=>{stop();if(ok()&&k<path.length-1)adv(1)};
+$('bB').onclick=()=>{stop();if(ok()&&k>0){k--;render(k,path[k].t,0)}};
+$('b0').onclick=()=>{stop();if(ok()){k=0;render(0,-1,0)}};
+$('b1').onclick=()=>{stop();if(ok()){k=path.length-1;render(k,path[k].t,0)}};
+$('w').onkeydown=e=>{if(e.key=='Enter')$('bV').click()};
+$('f').addEventListener('input',e=>{if(e.target.id!='sp')prep()});
+document.querySelectorAll('#ex button').forEach(b=>b.onclick=()=>{
+ const x=EX[b.dataset.e];['Q','S','G','q0','Z0','F','T','w'].forEach(i=>$(i).value=x[i]);$('mode').value=1;
+ document.querySelectorAll('#ex button').forEach(z=>z.classList.toggle('s',z==b));prep();
+});
+function boom(){const f=document.createElement('div');f.className='cf';for(let i=0;i<40;i++){const e=document.createElement('i');e.style.cssText=`left:${Math.random()*100}%;background:hsl(${Math.random()*360} 90% 60%);animation-delay:${Math.random()*.4}s;--x:${Math.random()*200-100}px`;f.appendChild(e)}document.body.appendChild(f);setTimeout(()=>f.remove(),2600)}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.06});
+document.querySelectorAll('.card,h2').forEach(e=>{e.classList.add('rv');io.observe(e)});
+addEventListener('scroll',()=>$('bar').style.width=scrollY/(document.body.scrollHeight-innerHeight)*100+'%');
+document.querySelector('#ex button').click();
+</script></body></html>
